@@ -152,5 +152,31 @@ class FunctionWordTests(unittest.TestCase):
         self.assertEqual([e["word"] for e in kept], ["eurotrans", "squawk"])
 
 
+
+class SquawkCheckTests(unittest.TestCase):
+    def setUp(self):
+        from atco.entity_extraction import CommandChecks
+
+        self.checks = CommandChecks()
+
+    def warnings(self, spoken):
+        return self.checks.validate_physics("squawk", self.checks._text_to_digit(spoken))
+
+    def test_a_leading_zero_is_a_valid_code(self):
+        self.assertEqual(self.warnings("zero four two one"), [])
+
+    def test_all_zeros_is_four_digits(self):
+        self.assertEqual(self.warnings("zero zero zero zero"), [])
+
+    def test_three_digits_are_flagged(self):
+        self.assertEqual(len(self.warnings("four two one")), 1)
+
+    def test_eight_or_nine_is_flagged(self):
+        self.assertIn("8 or 9", " ".join(self.warnings("four four eight two")))
+
+    def test_emergency_code_is_named(self):
+        self.assertIn("emergency", " ".join(self.warnings("seven seven zero zero")))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,8 +1,6 @@
 """DistilBERT entity extraction and the saved command heuristics."""
 from pathlib import Path
-import torch
 import re
-from transformers import pipeline, AutoTokenizer, AutoModelForTokenClassification
 
 MODEL_DIR = Path(__file__).resolve().parents[1] / "models/distilbert"
 
@@ -108,9 +106,10 @@ class CommandChecks:
         # Squawk code checks.
 
         if "squawk" in cmd:
-            str_val = str(val_int)
-            # The original check converts to int, so it loses leading zeros.
-            if len(str_val) != 4 and val_int != 0:
+            # Check the digits as spoken: converting to a number would drop a
+            # leading zero and make a valid code such as 0421 look three digits long.
+            str_val = value_str.strip()
+            if len(str_val) != 4 or not str_val.isdigit():
                 warnings.append(f"Squawk code should have four digits; got {str_val}.")
 
             # Squawk codes use octal digits.
@@ -235,6 +234,10 @@ class AtcParser:
     def __init__(self, model_dir=None, local_files_only=False):
         model_dir = model_dir or MODEL_DIR
         print(f"Loading entity model: {model_dir}")
+        # Imported here so the rule checks above can be used and tested without them.
+        import torch
+        from transformers import pipeline, AutoTokenizer, AutoModelForTokenClassification
+
         device = 0 if torch.cuda.is_available() else -1
         tokenizer = AutoTokenizer.from_pretrained(model_dir, local_files_only=local_files_only)
         model = AutoModelForTokenClassification.from_pretrained(
