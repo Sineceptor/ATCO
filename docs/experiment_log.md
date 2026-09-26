@@ -50,12 +50,12 @@ All from [retraining.json](../results/retraining.json), `runs`, except where not
 | Run | What changed | Validation | Test | Change from 2025 (95% range) | Adopted |
 | --- | --- | ---: | ---: | --- | --- |
 | A, `fixed` | Corrected labels, SpecAugment, checkpoints chosen on validation | 20.02% | 19.28% | +0.64 (−2.13 to +3.39) | No: no measurable change |
-| B, `synthetic` | A plus 700 of my synthetic radio clips per epoch | 23.08% | 20.34% | +1.70 (−1.29 to +4.87) | No: synthetic speech did not help |
+| B, `synthetic` | A plus 700 of my synthetic radio clips per epoch | 23.08% | 20.34% | +1.70 (−1.29 to +4.87) | No: synthetic speech did not help. Its airline list included callsigns picked from old test errors (favours B), and its transcripts say "decimal" and "x-ray" where ATCO2 says "point" and "x ray" (B wrote "decimal" once on test) |
 | C, `augmented` | A plus noise and speed copies of the training clips | not run | not run | | Dropped for time |
 | D, `continued` | The 2025 model trained further with the corrected labels | never beat its start (22.55% → best 22.90%) | | | No: nothing saved |
 | E, `real_data` | A plus 1,400 UWB-ATCC clips per epoch (10.5 hours of real speech) | 21.68% | 18.21% | −0.43 (−3.13 to +2.42) | No, but far less looping: 19.38% greedy against 26.52% for A |
 | Soup of A and E | Weight average | 17.66% | 16.72% | −1.92 (−4.54 to +0.75) | Best Whisper-small, but its gain over 2025 is not certain |
-| Soup of A, B and E | Weight average | 19.49% | not scored | | No: worse than the soup of A and E on validation |
+| Soup of A, B and E | Weight average | 19.23% (plain beam, its best) | not scored | | No: worse than the soup of A and E on validation |
 
 ## 5. Every recording: cross-validation
 
@@ -77,8 +77,8 @@ Whisper-medium with its weights frozen and rank-32 LoRA adapters trained
 | --- | --- | ---: | ---: | --- | --- |
 | `medium_real` | ATCO2 clips plus 1,000 UWB-ATCC clips per epoch, 6 epochs | 16.61% | 15.23% | −3.41 (−5.77 to −1.08) | Was the best until the soup below |
 | `medium_atco2_only` | Ablation, declared in advance and not eligible to be chosen: ATCO2 clips only | 17.66% | 15.65% | −2.98 (−5.26 to −0.67) | Ablation. Shows most of the gain is from model size |
-| `medium_longer` | `medium_real` trained up to 3 more epochs with fresh adapters | never beat its start (17.92% → 18.09%, 18.44%) | | | No: nothing saved |
-| **`soup_medium`** | **Weight average of the two Whisper-medium models** | **14.86%** | **14.38%** | **−4.26 (−6.61 to −1.96)** | **Yes: the best model, used by the app** |
+| `medium_longer` | `medium_real` restarted with fresh adapters and a new warm-up, up to 3 more epochs | never beat its start (17.92% → 18.09%, 18.44%) | | | No: nothing saved. Not the same as training the original run for longer |
+| **`soup_medium`** | **Weight average of the two Whisper-medium models** | **14.86%** | **14.38%** | **−4.26 (−6.61 to −1.96)** | **Yes: the best model, used by the app. Built after both ingredients had been scored on test, and one of them was the ablation** |
 
 ## 7. Noise
 
@@ -92,8 +92,11 @@ greedy decoding with repetition guards ([retraining.json](../results/retraining.
 | 10 dB | 20.87% | 28.01% | 70.50% |
 | 0 dB | 40.26% | 48.03% | 93.08% |
 
-The first noise sweep used plain greedy decoding and jumped about because a few
-noisy clips looped; it was redone with the guards. With a 300 to 3,400 Hz
+The Whisper-small soup reaches 45.79% at 0 dB and the single Whisper-medium
+model 42.81% (`noise_sweep.other_models`). 0 dB means the noise has the same
+average power as the whole clip, pauses included. The first noise sweep used
+plain greedy decoding and jumped about because a few noisy clips looped; it was
+redone with the guards (both are in `retraining.json`). With a 300 to 3,400 Hz
 filter applied first, the best model scores 16.93% with no added noise and
 36.42% at 0 dB.
 
@@ -107,7 +110,13 @@ The app's tagger run on the correct transcript and on each model's transcript
 | Callsign (59 clips) | 3 | 33 | 35 |
 | Command (56 clips) | 19 | 37 | 44 |
 | Numbers (58 clips) | 11 | 35 | 41 |
-| Every field (74 clips) | 0 | 20 | 22 |
+| Callsign, command and numbers (74 clips) | 3 | 29 | 33 |
+| Every field, including waypoints (74 clips) | 0 | 20 | 22 |
+
+Waypoint labels come from a rule known to be too loose, so the first of those
+two rows is the headline. On it the best model is not clearly ahead of the other
+2026 models (Whisper-small soup 37, single Whisper-medium 36), but a few clips out
+of 74 is within noise.
 
 None of the best model's 27 missed callsigns starts with a word absent from
 the training transcripts: the errors are misheard letters and digits, not
@@ -127,8 +136,13 @@ niner and nine) as the same ([letters_digits.json](../results/letters_digits.jso
 
 | Trial | Result on validation | Adopted |
 | --- | --- | --- |
-| Give Whisper the phonetic alphabet as a prompt | Worse: WER 16.96% against 14.86%, letters 87.26% against 95.54% | No; never scored on test |
-| Train the best model 2 more epochs with the loss on letter and digit words weighted three times (`--letter-weight 3`) | Epoch 1: letters and digits 96.87% (4 more of 479 right) but WER 15.38%. Epoch 2: 96.45%, WER 16.00% | No: the rule set before the run needed both better; never scored on test |
+| Give Whisper the phonetic alphabet as a prompt | Under its best decoding (plain beam): WER 14.95% against 14.86% (171 errors against 170), letters 94.27% against 95.54%. Under guarded beam it was much worse (16.96%), possibly because the guards also count the prompt's words | No: no measurable gain; never scored on test |
+| Train the best model 2 more epochs with the loss on letter and digit words weighted three times (`--letter-weight 3`) | Epoch 1: letters and digits 96.87% (4 more of 479 right) but WER 15.38%. Epoch 2: 96.45%, WER 16.00% | No: the rule set before the run needed both better; never scored on test. `medium_longer` also got worse after a restart with no weighting, so the restart, not the weighting, may explain the WER rise |
+
+The best model and the single Whisper-medium model have identical rows here
+(460 of 479, same confusions). Re-scored from their own prediction files on
+27 September 2026: their transcripts differ on 39 of the 101 clips, but they make
+the same 19 letter and digit errors.
 
 ## 10. The app
 
@@ -138,6 +152,46 @@ niner and nine) as the same ([letters_digits.json](../results/letters_digits.jso
 | Beam search with repetition guards instead of greedy decoding | Greedy decoding looped on noisy clips; the guards did best on validation |
 | Drops waypoint labels on English function words such as "and" | The word-list rules, and so the tagger, called them waypoints |
 | A missing package is reported as a server problem | It used to be reported as a bad upload |
+
+## 11. How long each run trained
+
+Every run had a planned number of epochs and would stop early if validation did
+not improve for two to four epochs (`training` in
+[retraining.json](../results/retraining.json)).
+
+| Run | Planned | Run | Best epoch | Stopped |
+| --- | ---: | ---: | ---: | --- |
+| A, `fixed` | 12 | 12 | 9 | at the plan |
+| B, `synthetic` | 8 | 8 | 7 | at the plan |
+| E, `real_data` | 8 | 8 | 8 | at the plan, still improving |
+| `medium_real` | 6 | 6 | 6 | at the plan, still improving |
+| `medium_atco2_only` | 5 | 5 | 5 | at the plan, still improving |
+| D, `continued` | 6 | 4 | none | early: never beat its start |
+| `medium_longer` | 3 | 2 | none | early: never beat its start |
+
+The learning rate falls to zero at the end of the plan, so the runs that were
+still improving may be undertrained. Training one of them for longer, with the
+adoption rule written first, is the obvious next experiment.
+
+## 12. Corrections after an outside review, 27 September 2026
+
+A reviewer read the repo and site before the numbers were frozen. Everything
+below was checked against the code and saved outputs before it was changed.
+
+| Finding | What changed |
+| --- | --- |
+| The README and site described the 2025 Whisper-small app | Now describe the current app; the traced call is labelled as the 2025 model |
+| "Every field right in 22 of 74" included waypoint labels | Recounted without waypoints (33 of 74) and both counts published |
+| "Training stops early" and "training longer did not help" | Epoch budgets published (section 11); wording now says what was actually run |
+| 45.79% and the `continued`, `medium_longer` and three-model soup numbers were not in `results/` | Added to `retraining.json` by the summary script |
+| The alphabet prompt was quoted under guarded beam, not its best decoding | Corrected (section 9) |
+| The best model and the single Whisper-medium model had identical letter rows | Checked: a real coincidence, not a copy (section 9) |
+| The filter explanation in the noise section was wrong | Corrected: the noise level follows the filtered clip's lower power |
+| "Degrades more slowly" | Now "loses fewer points"; as a multiple of the starting error it does not |
+| Hardware | 2025 on a Windows laptop with an RTX 3070, 2026 on an M3 Pro |
+| Citation [8] and the ATCO2 author list | Corrected |
+| Rounded large-v3 numbers, "mostly silence", generator ranges, "clean clips", "different airspace", missing credits | Corrected |
+| The soup was built after both ingredients were scored on test | Now said wherever the soup is described |
 
 ## Not done yet
 

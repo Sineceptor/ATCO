@@ -92,23 +92,23 @@
   <div class="wrap">
     <div class="col">
       <h2>One radio call, traced through the system</h2>
-      <p>It runs on my own computer in three steps. <strong>Whisper-small</strong>, fine-tuned on the 699
-        clips, turns audio into words. <strong>DistilBERT</strong> labels each word as a
+      <p>It runs on my own computer in three steps. <strong>Whisper</strong>, fine-tuned on ATC radio,
+        turns audio into words (the app now uses my best 2026 model, built on Whisper-medium). <strong>DistilBERT</strong> labels each word as a
         <em>callsign</em> (who is being spoken to), a <em>command</em> or a <em>value</em>. Then
         <strong>plain rules</strong> check that each number is even possible. Here is one real call going
-        through it.</p>
+        through it, as my 2025 model (Whisper-small) heard it.</p>
     </div>
 
-    <p class="tag wide">Archived output from the app. No model runs in this page.</p>
+    <p class="tag wide">Archived output from the app with my 2025 model. No model runs in this page.</p>
     <ol class="trace">
       <li>
         <h3><span class="step">1</span> What the model heard</h3>
         <p class="tx"><mark class="miss">portion startup</mark> approved on position three foxtrot as
           squawk four four zero two eurotrans one three juliett</p>
-        <p>Whisper&rsquo;s transcript of a 6.12-second recording, which actually says <q>push and start
+        <p>My 2025 model&rsquo;s transcript of a 6.12-second recording, which actually says <q>push and start
           approved</q>, a standard instruction my own generator also uses. Every later step inherits the
           mistake.</p>
-        <p class="note">This clip is one of the 74 clean test clips. My best 2026 model hears it as
+        <p class="note">This clip is one of the 74 unseen test clips. My best 2026 model hears it as
           <q>proceed and start approved</q>: closer, but still not <q>push</q>. A smaller 2026 model
           heard <q>sion start approved</q>, because Sion is one of the airports in its training data.</p>
       </li>
@@ -186,8 +186,8 @@
             <tr><th scope="row">Squawk</th><td>four digits, 0 to 7 only<span class="why">Transponder codes are octal.</span></td></tr>
             <tr><th scope="row">Heading</th><td>001 to 360, three digits, read digit by digit<span class="why">A compass heading, said the way controllers say it.</span></td></tr>
             <tr><th scope="row">Frequency</th><td>118 to 136&nbsp;MHz plus a decimal<span class="why">Inside the aviation voice band.</span></td></tr>
-            <tr><th scope="row">Flight level</th><td>FL060 to FL430<span class="why">My choice. Levels outside it exist.</span></td></tr>
-            <tr><th scope="row">Speed</th><td>160 to 320 knots, in tens<span class="why">My choice.</span></td></tr>
+            <tr><th scope="row">Flight level</th><td>FL060 to FL430, any whole number, so odd levels like FL347 come out too<span class="why">My choice. Levels outside it exist, and real ones are mostly in tens.</span></td></tr>
+            <tr><th scope="row">Speed</th><td>160 to 310 knots, in tens<span class="why">My choice.</span></td></tr>
             <tr><th scope="row">Wind</th><td>any direction, 3 to 25 knots<span class="why">My choice.</span></td></tr>
           </tbody>
         </table>
@@ -309,7 +309,7 @@
         callsigns to steer the decoder, and a language model to tidy the transcripts. It barely moved: the
         scores I recorded changed by less than half a point, and the bigger model did worse with my
         settings. Looking back in 2026, I found four likely reasons. Text-to-speech voices are calmer than
-        real controllers. A file-path bug fed one training round mostly silence. And two were about my own
+        real controllers. A file-path bug meant about a third of one training round was probably silence. And two were about my own
         measuring: I had chosen the hard words by looking at the test clips, and the test clips themselves
         turned out to overlap with training.</p>
       <p>So in 2026 I tested it again, properly: the same model trained with and without the synthetic
@@ -330,14 +330,16 @@
       <li>
         <h3>The test wasn&rsquo;t really unseen</h3>
         <p>I had split clips, not recordings, so 101 of my 175 test clips came from recordings the model
-          had trained on: same voices, same frequency, same background hum. I had also used the test clips
+          had trained on: same voices, same frequency, same background hum. (Unseen here means a different
+          recording, not a different airport or controller.) I had also used the test clips
           to pick checkpoints and tune the decoder.</p>
         <div class="split" role="img" aria-label="101 of the 175 test clips share a source recording with the training data; the other 74 do not.">
           <span class="shared" style="width:57.7%">101 share a recording with training</span><span class="unshared" style="width:42.3%">74 don&rsquo;t</span>
         </div>
-        <p class="so"><b>What I did:</b> kept the 74 clips from recordings no model had trained on as a
-          clean test, and used the other 101 only for making choices. On the clean clips my 2025 model
-          scores 18.64%, better than its 20.31% overall, so the overlap hadn&rsquo;t flattered it.</p>
+        <p class="so"><b>What I did:</b> kept the 74 clips from recordings no model had trained on as an
+          unseen test, and used the other 101 only for making choices. On the unseen clips my 2025 model
+          scores 18.64%, better than its 20.31% overall, so any help it got from the overlap is too small for
+          me to detect.</p>
       </li>
       <li>
         <h3>A bug in how the model learned</h3>
@@ -345,7 +347,7 @@
           <q>English</q> and <q>transcribe</q> markers it is always given when it runs. So it practised a
           slightly different task from the one it was used for.</p>
         <p class="so"><b>What I did:</b> fixed both, wrote a test for it, and retrained from scratch. The
-          fixed model scores 19.28% on the clean clips, the same as the old one within noise. The bug cost
+          fixed model scores 19.28% on the unseen clips, the same as the old one within noise. The bug cost
           less than I expected.</p>
       </li>
       <li>
@@ -378,11 +380,14 @@
       speech. To fit it in my laptop&rsquo;s memory I froze its weights and trained small add-on
       matrices instead (LoRA), about 4% as many numbers as the whole model. Trained on my 699 clips alone,
       the bigger model already scored 15.65%, so most of its gain comes from size, not from the extra
-      speech. Averaging those two Whisper-medium models, the same soup trick, gave my best model. Training
-      the bigger model for longer did not help.</p>
-    <p>Everything here is measured on the 74 clean clips, from recordings none of these models heard in
-      training. Each model and its decoding settings were chosen on the other 101 clips, so the test
-      clips played no part in any choice.</p>
+      speech. Averaging those two Whisper-medium models, the same soup trick, gave my best model. Restarting
+      the bigger model with fresh adapters for more epochs did not help, but every run I kept was still
+      improving when it reached its planned number of epochs, so I don&rsquo;t know whether training the
+      same run for longer would have.</p>
+    <p>Everything here is measured on the 74 unseen clips, from recordings none of these models heard in
+      training. Each 2026 model and its decoding settings were chosen on the other 101 clips, so the test
+      clips played no part in any 2026 choice. (My 2025 model was tuned on the old test clips, which
+      include these 74, so its score may be a little flattering.)</p>
 
     <figure class="chartfig">
 <!-- chart:bars -->
@@ -426,25 +431,31 @@
       worse. I ran my word tagger on each correct transcript and on the model&rsquo;s version, and
       compared what came out. My best model now gets the command right in 44 of the 56 clips that have
       one (the 2025 model: 37) and the numbers right in 41 of 58 (2025: 35). Callsigns are the weak
-      point: 35 of 59, and every field matched in only 22 of the 74 clips. Unmodified Whisper-small got
-      every field right in none.</p>
+      point: 35 of 59. Callsign, command and numbers all matched in 33 of the 74 clips (the 2025 model:
+      29; unmodified Whisper-small: 3). My tagger&rsquo;s waypoint labels aren&rsquo;t reliable, so I leave
+      them out of that count; with them, every field matched in only 22. On whole instructions my best
+      model isn&rsquo;t clearly ahead of my other 2026 models: the Whisper-small soup got 37, but a few clips
+      out of 74 is within noise.</p>
     <p>I expected the missed callsigns to be airlines the model had never heard of. They weren&rsquo;t:
-      every one started with a word from the training data. Most were spelled-out letters and numbers
-      heard wrong, like <span class="say">hotel delta lima</span> as <span class="say err">hotel golf
+      every one of the 27 missed callsigns (a clip can hold more than one) started with a word from the
+      training data. The ones I looked at were mostly spelled-out letters and numbers heard wrong, like <span class="say">hotel delta lima</span> as <span class="say err">hotel golf
       lima</span>, which is exactly what the phonetic alphabet exists to prevent, and exactly what a
       crackly channel attacks.</p>
     <p>Letter by letter, the model is already good: it gets 94.39% of spelled letters and digits right on
-      the clean clips (the 2025 model: 93.22%). A callsign fails when any one of its four or five words
+      the unseen clips (the 2025 model: 93.22%). A callsign fails when any one of its four or five words
       is wrong, which is why whole callsigns match so much less often. Giving Whisper the phonetic alphabet
-      as a prompt made it worse, so I dropped the idea. I also trained it further with mistakes on
+      as a prompt made no measurable difference to the word error rate and got slightly fewer letters
+      right, so I dropped the idea. I also trained it further with mistakes on
       letters and digits counting three times as much. It got four more of 479 letters and digits right
       on validation, but its overall word error rate went up from 14.86% to 15.38%, so I kept the model I
-      had.</p>
+      had. Restarting training without the weighting made things worse too, so the weighting may not be
+      what hurt.</p>
 
     <h3>What noise does</h3>
     <p>This is the measurement I should have made in 2025, before building a whole simulated radio. I
-      added white noise to every clean clip at a fixed signal-to-noise ratio, from 30&nbsp;dB down to
-      0&nbsp;dB, where the noise is as loud as the speech, and transcribed each one again. Every 10&nbsp;dB
+      added white noise to every unseen clip at a fixed signal-to-noise ratio, from 30&nbsp;dB down to
+      0&nbsp;dB, and transcribed each one again. At 0&nbsp;dB the noise has the same average power as the
+      whole clip, pauses included, so it is louder than the speech while someone is talking. Every 10&nbsp;dB
       is a factor of ten in power.</p>
     <figure class="chartfig">
 <!-- chart:noise -->
@@ -493,21 +504,23 @@
 <text class="serieslabel best" x="384" y="137.9">Best 2026 model</text>
 </svg>
 <!-- /chart:noise -->
-      <figcaption>Word error rate on the 74 clean clips as noise is added. Greedy decoding with repetition
+      <figcaption>Word error rate on the 74 unseen clips as noise is added. Greedy decoding with repetition
         guards, so the starting points sit a little above the beam-search numbers above. Each clip gets its
         own fixed noise, so all three models hear exactly the same audio.</figcaption>
     </figure>
     <p>At 10&nbsp;dB my best model goes from 15.44% to 20.87%; at 0&nbsp;dB, to 40.26%. My 2025 model
       goes from 19.81% to 28.01% and 48.03%, and unmodified Whisper from 58.79% to 93.08%. So the bigger
-      model is not just more accurate, it holds up better: at 10&nbsp;dB it loses 5.43 points where the
-      2025 model loses 8.20. My smaller retrained models, trained on the same real speech, followed the
+      model is not just more accurate, it loses fewer points as the noise rises: 5.43 at 10&nbsp;dB where
+      the 2025 model loses 8.20, and 24.82 at 0&nbsp;dB against 28.22. Measured as a multiple of where each
+      model started, though, the two are close. My smaller retrained models, trained on the same real speech, followed the
       2025 curve closely, so the robustness seems to come mostly from the bigger model.</p>
 
 
     <details class="more">
       <summary>The tagger on its own</summary>
       <p>Against my rule-generated labels, DistilBERT scores a weighted F1 of <b>0.8657</b>. That
-        measures agreement with the word lists, not accuracy against a person.</p>
+        measures agreement with the word lists, not accuracy against a person, and it is on the same
+        sentences my training used to pick the best epoch, so it is a little flattering even as that.</p>
           <div class="bars" role="img" aria-label="Per-label F1 against the rule-generated labels: command 0.953 on 116 words, value 0.945 on 278, callsign 0.888 on 241, waypoint 0.811 on 226, other 0.685 on 140.">
             <div class="metric-row"><span class="bl">Command <em>116</em></span><span class="bt"><i style="width:95.3%"></i></span><span class="bv">0.953</span></div>
             <div class="metric-row"><span class="bl">Value <em>278</em></span><span class="bt"><i style="width:94.5%"></i></span><span class="bv">0.945</span></div>
@@ -540,7 +553,7 @@
     <details class="more">
       <summary>Older numbers I don&rsquo;t use, and why</summary>
       <p><b>20.31% on all 175 old test clips.</b> My original headline: 423 word edits across 2,083
-        reference words, with beam search. It mixes the clean clips with ones from training
+        reference words, with beam search. It mixes the unseen clips with ones from training
         recordings, and its settings were tuned on the same clips, so the 74-clip numbers above replace
         it.</p>
       <p><b>The half-point scores. Historical values; metric not established.</b> A 2025 code comment
@@ -561,7 +574,7 @@
   <div class="wrap col">
     <h2>What I&rsquo;d do next</h2>
     <p>Label a thousand words by hand, so the tagger is finally tested against a person instead of my own
-      rules. Then find more clean test recordings: 74 clips is enough to see big effects, like
+      rules. Then find more unseen test recordings: 74 clips is enough to see big effects, like
       fine-tuning, but not to separate two models that are a point apart.</p>
   </div>
 </section>
@@ -572,18 +585,18 @@
     <p>The January 2024 runway collision at Tokyo Haneda was one of the things that got me started. After
       months of trying to get a machine to hear every word, I went back to it. The exchange was in English
       and the instruction was read back correctly; the investigators&rsquo;
-      <a href="https://jtsb.mlit.go.jp/eng-air_report/interim20241225-JA722A_JA13XJ.pdf">interim report</a>
-      centres instead on what one phrase was understood to mean. A transcript records every word. It
+      <a href="https://jtsb.mlit.go.jp/eng-air_report/interim20251225-JA722A_JA13XJ.pdf">second interim
+      report</a> (December 2025) centres instead on what one phrase was understood to mean. A transcript records every word. It
       can&rsquo;t show what each person took them to mean, and my format checks sit right at that edge: they
       can tell a transponder code is possible, not that it&rsquo;s the right one.</p>
     <p>The most convincing use of speech recognition in air traffic control I&rsquo;ve found isn&rsquo;t
       preventing accidents. In a trial, radar labels filled in from controllers&rsquo; own speech reduced
       wrong or missing entries and lightened their workload
-      (<a href="https://www.mdpi.com/2226-4310/10/6/538">Helmke et al., 2023</a>), and they scored whether
+      (<a href="https://www.mdpi.com/2226-4310/10/6/538">Ahrenhold, Helmke et al., 2023</a>), and they scored whether
       each command was recognised, not every word. It&rsquo;s a smaller claim than <q>AI will make flying
       safer</q>, and one I believe.</p>
     <p class="note">I&rsquo;m not suggesting this prototype would have changed what happened at Haneda. The
-      report is interim, not a final account.</p>
+      reports are interim, not a final account.</p>
   </div>
 </section>
 
@@ -595,19 +608,22 @@
       can check. The team didn&rsquo;t continue, and I carried on alone, teaching myself how to train a
       model, and the maths underneath it, as I went.</p>
 
-    <p id="small">Everything I trained for this project ran on my own laptop. That began as the only
-      hardware I had, and turned out to matter: a model I can run end to end is one I can re-run and check,
+    <p id="small">Everything I trained for this project ran on my own laptops: the 2025 models on a Windows
+      laptop with an NVIDIA RTX 3070, and the 2026 retraining on a MacBook with an Apple M3 Pro, after I no
+      longer had the first one. Working on a laptop turned out to matter: a model I can run end to end is one I can re-run and check,
       which is the only reason I could go back over these numbers at all.</p>
 
     <p class="credits">The models are other people&rsquo;s work, and the real audio comes from the ATCO2 and
       UWB-ATCC research corpora. None of their audio or transcripts are published here. I used AI coding
-      tools to help write the code.</p>
+      tools to help write the code and to draft and edit this write-up.</p>
     <details class="more">
       <summary>Credits and data citation</summary>
       <p>Whisper, BERT, DistilBERT, SpeechT5, HiFi-GAN, wav2vec2, Phi-3 and Qwen are other people&rsquo;s
         models, used through Hugging Face. I&rsquo;m not proposing a new model or training method. The 4,808
-        generated clips are mine.</p>
-      <p class="cite">Zuluaga-Gomez, J., Vesel&yacute;, K., Sz&ouml;ke, I., Motlicek, P., et&nbsp;al.
+        generated clips are mine: my sentences, spoken by Microsoft Edge text-to-speech voices. The 2025
+        experiments also used Silero VAD to trim silence and a DeepSeek language model to tidy
+        transcripts.</p>
+      <p class="cite">Zuluaga-Gomez, J., Vesel&yacute;, K., Sz&ouml;ke, I., Blatt, A., Motlicek, P., et&nbsp;al.
         <em>ATCO2 corpus: A Large-Scale Dataset for Research on Automatic Speech Recognition and Natural
         Language Understanding of Air Traffic Control Communications.</em>
         <a href="https://arxiv.org/abs/2211.04054">arXiv:2211.04054</a>, 2022. Corpus at

@@ -5,11 +5,12 @@ traffic control radio into text that a computer can check. ATCO (Air Traffic
 Control Officer) is my attempt: about thirty training and decoding experiments
 on one hour of real ATC audio, and a small app that joins the pieces together.
 
-**Audio → fine-tuned Whisper-small → DistilBERT word tagger → text, range checks and an optional spoken readback**
+**Audio → Whisper fine-tuned on ATC radio (Whisper-medium since the 2026 retraining) → DistilBERT word tagger → text, range checks and an optional spoken readback**
 
 <img src="docs/images/app_input.png" width="360" alt="Select an air traffic recording"> <img src="docs/images/app_output.png" width="360" alt="Transcript, extracted words and optional readback">
 
-The screenshot is a real 6-second recording. It also shows where the system
+The screenshot is a real 6-second recording, run through my 2025 model
+(Whisper-small). It also shows where the system
 goes wrong: "push and start" is heard as "portion startup", and the tagger
 calls words it does not know "waypoints". I left it in because those mistakes
 are most of what I learned from.
@@ -42,8 +43,8 @@ test clips.
 
 | Stage | What I tried | What happened |
 | --- | --- | --- |
-| Baseline | Fine-tune all of Whisper-small | This is what I kept in the end |
-| Bigger model | Whisper-large-v3 in 4-bit with LoRA, 18 versions, plus a noise and speed stress test | 27.9% WER clean, 34.4% noisy, 28.8% fast. No better than the small model |
+| Baseline | Fine-tune all of Whisper-small | This is what I kept in 2025. In 2026 a Whisper-medium model replaced it (see Results) |
+| Bigger model | Whisper-large-v3 in 4-bit with LoRA, 18 versions, plus a noise and speed stress test | 27.86% WER clean, 34.42% noisy, 28.78% fast. No better than the small model |
 | More data | Noise and speed copies, then 4,808 clips of my own ATC sentences spoken by 31 TTS accents and pushed through a simulated radio | The scores I recorded moved by less than half a point, and I no longer trust how they were measured. It mostly did not work, and I think I know why |
 | Decoding | Vocabulary prompts, beam search settings, silence trimming, an LLM to fix the transcript | Small gains that I later realised were tuned on the test clips |
 | Understanding the text | Word lists to label callsigns, commands, values and waypoints; DistilBERT and BERT trained on those labels; Phi-3 and Qwen for comparison | The taggers copy the word lists well, but the word lists are the weak part |
@@ -77,7 +78,7 @@ and I had used the test clips to tune settings. So I kept the 74 clips from
 recordings no model has trained on as the test set, used the other 101 only for
 choices, fixed the bugs I found and retrained.
 
-Word error rate on the 74 clean clips ([retraining.json](results/retraining.json)):
+Word error rate on the 74 unseen clips ([retraining.json](results/retraining.json)):
 
 | Model | Word error rate | 95% range |
 | --- | --- | --- |
@@ -94,23 +95,27 @@ Word error rate on the 74 clean clips ([retraining.json](results/retraining.json
   recording over all 874 clips puts the retrained Whisper-small at 19.16%
   (95% range 17.90 to 20.45) against 53.44% unmodified
   ([cross_validation.json](results/cross_validation.json)).
-- The overlap had not flattered the old model: it does slightly better on the
-  clean clips than on all 175 (20.31%).
+- I can't detect any help the old model got from the overlap: it does slightly
+  better on the unseen clips than on all 175 (20.31%).
 - My synthetic speech did not help, even tested properly.
-- The best model, chosen on the validation clips before it was scored on
-  these, averages two Whisper-medium models. It is 4.26 points better than the
+- The best model, chosen on the validation clips, averages two Whisper-medium
+  models. I built that average after both models had been scored on these
+  clips, so the idea was not blind to them. It is 4.26 points better than the
   2025 model, with a 95% range of 1.96 to 6.61 points. Trained on the ATCO2
   clips alone, Whisper-medium already scores 15.65%, so most of the gain comes
-  from the bigger model; training it for longer did not help. The smaller
+  from the bigger model. Restarting it with fresh adapters for more epochs did
+  not help, but every run I kept was still improving at its last planned epoch. The smaller
   soup's 1.92-point gain is not certain.
-- With white noise added until it is as loud as the speech (0 dB), the best
+- With white noise added at 0 dB (the same average power as the whole clip,
+  pauses included), the best
   model's error rises from 15.44% to 40.26% and the 2025 model's from 19.81%
   to 48.03%; unmodified Whisper goes from 58.79% to 93.08% (greedy decoding
   with repetition guards).
-- Spelled letters and digits are mostly right (94.39% on the clean clips,
+- Spelled letters and digits are mostly right (94.39% on the unseen clips,
   [letters_digits.json](results/letters_digits.json)), but a callsign fails when
   any one of its words is wrong, so most instructions still have at least one
-  field wrong. Callsigns are the weakest part
+  field wrong: callsign, command and numbers all match in only 33 of the 74
+  clips, and callsigns are the weakest of the three
   ([extraction_agreement.json](results/extraction_agreement.json)).
 
 Every experiment, including the ones that failed, is in the
@@ -157,8 +162,12 @@ python -m unittest discover -s tests
 The models (Whisper, BERT, DistilBERT, SpeechT5, HiFi-GAN and the others) are
 other people's work, and the real audio comes from the ATCO2 and UWB-ATCC
 corpora ([data credit](docs/data.md)).
-I used AI coding tools to help write the code. More in
+I used AI coding tools to help write the code and to draft and edit this
+write-up. More in
 [project history](docs/project_history.md).
+
+The code is under the [MIT licence](LICENSE). The models and audio are not
+included and keep their own licences.
 
 This is a student research prototype. It must never be used for real air
 traffic communication.

@@ -4,7 +4,8 @@ These are the scripts from the original project. The originals had names like
 `1.py`, `make_it_real.py` and `train_finale_v2_round3_gan.py`, so I renamed each
 one by what it actually does and grouped them in the order the work went. They
 are a record, not a package you can install: paths, model folder names and
-dependencies are as they were on my Windows training machine. The code I still
+dependencies are as they were on my 2025 training laptop (Windows, NVIDIA RTX
+3070). The code I still
 maintain is in [atco/](../atco/), [training/](../training/) and
 [evaluation/](../evaluation/).
 
@@ -27,8 +28,9 @@ loads which model. No file dates or Git history survive from 2025.
 4. **Three-round training** on raw, augmented and synthetic data.
 5. **Decoding.** Vocabulary prompts, beam sizes and penalties (64+ numbered
    variants), voice-activity trimming, and an LLM correction pass.
-6. **Restart** with cleaned lowercase transcripts. This produced the
-   checkpoint the app uses ([training/train_whisper.py](../training/train_whisper.py)).
+6. **Restart** with cleaned lowercase transcripts. This produced the 2025
+   checkpoint, which the app used until the 2026 retraining replaced it with a
+   Whisper-medium model ([training/train_whisper.py](../training/train_whisper.py)).
 7. **Text side.** Rule-generated entity labels, DistilBERT and BERT taggers,
    masked-language-model pretraining, a comparison with Phi-3 and Qwen, and a
    speaker-role side experiment.
@@ -190,7 +192,7 @@ Saved confusion matrices: [Phi-3](../results/original_2025/ner_phi3_few_shot.png
 
 | Original name | Now | What it is |
 | --- | --- | --- |
-| `ASR2/train_atc.py` | [training/train_whisper.py](../training/train_whisper.py) | Final Whisper-small training script (2800 steps, lr 2e-5 cosine). |
+| `ASR2/train_atc.py` | [training/train_whisper.py](../training/train_whisper.py) | The 2025 final Whisper-small training script (2,800 steps, lr 2e-5, cosine schedule), rewritten in 2026 with the corrected labels, checkpoints chosen on validation and a LoRA option. The 2025 version is not kept. |
 | `ASR2/clean_data.py` | [training/prepare_speech.py](../training/prepare_speech.py) | Transcript cleaning: removes [HES]/[NE-..] tags, lowercases. |
 | `ASR/inference.py` | [atco/speech_recognition.py](../atco/speech_recognition.py) | Single-file transcription. |
 | `NLP/prepare_ner_mlm.py` | [training/entity_labels.py](../training/entity_labels.py) | Rule labeller version 2 (with stopwords). |

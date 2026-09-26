@@ -30,9 +30,15 @@ start-token bug and the too-loose waypoint rule. None of those were known to me
 in 2025.
 
 Whisper, BERT, DistilBERT, SpeechT5, HiFi-GAN, wav2vec2, Phi-3 and Qwen are
-other people's models, used through the Hugging Face libraries. I am not
+other people's models, used through the Hugging Face libraries. The synthetic
+clips were spoken by Microsoft Edge text-to-speech voices, and the 2025
+experiments also used Silero VAD and a DeepSeek language model. I am not
 proposing a new model or training method. I used AI coding tools to help write
-the code.
+the code and to draft and edit this write-up.
+
+The 2025 models were trained on a Windows laptop with an NVIDIA RTX 3070. I no
+longer have it, so all the 2026 retraining ran on a MacBook with an Apple M3 Pro
+and 18 GB of memory.
 
 ## The name
 

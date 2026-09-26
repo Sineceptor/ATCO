@@ -27,8 +27,8 @@ numbers realistic:
 | Item | Rule in the generator |
 | --- | --- |
 | Heading | 001 to 360, always three digits, spoken digit by digit |
-| Flight level | FL060 to FL430 |
-| Speed | 160 to 320 knots in steps of 10 |
+| Flight level | FL060 to FL430, any whole number (so FL347 can appear) |
+| Speed | 160 to 310 knots in steps of 10 |
 | Frequency | 118 to 136 MHz plus a valid decimal, spoken with "decimal" |
 | Squawk | four digits using only 0 to 7, because transponder codes are octal |
 | Wind | direction in degrees plus 3 to 25 knots |
@@ -148,19 +148,23 @@ fixed seed per clip so every model hears the same audio
 | 0 dB | 40.26% | 48.03% | 93.08% |
 
 The fine-tuned models are better at every noise level, and the best 2026 model,
-an average of two Whisper-medium models, also degrades more slowly: at 10 dB it
-loses 5.43 points where the 2025 model loses 8.20. The smaller 2026 soup, trained on the same extra real speech,
+an average of two Whisper-medium models, also loses fewer points: 5.43 at 10 dB
+where the 2025 model loses 8.20, and 24.82 at 0 dB against 28.22. As a multiple
+of where each started it is no better (2.61 times at 0 dB against 2.42). The smaller 2026 soup, trained on the same extra real speech,
 follows the 2025 curve closely (45.79% at 0 dB), so the robustness seems to come
-mostly from the bigger model.
+mostly from the bigger model. Here 0 dB means the noise has the same average power
+as the whole clip, pauses included, so while someone is talking the noise is
+louder than the speech.
 
 With the 300 to 3,400 Hz filter applied first, the recordings barely change:
 16.93% instead of 15.44% for the best 2026 model, 55.80% instead of 58.79% for
 the unmodified model. They have already been through a radio, so there is little
 outside the voice band to remove. Under heavy noise the filtered versions do
-better (36.42% against 40.26% at 0 dB), but that is partly bookkeeping: the SNR
-is measured on the filtered speech, while white noise spreads its power evenly
-over the whole 0 to 8 kHz band, so at the same nominal SNR less of the noise
-lands in the band where the speech is.
+better (36.42% against 40.26% at 0 dB), but that is at least partly bookkeeping: the
+noise level is set from the clip's total power, and the filter removes the power
+outside the voice band, so a filtered clip gets weaker noise at the same nominal
+SNR while its speech in the band hardly changes. The noise is not filtered in
+either case, so the same share of it lands in the voice band both times.
 
 It also connects to how Whisper itself works. The model never sees the
 waveform. It sees a log-mel spectrogram: a short-time Fourier transform with

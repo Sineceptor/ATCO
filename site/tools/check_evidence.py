@@ -65,7 +65,7 @@ splits = load('rescoring_2025/data_splits.json')
 unseen = splits['asr_test_rows'] - splits['asr_test_clips_in_shared_sessions']
 shown('training clips', f"{splits['asr_train_rows']} real training clips")
 shown('overlapping test clips', f"{splits['asr_test_clips_in_shared_sessions']} of my {splits['asr_test_rows']} test clips")
-shown('clean test clips', f'{unseen} clean clips')
+shown('unseen test clips', f'{unseen} unseen clips')
 check('the clean test set in results matches the split',
       all(runs[n]['test']['beam']['reference_words'] == runs['checkpoint_2025']['test']['beam']['reference_words']
           for n in runs))
@@ -77,11 +77,17 @@ shown('commands right, best model', f"command right in {b['command']['clips_wher
 shown('commands right, 2025', f"(the 2025 model: {o['command']['clips_where_it_matches']})")
 shown('numbers right', f"numbers right in {b['value']['clips_where_it_matches']} of {b['value']['clips_with_field']}")
 shown('callsigns right', f"{b['callsign']['clips_where_it_matches']} of {b['callsign']['clips_with_field']}")
-shown('every field right', f"every field matched in only {b['all_fields_identical']} of the {b['clips']} clips")
-check('zero-shot got every field right in none', z['all_fields_identical'] == 0 and 'every field right in none' in TEXT)
+core = 'callsign_command_value_identical'
+shown('callsign, command and numbers all right',
+      f"Callsign, command and numbers all matched in {b[core]} of the {b['clips']} clips (the 2025 model: "
+      f"{o[core]}; unmodified Whisper-small: {z[core]})")
+shown('every field right, with waypoints', f"with them, every field matched in only {b['all_fields_identical']}")
+shown('Whisper-small soup on whole instructions', f"the Whisper-small soup got {agree['soup_fixed_real'][core]}")
+check('the best model is not the top on whole instructions, as the page says',
+      max(m[core] for m in agree.values()) > b[core])
+shown('missed callsigns counted', f"every one of the {b['missed_callsigns']['count']} missed callsigns")
 check('"every missed callsign started with a known word" matches the saved analysis',
-      b['missed_callsigns']['starting_with_a_word_never_in_training'] == 0
-      or 'every one started with a word from the training data' not in TEXT)
+      b['missed_callsigns']['starting_with_a_word_never_in_training'] == 0)
 
 tag = load('rescoring_2025/entity_extraction.json')
 shown('tagger weighted F1', f"{tag['report']['weighted avg']['f1-score']:.4f}")
@@ -95,6 +101,9 @@ if 'noise_sweep' in retrain:
     at = lambda key, snr: next(p['wer'] for p in sweep[key] if p['added_noise_snr_db'] == snr)
     for key, snr in [('retrained', None), ('retrained', 10), ('retrained', 0), ('zero_shot', None), ('zero_shot', 0)]:
         shown(f'noise sweep {key} at {snr} dB', pct(at(key, snr)))
+    lost = lambda key, snr: f"{100 * (at(key, snr) - at(key, None)):.2f}"
+    shown('points lost to noise', f"{lost('retrained', 10)} at 10 dB where the 2025 model loses "
+          f"{lost('checkpoint_2025', 10)}, and {lost('retrained', 0)} at 0 dB against {lost('checkpoint_2025', 0)}")
     check('the noise sweep is of the model chosen on validation',
           f'/{best}/' in retrain['noise_sweep']['retrained_model'], retrain['noise_sweep']['retrained_model'])
 

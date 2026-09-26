@@ -122,7 +122,12 @@ Adding white noise to the 74 test clips (greedy decoding with repetition
 guards) raises the selected model's error from 15.44% as recorded to 20.87% at
 10 dB and 40.26% at 0 dB, against 19.81%, 28.01% and 48.03% for the 2025
 checkpoint; unmodified Whisper-small rises from 58.79% to 93.08%. The smaller
-2026 soup follows the 2025 curve closely (45.79% at 0 dB). Without the
+2026 soup follows the 2025 curve closely (45.79% at 0 dB; `noise_sweep.other_models`
+in [retraining.json](../results/retraining.json)). The selected model loses fewer
+points than the 2025 checkpoint, but as a multiple of its starting error it does
+not degrade more slowly (2.61 times at 0 dB against 2.42). The signal-to-noise
+ratio is measured over the whole clip, pauses included, and after the optional
+300 to 3,400 Hz filter, so a filtered clip receives less noise. Without the
 repetition guards, greedy decoding sometimes falls into loops on noisy clips,
 which makes the curve jump about.
 
@@ -136,10 +141,15 @@ Scored on their own, spelled phonetic-alphabet letters and digit words are
 mostly right: 94.39% for the selected model and 93.22% for the 2025 checkpoint on
 the test clips, counting spelling variants of the same letter or digit as the
 same word ([letters_digits.json](../results/letters_digits.json)). A prompt
-listing the phonetic alphabet made the selected model worse on validation and
-was not adopted. Training further with the loss weighted three times on letter
+listing the phonetic alphabet, under its best decoding on validation (plain
+beam), made no measurable difference to WER (171 word errors against 170) and got
+slightly fewer letters right (94.27% against 95.54%), so it was not adopted. Under
+guarded beam it did much worse, possibly because the repetition guards also count
+the prompt's words. Training further with the loss weighted three times on letter
 and digit words gained four of 479 of them on validation but made overall WER
-worse (15.38% against 14.86%), so it was not adopted either. Every experiment is listed in the
+worse (15.38% against 14.86%), so it was not adopted either; restarting training
+with fresh adapters and no weighting (`medium_longer`) also made WER worse, so the
+weighting itself may not be the cause. Every experiment is listed in the
 [experiment log](experiment_log.md).
 
 Two cautions. The 2025 checkpoint was chosen in 2025 by looking at the old test
@@ -153,9 +163,24 @@ test, so most of the gain comes from the larger model
 ([retraining.json](../results/retraining.json), `ablations`). Averaging the two
 Whisper-medium models gave the lowest validation error of all (14.86%), so the
 average is the selected model: 14.38% on test, 4.26 points better than the 2025
-checkpoint (95% interval 1.96 to 6.61). Training Whisper-medium for up to three
-more epochs never improved on it on validation, so no longer-trained model was
-kept.
+checkpoint (95% interval 1.96 to 6.61). Two things about that choice should be
+said plainly: the ATCO2-only model had been declared an ablation that could not
+itself be chosen, and I built the soup after both Whisper-medium models had been
+scored on the test clips. The soup was chosen on validation, but the idea was not
+blind to the test scores.
+
+Every run that was kept reached its planned number of epochs while validation
+WER was still falling (run E at epoch 8 of 8, `medium_real` at 6 of 6, the
+ATCO2-only Whisper-medium at 5 of 5), and the learning rate decays to zero at that
+point, so these models may be undertrained. Only runs that never beat their
+starting point stopped early. Restarting `medium_real` with fresh adapters and a
+new warm-up for up to three more epochs (`medium_longer`) never improved on it on
+validation; that is not the same as training the original run for longer.
+
+Validation clips share recordings with training clips, so choosing on them can
+reward memorising those recordings. Run E is worse than run A on validation but
+better on test, which is a sign of this. Validation ties between decodings go to
+guarded beam, the first one tried.
 
 Whisper-medium has three times as many weights as Whisper-small. Its original
 weights were frozen and rank-32 LoRA adapters were trained on every attention
@@ -164,10 +189,11 @@ training fitted in 4.9 GB of GPU memory, at about 3 seconds per clip.
 
 ## Connected application
 
-A real 6.12-second file passes through Whisper-small, DistilBERT and SpeechT5/HiFi-GAN.
+A real 6.12-second file passes through the 2025 Whisper-small model, DistilBERT and SpeechT5/HiFi-GAN.
 It produces the transcript, extracted words and a 4.96-second mono WAV at 16 kHz.
 The browser upload and command-line routes give matching outputs for this file.
-The example misrecognises “push and start approved” as “portion startup approved”,
+The example misrecognises “push and start approved” as “portion startup approved”
+(the 2026 Whisper-medium soup hears “proceed and start approved”),
 showing that transcription errors can reach extraction and readback.
 
 Since 2026 the application also removes waypoint labels from English function

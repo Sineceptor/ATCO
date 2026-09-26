@@ -123,10 +123,11 @@ def instructions():
     for j, (name, colour) in enumerate(models):
         m = a[name]
         shares = [100 * m[f]["clips_where_it_matches"] / m[f]["clips_with_field"] for f, _ in fields]
+        shares.append(100 * m["callsign_command_value_identical"] / m["clips"])
         shares.append(100 * m["all_fields_identical"] / m["clips"])
         xs = [i + (j - 1) * width for i in range(len(shares))]
         ax.bar(xs, shares, width=width, color=colour, label=LABELS[name])
-    ax.set_xticks(range(4), [label for _, label in fields] + ["Every field"])
+    ax.set_xticks(range(5), [label for _, label in fields] + ["All three", "All, with\nwaypoints"])
     ax.set_ylabel("Clips where the field matches (%)")
     ax.set_ylim(0, 100)
     ax.grid(axis="y", color=LINE, lw=0.6)

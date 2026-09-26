@@ -2,7 +2,7 @@
 
 | Script | What it trains | Output |
 | --- | --- | --- |
-| `train_whisper.py` | Fine-tunes Whisper-small on the speech clips | `outputs/training/<name>/best/` |
+| `train_whisper.py` | Fine-tunes Whisper-small in full, or Whisper-medium with LoRA adapters, on the speech clips | `outputs/training/<name>/best/` |
 | `train_distilbert.py` | The app's word tagger | `outputs/training/distilbert/` |
 | `pretrain_bert.py` | Masked-language pretraining for the separate BERT tagger | `outputs/training/bert-pretrained/` |
 | `train_bert.py` | Fine-tunes that BERT tagger | `outputs/training/bert-reference/` |

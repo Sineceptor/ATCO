@@ -18,7 +18,7 @@ With 74 clips, a difference of one or two points can be chance, so every
 comparison in [`retraining.json`](../results/retraining.json) carries a 95%
 interval from resampling whole clips, and differences are paired.
 
-## Speech recognition on the 74 clean clips
+## Speech recognition on the 74 unseen clips
 
 All from [`retraining.json`](../results/retraining.json), `runs.<name>.headline_test`.
 Each model's decoding setting was chosen on the validation clips.
@@ -58,7 +58,7 @@ is under `rejected_trials`.
 
 | On the page | Source | Why it is not the headline any more |
 | --- | --- | --- |
-| 20.31%: 423 word edits across 2,083 reference words | [`speech_recognition.json`](../results/rescoring_2025/speech_recognition.json), `metrics.beam` | Mixes the clean clips with 101 from training recordings, and the settings were tuned on the same clips |
+| 20.31%: 423 word edits across 2,083 reference words | [`speech_recognition.json`](../results/rescoring_2025/speech_recognition.json), `metrics.beam` | Mixes the unseen clips with 101 from training recordings, and the settings were tuned on the same clips |
 | About 19%, not counted | same file, `metrics.beam_cleaned` | That scorer rewrote known mistakes into the right answer on both sides |
 | 76.18, 76.23, 76.67 | a 2025 comment, line 22 of [`eval_vocab_prompt.py`](../experiments/asr/06_decoding_and_prompts/eval_vocab_prompt.py) | Labelled `acc-`; the scorer changed the text first and the test file cannot be confirmed |
 | 27.86%, 34.42%, 28.78% | [`asr_large_lora_robustness.txt`](../results/original_2025/asr_large_lora_robustness.txt) | A different training method, compression and decoding, on the old test clips |
@@ -81,7 +81,7 @@ person.
 | The seven radio stages, and µ-law giving 257 levels | [`simulate_radio_channel.py`](../experiments/asr/04_augmentation_and_synthetic_speech/simulate_radio_channel.py) |
 | 10.5 hours of UWB-ATCC speech | [`training/prepare_uwb_atcc.py`](../training/prepare_uwb_atcc.py) output: 11,291 clips |
 | The traced call: transcript, labels, 6.12 seconds | [`docs/evaluation.md`](../docs/evaluation.md) and [`docs/images/app_output.png`](../docs/images/app_output.png) |
-| "proceed and start approved" from the best 2026 model, "sion start approved" from the soup | their saved transcripts of that clip, one of the 74 clean clips |
+| "proceed and start approved" from the best 2026 model, "sion start approved" from the soup | their saved transcripts of that clip, one of the 74 unseen clips |
 | The squawk check | `validate_physics` in [`atco/entity_extraction.py`](../atco/entity_extraction.py) |
 
 No ATCO2 or UWB-ATCC audio is published on the page or in this repository.
@@ -93,8 +93,8 @@ No ATCO2 or UWB-ATCC audio is published on the page or in this repository.
 | Whisper trained on 680,000 hours, 438,000 of them English | the [Whisper-small model card](https://huggingface.co/openai/whisper-small) |
 | Model soups | Wortsman et al., [Model soups](https://arxiv.org/abs/2203.05482), ICML 2022 |
 | LoRA | Hu et al., [LoRA](https://arxiv.org/abs/2106.09685), 2021 |
-| The Haneda collision | the Japan Transport Safety Board [interim report](https://jtsb.mlit.go.jp/eng-air_report/interim20241225-JA722A_JA13XJ.pdf); the page makes no claim about its cause |
-| Speech recognition filling in radar labels | Helmke et al., [Aerospace 10(6), 538, 2023](https://www.mdpi.com/2226-4310/10/6/538) |
+| The Haneda collision | the Japan Transport Safety Board [second interim report](https://jtsb.mlit.go.jp/eng-air_report/interim20251225-JA722A_JA13XJ.pdf) (25 December 2025); the page makes no claim about its cause |
+| Speech recognition filling in radar labels | Ahrenhold, Helmke et al., [Aerospace 10(6), 538, 2023](https://www.mdpi.com/2226-4310/10/6/538) |
 | ATCO2 and UWB-ATCC | Zuluaga-Gomez et al., [arXiv:2211.04054](https://arxiv.org/abs/2211.04054); Šmídl et al., Language Resources and Evaluation 53, 2019 |
 
 ## The demo audio
