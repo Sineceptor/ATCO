@@ -14,6 +14,7 @@ here. Each file records how it was produced; the scripts are in
 | [callsign_errors.json](callsign_errors.json) | Each callsign the best and 2025 models miss, sorted by cause (letters or digits, tagger, airline word, mostly lost); counts only |
 | [radio_chain_noise.json](radio_chain_noise.json) | A simulation of the 2025 radio script's noise stages: how much of the engine noise and static survive its own 300-3,400 Hz filter |
 | [band_pass_power.json](band_pass_power.json) | How much power the 300-3,400 Hz filter removes from each of the 74 test clips, which sets how much less noise the filtered noise sweep added |
+| [clips/](clips/) | The split clip by clip (`split.csv`: all 874 clip IDs with recording, airport and split) and every model's word errors on each validation and test clip (`errors_*.csv`), so the intervals can be checked. IDs and counts only, no transcripts |
 | [cross_validation.json](cross_validation.json) | Five-fold cross-validation by recording over all 874 clips: the retrained Whisper-small and the unmodified model, pooled and per fold |
 
 ## 2025 models, re-scored in 2026

@@ -226,9 +226,25 @@ lower validation WER (best decoding) is adopted only if it makes fewer than 170
 word errors on the 101 validation clips, the current best (14.86%). Only an
 adopted model is scored on the test clips.
 
+## 14. The rest of the review, 27 September 2026
+
+| What | Result |
+| --- | --- |
+| Engine noise in the 2025 radio script | About 99% of its power below 20 Hz; the script's own filter kept a median 0.012%, leaving it 34 dB below the static ([radio_chain_noise.json](../results/radio_chain_noise.json)) |
+| Why the filtered noise sweep scored better | The filter removes a median 2.05 dB of each test clip's power, so filtered clips got about 2 dB less noise ([band_pass_power.json](../results/band_pass_power.json)) |
+| The audio band | 300 to 3,400 Hz is the telephone band; ICAO's guidance for 8.33 kHz channels assumes about 2,500 Hz of audio |
+| Missed callsigns sorted by cause | Best model: 15 of 24 letters or digits, 7 the tagger's, 1 airline word, 1 mostly lost ([callsign_errors.json](../results/callsign_errors.json)) |
+| Spelling variants | Now one word in every measure; changes the instruction counts and letters score slightly (section 12) |
+| Squawk check | Accepted codes with a leading zero wrongly; fixed, with tests |
+| ATCO2's own word tags as a human reference | Not usable: only 2 of 877 segments are marked as checked |
+| Hand labels for the tagger | Sheet exported and the rules for awkward words written first ([guide](hand_labelling_guide.md)); the labelling itself is still to do |
+| Clip IDs and per-clip errors | Published in [results/clips/](../results/clips/) |
+
 ## Not done yet
 
 - The word tagger has never been scored against labels written by a person:
-  the sheet is ready (`python -m evaluation.hand_labels export`).
+  the sheet and the [labelling guide](hand_labelling_guide.md) are ready.
+- The leave-one-airport-out test and the longer Whisper-medium run (section 13)
+  are running; their results will be added here whatever they show.
 - More test recordings from new airports, to separate models a point apart.
 - Training audio of spelled-out registrations, the other way to work on callsign letters.

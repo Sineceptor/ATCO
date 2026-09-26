@@ -1,9 +1,10 @@
 # Evaluation methods and results
 
-The first part of this page re-scores the 2025 checkpoints without retraining.
-The last part, [the 2026 retraining](#the-2026-retraining), describes the models
-trained after the review. The [evaluation instructions](../evaluation/README.md)
-show how to repeat each check.
+The first half of this page is what I found when I re-scored my 2025 models in
+2026, without training anything. The second half,
+[the 2026 retraining](#the-2026-retraining), covers the models I trained after
+that. The [evaluation instructions](../evaluation/README.md) say how to repeat
+each check.
 
 ## Speech recognition
 
@@ -15,34 +16,36 @@ show how to repeat each check.
 | Archived quick-test predictions | 176 | 27.19% | 18.23% |
 | Archived beam-cleanup predictions | 175 inferred | 19.24% | 12.92% |
 
-Ordinary normalisation uppercases text, removes punctuation and collapses spaces.
-Greedy decoding gives 435 word edits over 2,083 reference words; beam decoding
-gives 423/2,083. All 175 recordings completed without failure. The evaluator uses
-128 new tokens. Beam search uses five beams, repetition penalty 1.2, length
-penalty 1.0 and a three-token repetition block; since 2026 the application
-decodes the same way.
+For the plain scores I only upper-case the text, remove punctuation and
+collapse spaces. Greedy decoding makes 435 word edits over the 2,083 reference
+words, and beam search 423. Every one of the 175 clips was transcribed. Beam
+search here uses five beams, a repetition penalty of 1.2 and no repeated
+three-word sequences, and the app has decoded the same way since 2026.
 
-Historical cleanup changes both predictions and references using phrase replacements
-chosen from observed errors. It removes substrings such as `NE` and `JA` even within
-words, and joins spoken digits. `ONE NINE JAPAN` becomes `O NI PAN`. The resulting
-386/2,022 word-edit score describes a different scoring target.
+The "historical cleanup" row is the 2025 scorer I no longer count. It rewrote
+both the model's output and the correct transcript using replacements I had
+picked by looking at mistakes, and it cut strings like `NE` and `JA` out of the
+middle of words, so `ONE NINE JAPAN` became `O NI PAN`. Its 386 edits over 2,022
+words measure a different target, not the same one more kindly.
 
-The quick-test log uses `datasets/archived/quick_test_manifest.jsonl`, with
-566/2,082 word edits. The beam log uses `datasets/speech/test.jsonl`, with
-389/2,022 edits. Both log reconstructions assume unlogged rows were exact matches.
-The quick-test header confirms 176 clips; the beam log omits its total, so its
-175-row reconstruction remains an assumption. These saved predictions differ
-from the evaluated checkpoint's predictions. The old logs lack a complete runtime
-and checkpoint hash, preventing a controlled explanation of the difference.
+The two "archived" rows come from old log files, not from re-running a model.
+The quick-test log covers 176 clips (566 edits over 2,082 words); the beam log
+(389 edits over 2,022 words) never says how many clips it covered, so 175 is my
+guess. To rebuild both I had to assume that any clip the logs left out was
+transcribed perfectly. Their predictions also differ from what the saved
+checkpoint produces now, and the logs don't record which checkpoint or software
+made them, so I can't say why.
 
-The evaluated runtime uses PyTorch 2.8.0 and Transformers 4.57.6. The saved model
-configuration names Transformers 4.39.3. Current summaries record model and
-manifest hashes.
+I re-scored with PyTorch 2.8.0 and Transformers 4.57.6; the saved model says it
+was made with Transformers 4.39.3. Every summary I write now records the model
+and manifest hashes, so this can't happen again.
 
-The speech split has 699 training and 175 evaluation clips. Filenames are disjoint,
-but 92 recording sessions occur in both sets, covering 101 evaluation clips
-(57.7%). Session IDs are inferred by removing each filename's final clip suffix.
-The scores therefore do not establish generalisation to wholly new sessions.
+The 2025 split had 699 training and 175 test clips. No file appears in both,
+but 92 recordings do: I had split clips, not recordings, so 101 of the 175 test
+clips (57.7%) came from a recording the model had also trained on. I worked out
+which recording each clip came from by removing the clip number from the end of
+its file name. So these scores don't show how the model does on new recordings;
+the 2026 section below does.
 
 ## Entity extraction
 
@@ -51,47 +54,48 @@ The scores therefore do not establish generalisation to wholly new sessions.
 | Application DistilBERT, stored labels | 871 / 1,001 | 87.01% | 0.8657 |
 | TensorFlow BERT reference, regenerated labels | 955 / 1,001 | 95.40% | 0.9544 |
 
-Both runs score 89 sequences without truncating words. They use the first subword
-prediction, collapse BIO prefixes and include the non-entity label `O`. These are
-word-label scores rather than exact entity-span scores. The TensorFlow result
-matches [the original report](../results/original_2025/ner_bert_word_level.txt) at its
-printed precision.
+Both taggers are scored on the same 89 sentences, with no words cut off. I use
+each word's first sub-word, merge the begin and inside tags, and count the
+"other" label too, so these are word-label scores, not whole-entity scores. The
+BERT number matches [the original report](../results/original_2025/ner_bert_word_level.txt)
+to the precision it printed.
 
-The word sequences match, but the two rule-generated target versions disagree on
-25 words. This prevents a controlled comparison between the models. The app uses
-DistilBERT; its grouping, repair and command checks are not included in these scores.
-The labelling rules in `training/entity_labels.py` reproduce the stored labels.
-`evaluation/reference_labels.py` retains the different rules needed for the BERT report.
+The two taggers can't be compared, though. They were trained and scored against
+two versions of my labelling rules, which disagree on 25 of the words. The app
+uses DistilBERT, and these scores leave out the grouping, repair and command
+checks the app runs afterwards. `training/entity_labels.py` reproduces the
+labels DistilBERT was scored on; `evaluation/reference_labels.py` keeps the other
+version, for the BERT report.
 
-The raw entity split contains 504 training and 56 evaluation sessions with no
-shared session IDs. Filtering turns without a labelled entity leaves 89 of 90
-evaluation turns. Both model families used the named test set during development:
-DistilBERT selects its best epoch by its F1 score, and TensorFlow uses it as validation
-data. These are development evaluation scores with rule-generated references.
+The sentences come from 504 training and 56 test recordings, with none shared.
+Dropping the one sentence with no labelled word leaves 89 of 90. Both taggers
+also used these test sentences while training: DistilBERT kept whichever epoch
+scored best on them, and the BERT script used them as its validation set. So
+these are development scores against labels made by rules, not a clean test.
 
 ## Known weaknesses of the entity labels
 
-The rules label a word WAYPOINT when it has three or more letters and is in no
-other word list. The intended test for an all-capitals waypoint name is applied
-to text that has already been uppercased, so it is always true. In the README
-example, "portion", "startup" and "position" are tagged WAYPOINT, and the
-callsign "eurotrans one three juliett" is split into WAYPOINT, VALUE, WAYPOINT
-because Eurotrans is not in the (mostly Australian) airline list. About a
-quarter of the evaluation words carry the WAYPOINT label. The taggers therefore
-learn a word-list lookup, and the F1 scores measure agreement with that lookup.
-The rules are left unchanged so that the stored labels and scores stay
-reproducible; [next steps](next_steps.md) describes the hand-labelled
-evaluation that would replace them.
+My rules call a word a WAYPOINT if it has three or more letters and isn't in any
+other word list. The check that was meant to catch waypoint names written in
+capitals runs on text that has already been upper-cased, so it always passes.
+That is why, in the README example, "portion", "startup" and "position" are
+tagged WAYPOINT, and the callsign "eurotrans one three juliett" is split into
+WAYPOINT, VALUE, WAYPOINT: Eurotrans isn't in my mostly Australian airline list.
+About a quarter of the test words carry the WAYPOINT label. The taggers have
+learnt to copy a word-list lookup, and their F1 scores measure how well they copy
+it. I've left the rules as they were so the stored labels and scores can still be
+reproduced; [next steps](next_steps.md) describes the hand-labelled test that
+would replace them.
 
 ## Unmodified Whisper-small
 
-On the same 175 clips, with digits spelled out on both sides because it writes
-"4402" where the references say "four four zero two", unmodified Whisper-small
-scores 60.68% with beam search and 62.46% greedy
+On the same 175 clips, unmodified Whisper-small scores 60.68% with beam search
+and 62.46% greedy
 ([speech_recognition_zero_shot.json](../results/rescoring_2025/speech_recognition_zero_shot.json)).
-Other formatting differences remain, such as "X-ray" against "x ray", so part of
-the gap is formatting, but most of it is real: callsigns such as "Jetstar seven
-sixty seven" come out as unrelated words.
+I spelled out digits on both sides first, because it writes "4402" where the
+transcripts say "four four zero two". Other formatting differences remain, such
+as "X-ray" against "x ray", so part of the gap is formatting, but most of it is
+real: callsigns such as "Jetstar seven sixty seven" come out as unrelated words.
 
 ## The 2026 retraining
 

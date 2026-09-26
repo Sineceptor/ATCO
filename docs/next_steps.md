@@ -18,6 +18,6 @@
 
 | Question | How | What it would settle |
 | --- | --- | --- |
-| Is the tagger any good against a person? | `python -m evaluation.hand_labels export`, label about 1,000 words by hand, then `python -m evaluation.hand_labels score` | Replaces a score that only measures agreement with my own word-list rules |
+| Is the tagger any good against a person? | The sheet is exported and the rules for awkward words are written down in [the labelling guide](hand_labelling_guide.md); label about 1,000 words by hand (2 to 4 hours), then `python -m evaluation.hand_labels score` | Replaces a score that only measures agreement with my own word-list rules |
 | Are spelled letters and digits the problem? | Partly: the best model gets 94.41% of them right, but one wrong word breaks a callsign. A phonetic-alphabet prompt made things worse, and weighting the loss on those words gained four of 479 on validation at the cost of overall WER | [letters_digits.json](../results/letters_digits.json) |
 | Why are callsigns so hard? | Not unfamiliar airlines: every missed callsign on the unseen clips starts with a word from the training data. Of the best model's 24, 15 are misheard letters and digits and 7 are the tagger's ("hotel delta lima" as "hotel golf lima"). Next: training audio of spelled-out registrations, chosen on validation | Callsigns are the field that decides who an instruction is for |

@@ -20,8 +20,9 @@ about two minutes, with a sound demo of the simulated radio.
 
 ## Why I did this
 
-I fly a lot. When I started reading about air traffic control I found two
-things: controllers are short-staffed and work under a lot of pressure, and
+On a seaplane in the Maldives I listened to the pilots' radio and could hear
+every word, but I couldn't follow a sentence. I fly a lot, and after that flight
+I started reading about air traffic control. I found two things: controllers are short-staffed and work under a lot of pressure, and
 pilots and controllers sometimes misunderstand each other over the radio. The
 January 2024 runway collision at Haneda showed how much can hang on how one
 instruction is understood. ATC speech is fast,
