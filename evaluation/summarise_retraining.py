@@ -54,6 +54,25 @@ def scores(rows, mode):
     return edits, words
 
 
+def training_summary(log_path):
+    """Epoch budget, when and why the run stopped, and validation WER after each epoch."""
+    log = json.loads(log_path.read_text())
+    settings = log["settings"]
+    budget, run = int(settings["epochs"]), len(log["epochs"])
+    return dict(
+        epoch_budget=budget,
+        patience=int(settings["patience"]),
+        epochs_run=run,
+        stopped="early, no improvement" if run < budget else "at the epoch budget",
+        best_epoch=log["best_epoch"],
+        validation_wer_before_training=round(log["validation_wer_before_training"], 4),
+        extra_clips_per_epoch=int(settings.get("extra_per_epoch", 0)),
+        learning_rate=float(settings["learning_rate"]),
+        effective_batch=int(settings["batch_size"]) * int(settings["accumulate"]),
+        validation_wer_by_epoch=[round(e["validation_wer"], 4) for e in log["epochs"]],
+    )
+
+
 def main():
     rng = np.random.default_rng(0)
     systems = {"zero_shot": ("zero_shot_validation", "zero_shot_test"),
@@ -80,15 +99,7 @@ def main():
         entry = dict(description=DESCRIPTIONS[name])
         log_path = OUT / "training" / name / "training_log.json"
         if name in DESCRIPTIONS and log_path.exists():
-            log = json.loads(log_path.read_text())
-            entry["training"] = dict(
-                epochs_run=len(log["epochs"]),
-                best_epoch=log["best_epoch"],
-                extra_clips_per_epoch=int(log["settings"].get("extra_per_epoch", 0)),
-                learning_rate=float(log["settings"]["learning_rate"]),
-                effective_batch=int(log["settings"]["batch_size"]) * int(log["settings"]["accumulate"]),
-                validation_wer_by_epoch=[round(e["validation_wer"], 4) for e in log["epochs"]],
-            )
+            entry["training"] = training_summary(log_path)
         entry["validation"], entry["test"] = {}, {}
         modes = [m for m in MODES if m in next(iter(val.values()))]
         for mode in modes:
@@ -127,21 +138,63 @@ def main():
     if ablations:
         report["ablations"] = ablations
 
+    # Runs that were never scored on the test clips: stopped because they never
+    # beat their starting point, beaten on validation, or not run at all.
+    not_scored = {}
+    for name in ["continued", "medium_longer"]:
+        log_path = OUT / "training" / name / "training_log.json"
+        if log_path.exists():
+            not_scored[name] = dict(description=DESCRIPTIONS[name], training=training_summary(log_path),
+                                    outcome="never beat its starting point on validation; nothing saved")
+    soup3 = OUT / "evaluation" / "soup_all3_validation" / "asr_predictions.jsonl"
+    if soup3.exists():
+        val = predictions("soup_all3_validation")
+        entry = dict(description="Weight average of fixed, synthetic and real_data", validation={})
+        for mode in MODES:
+            edits, words = scores(val, mode)
+            entry["validation"][mode] = dict(wer=round(float(edits.sum() / words.sum()), 4),
+                                             word_errors=int(edits.sum()), reference_words=int(words.sum()))
+        entry["decoding_chosen_on_validation"] = min(MODES, key=lambda m: entry["validation"][m]["wer"])
+        entry["outcome"] = "worse than soup_fixed_real on validation; never scored on test"
+        not_scored["soup_all3"] = entry
+    not_scored["augmented"] = dict(description=DESCRIPTIONS["augmented"], outcome="not run: dropped for time")
+    report["not_scored_on_test"] = not_scored
+
+    def sweep(folder, label):
+        path = OUT / "evaluation" / folder / f"noise_sweep_{label}.json"
+        if not path.exists():
+            return None
+        data = json.loads(path.read_text())
+        return dict(model=data["model"], band_pass_300_3400_hz=data["band_pass_300_3400_hz"],
+                    decoding=data["decoding"],
+                    results=[dict(added_noise_snr_db=r["added_noise_snr_db"], wer=round(r["wer"], 4))
+                             for r in data["results"]])
+
     sweeps = {}
     for label in ["zero_shot", "checkpoint_2025", "retrained", "zero_shot_bandpass", "retrained_bandpass"]:
-        path = OUT / "evaluation" / "noise" / f"noise_sweep_{label}.json"
-        if path.exists():
-            data = json.loads(path.read_text())
-            sweeps[label] = [dict(added_noise_snr_db=r["added_noise_snr_db"], wer=round(r["wer"], 4))
-                             for r in data["results"]]
+        found = sweep("noise", label)
+        if found:
+            sweeps[label] = found["results"]
     if sweeps:
         report["noise_sweep"] = dict(
             clips="the 74 unseen test clips",
-            noise="white Gaussian noise added at the stated signal-to-noise ratio",
+            noise="white Gaussian noise added at the stated signal-to-noise ratio, measured over the whole clip "
+                  "(pauses included) after the optional band-pass filter",
             decoding=json.loads((OUT / "evaluation" / "noise" / "noise_sweep_retrained.json").read_text())["decoding"],
             retrained_model=json.loads((OUT / "evaluation" / "noise" / "noise_sweep_retrained.json").read_text())["model"],
             results=sweeps,
         )
+        # The same sweep for two more models, and the first sweep, which had no
+        # repetition guards and was redone because greedy decoding looped.
+        others = {}
+        for name, folder in [("soup_fixed_real", "noise_soup"), ("medium_real", "noise_medium_real")]:
+            for label, key in [("retrained", name), ("retrained_bandpass", f"{name}_bandpass")]:
+                found = sweep(folder, label)
+                if found:
+                    others[key] = found["results"]
+        report["noise_sweep"]["other_models"] = others
+        first = {label: sweep("noise_greedy", label) for label in ["zero_shot", "checkpoint_2025", "retrained"]}
+        report["noise_sweep"]["first_sweep_without_guards"] = {k: v for k, v in first.items() if v}
 
     path = ROOT / "results" / "retraining.json"
     path.write_text(json.dumps(report, indent=2) + "\n")

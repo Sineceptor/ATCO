@@ -298,8 +298,12 @@
       "beamplain": {
         "wer": 0.1495,
         "letters_and_digits": 0.9541,
-        "letters": 0.9427
-      }
+        "letters": 0.9427,
+        "word_errors": 171
+      },
+      "decoding_chosen_on_validation": "beamplain",
+      "compared_with": "soup_medium without the prompt: 14.86% (170 word errors, guarded beam), letters and digits 96.03%, letters 95.54%",
+      "outcome": "not adopted: under its best decoding (plain beam) the prompt made no measurable difference to WER (171 word errors against 170) and got slightly fewer letters right (94.27% against 95.54%). Under guarded beam it did much worse, possibly because the repetition guards also count the prompt's words and so work against the alphabet words it lists"
     },
     "letter_weighted_loss": {
       "model": "the Whisper-medium soup with fresh rank-32 LoRA adapters, loss on letter and digit words weighted 3x, learning rate 1e-4, 2 epochs",
@@ -322,5 +326,8 @@
         "spelled_words": 479
       }
     }
-  }
+  },
+  "notes": [
+    "medium_real and soup_medium have identical validation rows (460 of 479, same confusions). This was checked on 27 September 2026 by re-scoring both from their own prediction files: their transcripts differ on 39 of the 101 clips, but they make the same 19 letter and digit errors."
+  ]
 }

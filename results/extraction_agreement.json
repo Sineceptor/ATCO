@@ -6,6 +6,7 @@
       "decoding": "beam",
       "clips": 74,
       "all_fields_identical": 0,
+      "callsign_command_value_identical": 3,
       "callsign": {
         "reference_items": 71,
         "recall": 0.0563,
@@ -43,6 +44,7 @@
       "decoding": "beam",
       "clips": 74,
       "all_fields_identical": 20,
+      "callsign_command_value_identical": 29,
       "callsign": {
         "reference_items": 71,
         "recall": 0.6056,
@@ -80,6 +82,7 @@
       "decoding": "beam",
       "clips": 74,
       "all_fields_identical": 17,
+      "callsign_command_value_identical": 28,
       "callsign": {
         "reference_items": 71,
         "recall": 0.5634,
@@ -117,6 +120,7 @@
       "decoding": "beam",
       "clips": 74,
       "all_fields_identical": 18,
+      "callsign_command_value_identical": 32,
       "callsign": {
         "reference_items": 71,
         "recall": 0.6056,
@@ -154,6 +158,7 @@
       "decoding": "beam",
       "clips": 74,
       "all_fields_identical": 19,
+      "callsign_command_value_identical": 31,
       "callsign": {
         "reference_items": 71,
         "recall": 0.6479,
@@ -191,6 +196,7 @@
       "decoding": "beamplain",
       "clips": 74,
       "all_fields_identical": 20,
+      "callsign_command_value_identical": 37,
       "callsign": {
         "reference_items": 71,
         "recall": 0.5775,
@@ -228,6 +234,7 @@
       "decoding": "beam",
       "clips": 74,
       "all_fields_identical": 23,
+      "callsign_command_value_identical": 36,
       "callsign": {
         "reference_items": 71,
         "recall": 0.6338,
@@ -265,6 +272,7 @@
       "decoding": "beam",
       "clips": 74,
       "all_fields_identical": 22,
+      "callsign_command_value_identical": 33,
       "callsign": {
         "reference_items": 71,
         "recall": 0.6197,
@@ -298,6 +306,5 @@
         "starting_with_a_word_never_in_training": 0
       }
     }
-  },
-  "clips": "the 74 unseen-recording test clips"
+  }
 }

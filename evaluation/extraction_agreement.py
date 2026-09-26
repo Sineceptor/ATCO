@@ -2,7 +2,8 @@
 
 For each clip, the app's DistilBERT tagger is run twice: on the reference
 transcript and on a model's transcript. The two sets of extracted fields
-(callsigns, commands, values, waypoints) are compared.
+(callsigns, commands, values, waypoints) are compared, with and without
+waypoints.
 
     python -m evaluation.extraction_agreement \\
         --model "2025=outputs/evaluation/2025_test/asr_predictions.jsonl:beam"
@@ -42,7 +43,14 @@ def extract(pipe, text):
 
 def compare(pairs):
     """pairs: list of (reference fields, model fields) Counters, one per clip."""
-    out = dict(clips=len(pairs), all_fields_identical=sum(r == h for r, h in pairs))
+    # Waypoint labels come from a rule that is known to be too loose, so the
+    # headline count leaves them out; the count with them is kept alongside.
+    core = lambda c: Counter({k: v for k, v in c.items() if k[0] != "WAYPOINT"})
+    out = dict(
+        clips=len(pairs),
+        all_fields_identical=sum(r == h for r, h in pairs),
+        callsign_command_value_identical=sum(core(r) == core(h) for r, h in pairs),
+    )
     for field in FIELDS:
         tp = fp = fn = 0
         clips_with_field = identical = 0

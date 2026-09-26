@@ -92,8 +92,12 @@
     "fixed": {
       "description": "Start-token fix, validation-based checkpoint choice, SpecAugment; real clips only",
       "training": {
+        "epoch_budget": 12,
+        "patience": 4,
         "epochs_run": 12,
+        "stopped": "at the epoch budget",
         "best_epoch": 9,
+        "validation_wer_before_training": 0.7911,
         "extra_clips_per_epoch": 0,
         "learning_rate": 1e-05,
         "effective_batch": 16,
@@ -165,8 +169,12 @@
     "synthetic": {
       "description": "As fixed, plus 700 of my synthetic radio clips mixed in each epoch",
       "training": {
+        "epoch_budget": 8,
+        "patience": 4,
         "epochs_run": 8,
+        "stopped": "at the epoch budget",
         "best_epoch": 7,
+        "validation_wer_before_training": 0.7911,
         "extra_clips_per_epoch": 700,
         "learning_rate": 1e-05,
         "effective_batch": 16,
@@ -234,8 +242,12 @@
     "real_data": {
       "description": "As fixed, plus 1,400 clips per epoch of real ATC speech from UWB-ATCC (10.5 hours, Czech airspace)",
       "training": {
+        "epoch_budget": 8,
+        "patience": 3,
         "epochs_run": 8,
+        "stopped": "at the epoch budget",
         "best_epoch": 8,
+        "validation_wer_before_training": 0.7911,
         "extra_clips_per_epoch": 1400,
         "learning_rate": 1e-05,
         "effective_batch": 16,
@@ -355,8 +367,12 @@
     "medium_real": {
       "description": "Whisper-medium with LoRA adapters (rank 32), real clips plus 1,000 UWB-ATCC clips per epoch",
       "training": {
+        "epoch_budget": 6,
+        "patience": 2,
         "epochs_run": 6,
+        "stopped": "at the epoch budget",
         "best_epoch": 6,
+        "validation_wer_before_training": 0.6967,
         "extra_clips_per_epoch": 1000,
         "learning_rate": 0.0005,
         "effective_batch": 16,
@@ -477,8 +493,12 @@
     "medium_atco2_only": {
       "description": "Whisper-medium with LoRA adapters (rank 32) on the ATCO2 clips only, to separate model size from the extra UWB-ATCC speech",
       "training": {
+        "epoch_budget": 5,
+        "patience": 2,
         "epochs_run": 5,
+        "stopped": "at the epoch budget",
         "best_epoch": 5,
+        "validation_wer_before_training": 0.6967,
         "extra_clips_per_epoch": 0,
         "learning_rate": 0.0005,
         "effective_batch": 16,
@@ -541,9 +561,77 @@
       }
     }
   },
+  "not_scored_on_test": {
+    "continued": {
+      "description": "The 2025 checkpoint trained further with the start-token fix, learning rate 5e-6",
+      "training": {
+        "epoch_budget": 6,
+        "patience": 4,
+        "epochs_run": 4,
+        "stopped": "early, no improvement",
+        "best_epoch": 0,
+        "validation_wer_before_training": 0.2255,
+        "extra_clips_per_epoch": 0,
+        "learning_rate": 5e-06,
+        "effective_batch": 16,
+        "validation_wer_by_epoch": [
+          0.2456,
+          0.243,
+          0.2308,
+          0.229
+        ]
+      },
+      "outcome": "never beat its starting point on validation; nothing saved"
+    },
+    "medium_longer": {
+      "description": "medium_real trained for up to three more epochs with fresh rank-32 adapters, learning rate 2e-4",
+      "training": {
+        "epoch_budget": 3,
+        "patience": 2,
+        "epochs_run": 2,
+        "stopped": "early, no improvement",
+        "best_epoch": 0,
+        "validation_wer_before_training": 0.1792,
+        "extra_clips_per_epoch": 1000,
+        "learning_rate": 0.0002,
+        "effective_batch": 16,
+        "validation_wer_by_epoch": [
+          0.1809,
+          0.1844
+        ]
+      },
+      "outcome": "never beat its starting point on validation; nothing saved"
+    },
+    "soup_all3": {
+      "description": "Weight average of fixed, synthetic and real_data",
+      "validation": {
+        "greedy": {
+          "wer": 0.2194,
+          "word_errors": 251,
+          "reference_words": 1144
+        },
+        "beam": {
+          "wer": 0.1949,
+          "word_errors": 223,
+          "reference_words": 1144
+        },
+        "beamplain": {
+          "wer": 0.1923,
+          "word_errors": 220,
+          "reference_words": 1144
+        }
+      },
+      "decoding_chosen_on_validation": "beamplain",
+      "outcome": "worse than soup_fixed_real on validation; never scored on test"
+    },
+    "augmented": {
+      "description": "As fixed, plus 700 noise and speed copies of the training clips each epoch",
+      "outcome": "not run: dropped for time"
+    }
+  },
   "noise_sweep": {
     "clips": "the 74 unseen test clips",
-    "noise": "white Gaussian noise added at the stated signal-to-noise ratio",
+    "noise": "white Gaussian noise added at the stated signal-to-noise ratio, measured over the whole clip (pauses included) after the optional band-pass filter",
     "decoding": "greedy, English, max_new_tokens=128, repetition_penalty=1.2, no_repeat_ngram_size=3",
     "retrained_model": "outputs/training/soup_medium/best",
     "results": {
@@ -697,6 +785,235 @@
           "wer": 0.3642
         }
       ]
+    },
+    "other_models": {
+      "soup_fixed_real": [
+        {
+          "added_noise_snr_db": null,
+          "wer": 0.1991
+        },
+        {
+          "added_noise_snr_db": 30,
+          "wer": 0.2013
+        },
+        {
+          "added_noise_snr_db": 20,
+          "wer": 0.2226
+        },
+        {
+          "added_noise_snr_db": 15,
+          "wer": 0.2268
+        },
+        {
+          "added_noise_snr_db": 10,
+          "wer": 0.2748
+        },
+        {
+          "added_noise_snr_db": 5,
+          "wer": 0.3291
+        },
+        {
+          "added_noise_snr_db": 0,
+          "wer": 0.4579
+        }
+      ],
+      "soup_fixed_real_bandpass": [
+        {
+          "added_noise_snr_db": null,
+          "wer": 0.2141
+        },
+        {
+          "added_noise_snr_db": 30,
+          "wer": 0.2162
+        },
+        {
+          "added_noise_snr_db": 20,
+          "wer": 0.2268
+        },
+        {
+          "added_noise_snr_db": 15,
+          "wer": 0.2204
+        },
+        {
+          "added_noise_snr_db": 10,
+          "wer": 0.2854
+        },
+        {
+          "added_noise_snr_db": 5,
+          "wer": 0.3152
+        },
+        {
+          "added_noise_snr_db": 0,
+          "wer": 0.4302
+        }
+      ],
+      "medium_real": [
+        {
+          "added_noise_snr_db": null,
+          "wer": 0.1736
+        },
+        {
+          "added_noise_snr_db": 30,
+          "wer": 0.1757
+        },
+        {
+          "added_noise_snr_db": 20,
+          "wer": 0.1821
+        },
+        {
+          "added_noise_snr_db": 15,
+          "wer": 0.1896
+        },
+        {
+          "added_noise_snr_db": 10,
+          "wer": 0.2204
+        },
+        {
+          "added_noise_snr_db": 5,
+          "wer": 0.2748
+        },
+        {
+          "added_noise_snr_db": 0,
+          "wer": 0.4281
+        }
+      ],
+      "medium_real_bandpass": [
+        {
+          "added_noise_snr_db": null,
+          "wer": 0.18
+        },
+        {
+          "added_noise_snr_db": 30,
+          "wer": 0.1768
+        },
+        {
+          "added_noise_snr_db": 20,
+          "wer": 0.1917
+        },
+        {
+          "added_noise_snr_db": 15,
+          "wer": 0.197
+        },
+        {
+          "added_noise_snr_db": 10,
+          "wer": 0.2247
+        },
+        {
+          "added_noise_snr_db": 5,
+          "wer": 0.2684
+        },
+        {
+          "added_noise_snr_db": 0,
+          "wer": 0.3845
+        }
+      ]
+    },
+    "first_sweep_without_guards": {
+      "zero_shot": {
+        "model": "/Volumes/Ethan-Disk/ATCO/ASR2/hf_cache/hub/models--openai--whisper-small/snapshots/973afd24965f72e36ca33b3055d56a652f456b4d",
+        "band_pass_300_3400_hz": false,
+        "decoding": "greedy, English, max_new_tokens=128",
+        "results": [
+          {
+            "added_noise_snr_db": null,
+            "wer": 0.5847
+          },
+          {
+            "added_noise_snr_db": 30,
+            "wer": 0.5793
+          },
+          {
+            "added_noise_snr_db": 20,
+            "wer": 0.6145
+          },
+          {
+            "added_noise_snr_db": 15,
+            "wer": 0.6219
+          },
+          {
+            "added_noise_snr_db": 10,
+            "wer": 0.8647
+          },
+          {
+            "added_noise_snr_db": 5,
+            "wer": 0.8392
+          },
+          {
+            "added_noise_snr_db": 0,
+            "wer": 0.9691
+          }
+        ]
+      },
+      "checkpoint_2025": {
+        "model": "models/whisper-small",
+        "band_pass_300_3400_hz": false,
+        "decoding": "greedy, English, max_new_tokens=128",
+        "results": [
+          {
+            "added_noise_snr_db": null,
+            "wer": 0.1928
+          },
+          {
+            "added_noise_snr_db": 30,
+            "wer": 0.1938
+          },
+          {
+            "added_noise_snr_db": 20,
+            "wer": 0.2098
+          },
+          {
+            "added_noise_snr_db": 15,
+            "wer": 0.2236
+          },
+          {
+            "added_noise_snr_db": 10,
+            "wer": 0.2769
+          },
+          {
+            "added_noise_snr_db": 5,
+            "wer": 0.3387
+          },
+          {
+            "added_noise_snr_db": 0,
+            "wer": 0.4835
+          }
+        ]
+      },
+      "retrained": {
+        "model": "outputs/training/soup_fixed_real/best",
+        "band_pass_300_3400_hz": false,
+        "decoding": "greedy, English, max_new_tokens=128",
+        "results": [
+          {
+            "added_noise_snr_db": null,
+            "wer": 0.1896
+          },
+          {
+            "added_noise_snr_db": 30,
+            "wer": 0.1928
+          },
+          {
+            "added_noise_snr_db": 20,
+            "wer": 0.2119
+          },
+          {
+            "added_noise_snr_db": 15,
+            "wer": 0.2151
+          },
+          {
+            "added_noise_snr_db": 10,
+            "wer": 0.3876
+          },
+          {
+            "added_noise_snr_db": 5,
+            "wer": 0.3206
+          },
+          {
+            "added_noise_snr_db": 0,
+            "wer": 0.4505
+          }
+        ]
+      }
     }
   }
 }
