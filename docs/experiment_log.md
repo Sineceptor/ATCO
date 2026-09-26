@@ -193,6 +193,26 @@ below was checked against the code and saved outputs before it was changed.
 | Rounded large-v3 numbers, "mostly silence", generator ranges, "clean clips", "different airspace", missing credits | Corrected |
 | The soup was built after both ingredients were scored on test | Now said wherever the soup is described |
 
+## 13. Decided before running, 27 September 2026
+
+Written and published before either run started.
+
+**Leave one airport out.** The ATCO2 clips come from seven airports (Prague,
+Brno, Sion, Bern, Zurich, Bratislava and Sydney). Recipe A is trained seven
+times, each time without one airport, and scored on every clip from the airport
+it never heard (`python -m evaluation.session_split --by-airport`). This is a
+measurement, not a choice: no model from it can be adopted. It will be reported
+per airport and pooled over all 874 clips, next to the five-fold
+cross-validation by recording (19.16%) on the same clips.
+
+**A longer Whisper-medium run (`medium_long`).** The same settings as
+`medium_real`, but with 12 planned epochs instead of 6 (patience 3), so the
+learning-rate schedule spans the longer run. Two candidates: `medium_long` on
+its own, and its average with the ATCO2-only Whisper-medium. The one with the
+lower validation WER (best decoding) is adopted only if it makes fewer than 170
+word errors on the 101 validation clips, the current best (14.86%). Only an
+adopted model is scored on the test clips.
+
 ## Not done yet
 
 - The word tagger has never been scored against labels written by a person:

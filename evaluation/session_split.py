@@ -61,6 +61,28 @@ def make_folds(rows, folds=5, validation_fraction=0.1, seed=42):
     return result
 
 
+def airport_id(audio_file):
+    """The ICAO code that starts every ATCO2 file name, for example LKPR for Prague."""
+    return recording_id(audio_file).split("_", 1)[0]
+
+
+def make_airport_folds(rows, validation_fraction=0.1, seed=42):
+    """Leave one airport out: each fold tests on every clip from one airport.
+
+    The model for that fold trains on the other airports, with whole recordings
+    set aside as validation for choosing checkpoints. This is a stricter meaning
+    of unseen than a new recording: new controllers, frequencies and place names.
+    """
+    airports = sorted({airport_id(r["audio_file"]) for r in rows})
+    result = {}
+    for k, airport in enumerate(airports):
+        test = [r for r in rows if airport_id(r["audio_file"]) == airport]
+        rest = [r for r in rows if airport_id(r["audio_file"]) != airport]
+        train, validation = split_by_recording(rest, validation_fraction, seed + k)
+        result[airport] = dict(train=train, validation=validation, test=test)
+    return result
+
+
 def split_original_test(train_rows, test_rows):
     """Keep the 2025 training clips, and divide the 2025 test clips in two.
 
@@ -83,6 +105,7 @@ def main():
     cli.add_argument("--test-fraction", type=float, default=0.2)
     cli.add_argument("--seed", type=int, default=42)
     cli.add_argument("--folds", type=int, help="Write this many cross-validation folds instead")
+    cli.add_argument("--by-airport", action="store_true", help="Write one leave-one-airport-out fold per airport")
     cli.add_argument(
         "--from-original",
         action="store_true",
@@ -95,6 +118,18 @@ def main():
     for split in ["train", "test"]:
         text = (args.data_dir / f"speech/{split}.jsonl").read_text(encoding="utf-8")
         rows += [json.loads(s) for s in text.splitlines() if s.strip()]
+    if args.by_airport:
+        output = ROOT / "datasets/speech_airports" if args.output == ROOT / "datasets/speech_by_recording" else args.output
+        for airport, fold in make_airport_folds(rows, seed=args.seed).items():
+            places = {name: {airport_id(r["audio_file"]) for r in part} for name, part in fold.items()}
+            assert places["test"] == {airport} and airport not in places["train"] | places["validation"]
+            (output / airport).mkdir(parents=True, exist_ok=True)
+            for name, part in fold.items():
+                with (output / f"{airport}/{name}.jsonl").open("w", encoding="utf-8") as out:
+                    for row in part:
+                        out.write(json.dumps(row, ensure_ascii=False) + "\n")
+            print(f"{airport}: {len(fold['train'])} train, {len(fold['validation'])} validation, {len(fold['test'])} test")
+        return
     if args.folds:
         output = ROOT / "datasets/speech_folds" if args.output == ROOT / "datasets/speech_by_recording" else args.output
         for k, fold in enumerate(make_folds(rows, args.folds, seed=args.seed)):
