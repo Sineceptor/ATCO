@@ -1,0 +1,12 @@
+{
+  "clips": 74,
+  "filter": "the noise sweep's 300-3400 Hz band-pass (4th-order Butterworth, forwards and backwards)",
+  "db_removed_per_clip_percentiles_10_50_90": [
+    0.84,
+    2.05,
+    3.9
+  ],
+  "db_removed_mean_over_clips": 2.28,
+  "db_removed_pooled": 1.77,
+  "meaning": "at the same nominal SNR, a filtered clip receives this many dB less noise than the unfiltered clip"
+}

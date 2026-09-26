@@ -58,8 +58,8 @@ The chain, in order:
 2. **Engine noise (brown noise).** I make white noise and take its running sum.
    Summing is a discrete integral, and integrating divides each frequency
    component's amplitude by its frequency, so the power spectrum falls as
-   1/f². The result is a low rumble, similar to engine and airframe noise in a
-   cockpit.
+   1/f². The idea was a low rumble, like engine and airframe noise in a
+   cockpit. It did not work out: see below.
 3. **Static (white noise).** Plain Gaussian noise with a flat spectrum, for
    receiver hiss.
 4. **μ-law companding.** The signal is compressed with
@@ -81,6 +81,24 @@ aircraft radio; that step is borrowed from telephones. I also never checked my
 simulated spectrum against the spectrum of the real ATCO2 clips, which would
 have been the obvious way to tune it. And the noise levels were picked by ear,
 not from a measured signal-to-noise ratio.
+
+Two more that I measured in 2026:
+
+- **The engine noise vanished inside my own chain.** Summed white noise puts
+  almost all its power at the lowest frequencies: in a simulation of my script
+  over 2,000 random clips, about 99% of the engine noise's power was below
+  20 Hz, which is below hearing. Stage 5 then keeps only 300 to 3,400 Hz, and
+  it kept a median 0.012% of the engine noise. After the filter the engine was a
+  median 34 dB quieter than the static, so my training audio had almost no
+  engine noise in it ([radio_chain_noise.json](../results/radio_chain_noise.json),
+  from `python -m evaluation.radio_chain_noise`). To be heard through a voice
+  radio, engine noise would need power inside the voice band, and it would
+  have to be added after the filter or shaped to survive it.
+- **300 to 3,400 Hz is the telephone band, not the aviation one.** ICAO's
+  radio standard does not set one audio band for VHF voice, but its guidance
+  for 8.33 kHz channels assumes an audio bandwidth of 2,500 Hz, and its rule
+  for HF voice limits audio to 300 to 2,700 Hz (Annex 10, Volume III). A real
+  airband channel may therefore cut off lower than my filter.
 
 A related piece of radio physics: aviation still uses AM rather than FM on
 purpose. With FM the stronger of two overlapping
@@ -160,11 +178,14 @@ With the 300 to 3,400 Hz filter applied first, the recordings barely change:
 16.93% instead of 15.44% for the best 2026 model, 55.80% instead of 58.79% for
 the unmodified model. They have already been through a radio, so there is little
 outside the voice band to remove. Under heavy noise the filtered versions do
-better (36.42% against 40.26% at 0 dB), but that is at least partly bookkeeping: the
-noise level is set from the clip's total power, and the filter removes the power
-outside the voice band, so a filtered clip gets weaker noise at the same nominal
-SNR while its speech in the band hardly changes. The noise is not filtered in
-either case, so the same share of it lands in the voice band both times.
+better (36.42% against 40.26% at 0 dB), but that is bookkeeping. The noise level is set
+from the clip's total power, and the filter removes a median 2.05 dB of each
+test clip's power ([band_pass_power.json](../results/band_pass_power.json)), so a
+filtered clip gets about 2 dB less noise at the same nominal SNR while its speech
+in the band hardly changes. The noise is not filtered in either case, so the same
+share of it lands in the voice band both times. Near 0 dB the best model loses
+roughly 2.9 points per dB, so 2 dB less noise is worth about 6 points, more than
+the whole 3.84-point gap. There is no sign the filter itself helps.
 
 It also connects to how Whisper itself works. The model never sees the
 waveform. It sees a log-mel spectrogram: a short-time Fourier transform with

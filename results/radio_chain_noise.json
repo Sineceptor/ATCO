@@ -1,0 +1,34 @@
+{
+  "method": "2000 random 4.5-second clips at 16000 Hz, noise levels drawn as in the 2025 script; each noise filtered on its own by the script's band-pass",
+  "percentiles": "10th, 50th and 90th",
+  "engine_power_below_20_hz_share": [
+    0.992767,
+    0.99797,
+    0.99927
+  ],
+  "engine_power_below_20_hz_share_without_its_constant_offset": [
+    0.984227,
+    0.992343,
+    0.996015
+  ],
+  "engine_power_kept_by_filter_share": [
+    2.9e-05,
+    0.000119,
+    0.000441
+  ],
+  "static_power_kept_by_filter_share": [
+    0.387026,
+    0.390012,
+    0.392931
+  ],
+  "engine_minus_static_db_before_filter": [
+    -6.43,
+    0.9,
+    7.98
+  ],
+  "engine_minus_static_db_after_filter": [
+    -42.48,
+    -34.25,
+    -26.67
+  ]
+}
