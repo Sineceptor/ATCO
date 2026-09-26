@@ -98,7 +98,14 @@ average power as the whole clip, pauses included. The first noise sweep used
 plain greedy decoding and jumped about because a few noisy clips looped; it was
 redone with the guards (both are in `retraining.json`). With a 300 to 3,400 Hz
 filter applied first, the best model scores 16.93% with no added noise and
-36.42% at 0 dB.
+36.42% at 0 dB, but the filter removes a median 2.05 dB of each clip's power, so
+filtered clips got about 2 dB less noise; that alone could explain the gap
+([band_pass_power.json](../results/band_pass_power.json)).
+
+A simulation of the 2025 radio script's noise stages found that its "engine"
+noise was about 99% below 20 Hz and that its own 300 to 3,400 Hz filter kept a
+median 0.012% of it, leaving it 34 dB below the static
+([radio_chain_noise.json](../results/radio_chain_noise.json)).
 
 ## 8. From words to instructions
 
@@ -107,20 +114,24 @@ The app's tagger run on the correct transcript and on each model's transcript
 
 | Field matches the one from the correct transcript | Unmodified | 2025 model | Best model |
 | --- | ---: | ---: | ---: |
-| Callsign (59 clips) | 3 | 33 | 35 |
+| Callsign (59 clips) | 4 | 35 | 37 |
 | Command (56 clips) | 19 | 37 | 44 |
 | Numbers (58 clips) | 11 | 35 | 41 |
-| Callsign, command and numbers (74 clips) | 3 | 29 | 33 |
-| Every field, including waypoints (74 clips) | 0 | 20 | 22 |
+| Callsign, command and numbers (74 clips) | 3 | 29 | 34 |
+| Every field, including waypoints (74 clips) | 0 | 20 | 23 |
 
 Waypoint labels come from a rule known to be too loose, so the first of those
 two rows is the headline. On it the best model is not clearly ahead of the other
-2026 models (Whisper-small soup 37, single Whisper-medium 36), but a few clips out
-of 74 is within noise.
+2026 models (Whisper-small soup and single Whisper-medium both 37), but a few
+clips out of 74 is within noise. Spelling variants (alfa and alpha, oskar and
+oscar) count as the same word, as in section 9.
 
-None of the best model's 27 missed callsigns starts with a word absent from
-the training transcripts: the errors are misheard letters and digits, not
-unknown airlines.
+None of the best model's 24 missed callsigns starts with a word absent from
+the training transcripts. Sorted by cause
+([callsign_errors.json](../results/callsign_errors.json)): 15 are letters or
+digits heard wrong, missed or added; 7 were transcribed word for word but the
+tagger labelled them differently; 1 is a misheard airline name; 1 is mostly
+lost. For the 2025 model's 25: 15, 6, 4 and 0.
 
 ## 9. Callsign letters and digits
 
@@ -130,9 +141,9 @@ niner and nine) as the same ([letters_digits.json](../results/letters_digits.jso
 
 | Letters and digits right | Validation | Test |
 | --- | ---: | ---: |
-| Unmodified Whisper-small | 60.54% | 66.36% |
-| 2025 model | 91.23% | 93.22% |
-| Best model | 96.03% | 94.39% |
+| Unmodified Whisper-small | 60.96% | 66.20% |
+| 2025 model | 91.23% | 93.24% |
+| Best model | 96.03% | 94.41% |
 
 | Trial | Result on validation | Adopted |
 | --- | --- | --- |
@@ -181,7 +192,9 @@ below was checked against the code and saved outputs before it was changed.
 | Finding | What changed |
 | --- | --- |
 | The README and site described the 2025 Whisper-small app | Now describe the current app; the traced call is labelled as the 2025 model |
-| "Every field right in 22 of 74" included waypoint labels | Recounted without waypoints (33 of 74) and both counts published |
+| "Every field right in 22 of 74" included waypoint labels | Recounted without waypoints and both counts published |
+| Spelling variants (alfa and alpha, oskar and oscar) counted as missed callsigns | Treated as the same word in both the letters score and the instruction counts: best model 34 of 74 without waypoints, 23 with them; letters and digits 94.41% |
+| "Mostly misheard letters and digits" was not counted | Sorted by cause: 15 of the 24 missed callsigns |
 | "Training stops early" and "training longer did not help" | Epoch budgets published (section 11); wording now says what was actually run |
 | 45.79% and the `continued`, `medium_longer` and three-model soup numbers were not in `results/` | Added to `retraining.json` by the summary script |
 | The alphabet prompt was quoted under guarded beam, not its best decoding | Corrected (section 9) |

@@ -86,6 +86,12 @@ shown('Whisper-small soup on whole instructions', f"the Whisper-small soup got {
 check('the best model is not the top on whole instructions, as the page says',
       max(m[core] for m in agree.values()) > b[core])
 shown('missed callsigns counted', f"every one of the {b['missed_callsigns']['count']} missed callsigns")
+if (RESULTS / 'callsign_errors.json').exists():
+    causes = load('callsign_errors.json')['models'][best]
+    check('callsign causes cover every missed callsign', causes['missed_callsigns'] == b['missed_callsigns']['count'])
+    shown('missed callsigns that were letters or digits',
+          f"{causes['by_cause']['letters or digits']} were spelled-out letters and numbers heard wrong")
+    shown('missed callsigns that were the tagger', f"Another {causes['by_cause']['tagger']} were heard right")
 check('"every missed callsign started with a known word" matches the saved analysis',
       b['missed_callsigns']['starting_with_a_word_never_in_training'] == 0)
 
@@ -147,6 +153,11 @@ for name, run in runs.items():
     lo_, hi_ = (f'{100 * x:.2f}' for x in h['interval_95'])
     check(f'README shows {name}', f"{pct(h['wer'])}" in README and f'{lo_} to {hi_}' in README,
           f"expected {pct(h['wer'])} and {lo_} to {hi_}")
+
+large = (RESULTS / 'original_2025' / 'asr_large_lora_robustness.txt').read_text(encoding='utf-8')
+large_wer = re.findall(r'\|\s*(\d+\.\d\d)%', large)[0::2]
+check('README quotes the 2025 large-v3 scores exactly',
+      len(large_wer) == 3 and all(f'{v}%' in README for v in large_wer), f'expected {large_wer}')
 
 for doc in ['docs/evaluation.md', 'paper/atco_paper.md']:
     body = (SITE.parent / doc).read_text(encoding='utf-8')

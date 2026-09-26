@@ -9,10 +9,10 @@
       "callsign_command_value_identical": 3,
       "callsign": {
         "reference_items": 71,
-        "recall": 0.0563,
-        "precision": 0.1538,
+        "recall": 0.0845,
+        "precision": 0.2308,
         "clips_with_field": 59,
-        "clips_where_it_matches": 3
+        "clips_where_it_matches": 4
       },
       "command": {
         "reference_items": 104,
@@ -29,14 +29,14 @@
         "clips_where_it_matches": 11
       },
       "waypoint": {
-        "reference_items": 314,
-        "recall": 0.4586,
-        "precision": 0.2939,
+        "reference_items": 315,
+        "recall": 0.4603,
+        "precision": 0.2959,
         "clips_with_field": 70,
         "clips_where_it_matches": 0
       },
       "missed_callsigns": {
-        "count": 67,
+        "count": 65,
         "starting_with_a_word_never_in_training": 0
       }
     },
@@ -47,10 +47,10 @@
       "callsign_command_value_identical": 29,
       "callsign": {
         "reference_items": 71,
-        "recall": 0.6056,
-        "precision": 0.5733,
+        "recall": 0.6479,
+        "precision": 0.6133,
         "clips_with_field": 59,
-        "clips_where_it_matches": 33
+        "clips_where_it_matches": 35
       },
       "command": {
         "reference_items": 104,
@@ -61,20 +61,20 @@
       },
       "value": {
         "reference_items": 103,
-        "recall": 0.7864,
-        "precision": 0.7364,
+        "recall": 0.7961,
+        "precision": 0.7455,
         "clips_with_field": 58,
         "clips_where_it_matches": 35
       },
       "waypoint": {
-        "reference_items": 314,
-        "recall": 0.7038,
-        "precision": 0.7391,
+        "reference_items": 315,
+        "recall": 0.7048,
+        "precision": 0.745,
         "clips_with_field": 70,
         "clips_where_it_matches": 24
       },
       "missed_callsigns": {
-        "count": 28,
+        "count": 25,
         "starting_with_a_word_never_in_training": 0
       }
     },
@@ -85,34 +85,34 @@
       "callsign_command_value_identical": 28,
       "callsign": {
         "reference_items": 71,
-        "recall": 0.5634,
-        "precision": 0.5479,
+        "recall": 0.5915,
+        "precision": 0.5753,
         "clips_with_field": 59,
-        "clips_where_it_matches": 29
+        "clips_where_it_matches": 30
       },
       "command": {
         "reference_items": 104,
-        "recall": 0.875,
-        "precision": 0.8667,
+        "recall": 0.8846,
+        "precision": 0.8679,
         "clips_with_field": 56,
-        "clips_where_it_matches": 40
+        "clips_where_it_matches": 41
       },
       "value": {
         "reference_items": 103,
         "recall": 0.7864,
-        "precision": 0.7714,
+        "precision": 0.7642,
         "clips_with_field": 58,
         "clips_where_it_matches": 35
       },
       "waypoint": {
-        "reference_items": 314,
-        "recall": 0.7006,
-        "precision": 0.7166,
+        "reference_items": 315,
+        "recall": 0.7016,
+        "precision": 0.7294,
         "clips_with_field": 70,
-        "clips_where_it_matches": 21
+        "clips_where_it_matches": 22
       },
       "missed_callsigns": {
-        "count": 31,
+        "count": 29,
         "starting_with_a_word_never_in_training": 0
       }
     },
@@ -123,10 +123,10 @@
       "callsign_command_value_identical": 32,
       "callsign": {
         "reference_items": 71,
-        "recall": 0.6056,
-        "precision": 0.6615,
+        "recall": 0.6197,
+        "precision": 0.6769,
         "clips_with_field": 59,
-        "clips_where_it_matches": 34
+        "clips_where_it_matches": 35
       },
       "command": {
         "reference_items": 104,
@@ -143,14 +143,14 @@
         "clips_where_it_matches": 35
       },
       "waypoint": {
-        "reference_items": 314,
-        "recall": 0.707,
-        "precision": 0.6873,
+        "reference_items": 315,
+        "recall": 0.7079,
+        "precision": 0.6904,
         "clips_with_field": 70,
-        "clips_where_it_matches": 21
+        "clips_where_it_matches": 22
       },
       "missed_callsigns": {
-        "count": 28,
+        "count": 27,
         "starting_with_a_word_never_in_training": 0
       }
     },
@@ -161,10 +161,10 @@
       "callsign_command_value_identical": 31,
       "callsign": {
         "reference_items": 71,
-        "recall": 0.6479,
-        "precision": 0.6479,
+        "recall": 0.6901,
+        "precision": 0.6901,
         "clips_with_field": 59,
-        "clips_where_it_matches": 34
+        "clips_where_it_matches": 35
       },
       "command": {
         "reference_items": 104,
@@ -181,14 +181,14 @@
         "clips_where_it_matches": 39
       },
       "waypoint": {
-        "reference_items": 314,
-        "recall": 0.7357,
-        "precision": 0.7624,
+        "reference_items": 315,
+        "recall": 0.7365,
+        "precision": 0.7657,
         "clips_with_field": 70,
-        "clips_where_it_matches": 23
+        "clips_where_it_matches": 24
       },
       "missed_callsigns": {
-        "count": 25,
+        "count": 22,
         "starting_with_a_word_never_in_training": 0
       }
     },
@@ -199,8 +199,8 @@
       "callsign_command_value_identical": 37,
       "callsign": {
         "reference_items": 71,
-        "recall": 0.5775,
-        "precision": 0.6212,
+        "recall": 0.6056,
+        "precision": 0.6515,
         "clips_with_field": 59,
         "clips_where_it_matches": 32
       },
@@ -213,34 +213,34 @@
       },
       "value": {
         "reference_items": 103,
-        "recall": 0.8447,
-        "precision": 0.8056,
+        "recall": 0.835,
+        "precision": 0.7963,
         "clips_with_field": 58,
-        "clips_where_it_matches": 40
+        "clips_where_it_matches": 39
       },
       "waypoint": {
-        "reference_items": 314,
-        "recall": 0.7389,
-        "precision": 0.7532,
+        "reference_items": 315,
+        "recall": 0.7397,
+        "precision": 0.759,
         "clips_with_field": 70,
-        "clips_where_it_matches": 23
+        "clips_where_it_matches": 24
       },
       "missed_callsigns": {
-        "count": 30,
+        "count": 28,
         "starting_with_a_word_never_in_training": 0
       }
     },
     "medium_real": {
       "decoding": "beam",
       "clips": 74,
-      "all_fields_identical": 23,
-      "callsign_command_value_identical": 36,
+      "all_fields_identical": 24,
+      "callsign_command_value_identical": 37,
       "callsign": {
         "reference_items": 71,
-        "recall": 0.6338,
-        "precision": 0.6522,
+        "recall": 0.6761,
+        "precision": 0.6957,
         "clips_with_field": 59,
-        "clips_where_it_matches": 36
+        "clips_where_it_matches": 38
       },
       "command": {
         "reference_items": 104,
@@ -257,28 +257,28 @@
         "clips_where_it_matches": 40
       },
       "waypoint": {
-        "reference_items": 314,
-        "recall": 0.7516,
-        "precision": 0.7789,
+        "reference_items": 315,
+        "recall": 0.7524,
+        "precision": 0.7822,
         "clips_with_field": 70,
         "clips_where_it_matches": 26
       },
       "missed_callsigns": {
-        "count": 26,
+        "count": 23,
         "starting_with_a_word_never_in_training": 0
       }
     },
     "soup_medium": {
       "decoding": "beam",
       "clips": 74,
-      "all_fields_identical": 22,
-      "callsign_command_value_identical": 33,
+      "all_fields_identical": 23,
+      "callsign_command_value_identical": 34,
       "callsign": {
         "reference_items": 71,
-        "recall": 0.6197,
-        "precision": 0.6286,
+        "recall": 0.662,
+        "precision": 0.6714,
         "clips_with_field": 59,
-        "clips_where_it_matches": 35
+        "clips_where_it_matches": 37
       },
       "command": {
         "reference_items": 104,
@@ -295,14 +295,14 @@
         "clips_where_it_matches": 41
       },
       "waypoint": {
-        "reference_items": 314,
-        "recall": 0.7739,
-        "precision": 0.7915,
+        "reference_items": 315,
+        "recall": 0.7746,
+        "precision": 0.7948,
         "clips_with_field": 70,
-        "clips_where_it_matches": 29
+        "clips_where_it_matches": 30
       },
       "missed_callsigns": {
-        "count": 27,
+        "count": 24,
         "starting_with_a_word_never_in_training": 0
       }
     }

@@ -60,7 +60,8 @@ part I spent longest on was making my own training audio: writing a sentence
 generator that follows real phraseology rules, speaking the sentences with TTS
 in many accents, and then degrading the clean audio so it sounds like aircraft
 radio, using band-limiting, 1/f² engine noise, static, companding, a 300 to
-3400 Hz filter, clipping and a squelch click. That last step is signal
+3400 Hz filter, clipping and a squelch click. (In 2026 I found the engine noise
+had almost all disappeared inside my own filter.) That last step is signal
 processing, and it is where the project meets the physics I am more used to.
 
 It barely moved the scores I recorded at the time, and when I tested it
@@ -111,10 +112,10 @@ Word error rate on the 74 unseen clips ([retraining.json](results/retraining.jso
   model's error rises from 15.44% to 40.26% and the 2025 model's from 19.81%
   to 48.03%; unmodified Whisper goes from 58.79% to 93.08% (greedy decoding
   with repetition guards).
-- Spelled letters and digits are mostly right (94.39% on the unseen clips,
+- Spelled letters and digits are mostly right (94.41% on the unseen clips,
   [letters_digits.json](results/letters_digits.json)), but a callsign fails when
   any one of its words is wrong, so most instructions still have at least one
-  field wrong: callsign, command and numbers all match in only 33 of the 74
+  field wrong: callsign, command and numbers all match in only 34 of the 74
   clips, and callsigns are the weakest of the three
   ([extraction_agreement.json](results/extraction_agreement.json)).
 

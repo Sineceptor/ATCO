@@ -195,11 +195,14 @@
 
       <h3 class="idea">Make clean speech sound like a radio</h3>
       <p>Text-to-speech sounds like a studio, so I wrote a simulated radio: cut everything above
-        4&nbsp;kHz, add engine rumble and static, crush the signal into coarse levels, keep only the 300 to
-        3,400&nbsp;Hz band a voice radio carries, overdrive it, and end with the click of the transmit button.
+        4&nbsp;kHz, add engine rumble and static, crush the signal into coarse levels, keep only 300 to
+        3,400&nbsp;Hz (the telephone band; an aviation channel may stop nearer 2.5&nbsp;kHz), overdrive it, and end with the click of the transmit button.
         Each stage has a reason. The engine rumble is white noise added up over time; adding up is a discrete
         integral, which divides each frequency&rsquo;s amplitude by that frequency, so the power falls as
-        1/f&sup2; and you hear a roar, not a hiss.</p>
+        1/f&sup2;. That was the idea. When I measured it in 2026, about 99% of that noise&rsquo;s power sat
+        below 20&nbsp;Hz, too low to hear, and my own filter later in the chain removed nearly all the rest:
+        after it, the <q>engine</q> was about 34&nbsp;dB quieter than the static. My training audio had
+        almost no engine noise in it.</p>
       <p>I called these clips my <q>GAN</q> data at the time. Wrong word: a GAN trains two networks against
         each other, and nothing here is trained. It is signal processing.</p>
     </div>
@@ -255,7 +258,9 @@
               <p>Throws away everything above 4&nbsp;kHz. <em>The Python version resamples to 8&nbsp;kHz and
                 back; the browser uses low-pass filters at 4&nbsp;kHz, which is similar but not identical.</em></p></li>
             <li><label><input type="checkbox" id="s-brown" checked> <b>Engine noise</b></label>
-              <p>A low rumble: white noise summed over time, so its power falls as 1/f&sup2;.</p></li>
+              <p>White noise summed over time, so its power falls as 1/f&sup2;. Most of it is below 20&nbsp;Hz,
+                and the voice-band filter below removes nearly all the rest, so turn that filter off to hear
+                it.</p></li>
             <li><label><input type="checkbox" id="s-white" checked> <b>Static</b></label>
               <p>Receiver hiss with a flat spectrum. This is the kind of noise early Whisper wrote whole
                 sentences out of.</p></li>
@@ -265,7 +270,9 @@
                 radio is analogue AM and has no such stage. I borrowed it from telephones, and it is the part
                 of the chain I would defend least.</p></li>
             <li><label><input type="checkbox" id="s-bp" checked> <b>Voice-band filter</b></label>
-              <p>Keeps only 300 to 3,400&nbsp;Hz, the band a voice radio carries. <em>The browser stacks two
+              <p>Keeps only 300 to 3,400&nbsp;Hz, the telephone band. ICAO&rsquo;s guidance for the newer
+                8.33&nbsp;kHz aviation channels assumes about 2,500&nbsp;Hz of audio, so a real channel may cut
+                off lower. <em>The browser stacks two
                 second-order filters on each edge; I haven&rsquo;t checked that this exactly matches the
                 Python filter.</em></p></li>
             <li><label><input type="checkbox" id="s-clip" checked> <b>Overdrive</b></label>
@@ -431,18 +438,18 @@
       worse. I ran my word tagger on each correct transcript and on the model&rsquo;s version, and
       compared what came out. My best model now gets the command right in 44 of the 56 clips that have
       one (the 2025 model: 37) and the numbers right in 41 of 58 (2025: 35). Callsigns are the weak
-      point: 35 of 59. Callsign, command and numbers all matched in 33 of the 74 clips (the 2025 model:
+      point: 37 of 59. Callsign, command and numbers all matched in 34 of the 74 clips (the 2025 model:
       29; unmodified Whisper-small: 3). My tagger&rsquo;s waypoint labels aren&rsquo;t reliable, so I leave
-      them out of that count; with them, every field matched in only 22. On whole instructions my best
+      them out of that count; with them, every field matched in only 23. On whole instructions my best
       model isn&rsquo;t clearly ahead of my other 2026 models: the Whisper-small soup got 37, but a few clips
       out of 74 is within noise.</p>
     <p>I expected the missed callsigns to be airlines the model had never heard of. They weren&rsquo;t:
-      every one of the 27 missed callsigns (a clip can hold more than one) started with a word from the
-      training data. The ones I looked at were mostly spelled-out letters and numbers heard wrong, like <span class="say">hotel delta lima</span> as <span class="say err">hotel golf
+      every one of the 24 missed callsigns (a clip can hold more than one) started with a word from the
+      training data. When I sorted them by cause, 15 were spelled-out letters and numbers heard wrong, like <span class="say">hotel delta lima</span> as <span class="say err">hotel golf
       lima</span>, which is exactly what the phonetic alphabet exists to prevent, and exactly what a
-      crackly channel attacks.</p>
-    <p>Letter by letter, the model is already good: it gets 94.39% of spelled letters and digits right on
-      the unseen clips (the 2025 model: 93.22%). A callsign fails when any one of its four or five words
+      crackly channel attacks. Another 7 were heard right but labelled differently by my tagger.</p>
+    <p>Letter by letter, the model is already good: it gets 94.41% of spelled letters and digits right on
+      the unseen clips (the 2025 model: 93.24%). A callsign fails when any one of its four or five words
       is wrong, which is why whole callsigns match so much less often. Giving Whisper the phonetic alphabet
       as a prompt made no measurable difference to the word error rate and got slightly fewer letters
       right, so I dropped the idea. I also trained it further with mistakes on

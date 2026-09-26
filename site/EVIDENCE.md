@@ -49,8 +49,8 @@ the tagger's own accuracy.
 
 ## Spelled letters and digits
 
-From [`letters_digits.json`](../results/letters_digits.json): 94.39% for the best
-model and 93.22% for the 2025 model on the test clips, counting spelling
+From [`letters_digits.json`](../results/letters_digits.json): 94.41% for the best
+model and 93.24% for the 2025 model on the test clips, counting spelling
 variants of the same letter or digit as the same word. The alphabet-prompt trial
 is under `rejected_trials`.
 

@@ -27,9 +27,17 @@ FIELDS = ["CALLSIGN", "COMMAND", "VALUE", "WAYPOINT"]
 
 
 def normalise(text):
-    """Lower case, digits spelled out, punctuation removed: the form the tagger was trained on."""
+    """Lower case, digits spelled out, punctuation removed: the form the tagger was trained on.
+
+    Spelling variants of the same word (alfa and alpha, oskar and oscar) are made
+    the same, as in evaluation.letters_digits, so that a callsign is not counted
+    as missed only because the reference spells it differently.
+    """
+    from .letters_digits import SAME
+
+    variants = {**SAME, "fourty": "forty"}
     text = spell_digits(text).lower().replace("-", " ")
-    return " ".join(re.sub(r"[^a-z0-9' ]", " ", text).split())
+    return " ".join(variants.get(w, w) for w in re.sub(r"[^a-z0-9' ]", " ", text).split())
 
 
 def extract(pipe, text):

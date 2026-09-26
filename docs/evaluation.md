@@ -138,7 +138,7 @@ each fold's training recordings, gives a pooled WER of 19.16% (95% interval
 17.74% to 21.01% ([cross_validation.json](../results/cross_validation.json)).
 
 Scored on their own, spelled phonetic-alphabet letters and digit words are
-mostly right: 94.39% for the selected model and 93.22% for the 2025 checkpoint on
+mostly right: 94.41% for the selected model and 93.24% for the 2025 checkpoint on
 the test clips, counting spelling variants of the same letter or digit as the
 same word ([letters_digits.json](../results/letters_digits.json)). A prompt
 listing the phonetic alphabet, under its best decoding on validation (plain

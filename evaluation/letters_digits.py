@@ -19,7 +19,7 @@ from pathlib import Path
 
 LETTERS = {
     "alpha", "alfa", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "india", "juliett",
-    "juliet", "kilo", "lima", "mike", "november", "oscar", "papa", "quebec", "romeo", "sierra", "tango",
+    "juliet", "kilo", "lima", "mike", "november", "oscar", "oskar", "papa", "quebec", "romeo", "sierra", "tango",
     "uniform", "victor", "whiskey", "whisky", "xray", "yankee", "zulu",
 }
 DIGITS = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "niner"}
@@ -27,7 +27,7 @@ SPELLED = LETTERS | DIGITS
 # Spelling variants of the same letter or digit. The ATCO2 transcripts write both
 # "alfa" and "alpha", and "niner" where the speaker said niner; UWB-ATCC always
 # writes "nine". A callsign is equally right either way.
-SAME = {"alfa": "alpha", "niner": "nine", "juliet": "juliett", "whisky": "whiskey"}
+SAME = {"alfa": "alpha", "niner": "nine", "juliet": "juliett", "whisky": "whiskey", "oskar": "oscar"}
 
 
 def normalise(text):
