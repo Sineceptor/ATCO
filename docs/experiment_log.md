@@ -128,7 +128,7 @@ niner and nine) as the same ([letters_digits.json](../results/letters_digits.jso
 | Trial | Result on validation | Adopted |
 | --- | --- | --- |
 | Give Whisper the phonetic alphabet as a prompt | Worse: WER 16.96% against 14.86%, letters 87.26% against 95.54% | No; never scored on test |
-| Weight the training loss three times more on letter and digit words | Code written and tested (`--letter-weight` in `train_whisper.py`); not run yet | Pending |
+| Train the best model 2 more epochs with the loss on letter and digit words weighted three times (`--letter-weight 3`) | Epoch 1: letters and digits 96.87% (4 more of 479 right) but WER 15.38%. Epoch 2: 96.45%, WER 16.00% | No: the rule set before the run needed both better; never scored on test |
 
 ## 10. The app
 
@@ -143,5 +143,5 @@ niner and nine) as the same ([letters_digits.json](../results/letters_digits.jso
 
 - The word tagger has never been scored against labels written by a person:
   the sheet is ready (`python -m evaluation.hand_labels export`).
-- The letter-weighted training run.
 - More test recordings from new airports, to separate models a point apart.
+- Training audio of spelled-out registrations, the other way to work on callsign letters.

@@ -120,6 +120,12 @@ if (RESULTS / 'letters_digits.json').exists():
     ld = load('letters_digits.json')['test']
     shown('letters and digits, best model', pct(ld[best]['accuracy']))
     shown('letters and digits, 2025 model', f"(the 2025 model: {pct(ld['checkpoint_2025']['accuracy'])})")
+    lw = load('letters_digits.json')['rejected_trials']['letter_weighted_loss']['epoch1']
+    base = load('letters_digits.json')['validation'][best]
+    gained = {1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five'}.get(lw['right'] - base['right'])
+    shown('letter-weighted trial gain', f"{gained} more of {lw['spelled_words']}")
+    shown('letter-weighted trial word error rate',
+          f"from {pct(retrain['runs'][best]['validation']['beam']['wer'])} to {pct(lw['wer'])}")
 
 shown('synthetic clips', '4,808 clips')
 check('historical values keep their unknown-metric label', 'metric not established' in TEXT)

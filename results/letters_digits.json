@@ -300,6 +300,27 @@
         "letters_and_digits": 0.9541,
         "letters": 0.9427
       }
+    },
+    "letter_weighted_loss": {
+      "model": "the Whisper-medium soup with fresh rank-32 LoRA adapters, loss on letter and digit words weighted 3x, learning rate 1e-4, 2 epochs",
+      "rule_decided_in_advance": "adopt an epoch only if, on validation, letters and digits beat 96.03% and word error rate is no worse than 14.86%",
+      "outcome": "not adopted: letters improved, overall word error rate got worse; never scored on test",
+      "epoch1": {
+        "decoding": "beam",
+        "wer": 0.1538,
+        "letters_and_digits": 0.9687,
+        "letters": 0.9618,
+        "right": 464,
+        "spelled_words": 479
+      },
+      "epoch2": {
+        "decoding": "beamplain",
+        "wer": 0.16,
+        "letters_and_digits": 0.9645,
+        "letters": 0.9554,
+        "right": 462,
+        "spelled_words": 479
+      }
     }
   }
 }

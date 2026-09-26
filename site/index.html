@@ -436,7 +436,10 @@
     <p>Letter by letter, the model is already good: it gets 94.39% of spelled letters and digits right on
       the clean clips (the 2025 model: 93.22%). A callsign fails when any one of its four or five words
       is wrong, which is why whole callsigns match so much less often. Giving Whisper the phonetic alphabet
-      as a prompt made it worse, so I dropped the idea.</p>
+      as a prompt made it worse, so I dropped the idea. I also trained it further with mistakes on
+      letters and digits counting three times as much. It got four more of 479 letters and digits right
+      on validation, but its overall word error rate went up from 14.86% to 15.38%, so I kept the model I
+      had.</p>
 
     <h3>What noise does</h3>
     <p>This is the measurement I should have made in 2025, before building a whole simulated radio. I

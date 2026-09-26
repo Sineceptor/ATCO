@@ -10,7 +10,7 @@ here. Each file records how it was produced; the scripts are in
 | --- | --- |
 | [retraining.json](retraining.json) | Every model on the 101 validation clips and the 74 unseen-recording test clips: word error rate for each decoding setting, the setting chosen on validation, 95% intervals, the paired change from the 2025 model, training details, and the noise sweeps |
 | [extraction_agreement.json](extraction_agreement.json) | For each model, how often the callsign, commands and numbers extracted from its transcript match those from the correct transcript, and which missed callsigns start with an unfamiliar word |
-| [letters_digits.json](letters_digits.json) | Spelled phonetic-alphabet letters and digit words transcribed exactly, per model, on validation and test, with the commonest confusions and the rejected alphabet-prompt trial |
+| [letters_digits.json](letters_digits.json) | Spelled phonetic-alphabet letters and digit words transcribed exactly, per model, on validation and test, with the commonest confusions and the two rejected trials (alphabet prompt, letter-weighted loss) |
 | [cross_validation.json](cross_validation.json) | Five-fold cross-validation by recording over all 874 clips: the retrained Whisper-small and the unmodified model, pooled and per fold |
 
 ## 2025 models, re-scored in 2026

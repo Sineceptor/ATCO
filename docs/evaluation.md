@@ -137,7 +137,9 @@ mostly right: 94.39% for the selected model and 93.22% for the 2025 checkpoint o
 the test clips, counting spelling variants of the same letter or digit as the
 same word ([letters_digits.json](../results/letters_digits.json)). A prompt
 listing the phonetic alphabet made the selected model worse on validation and
-was not adopted. Every experiment is listed in the
+was not adopted. Training further with the loss weighted three times on letter
+and digit words gained four of 479 of them on validation but made overall WER
+worse (15.38% against 14.86%), so it was not adopted either. Every experiment is listed in the
 [experiment log](experiment_log.md).
 
 Two cautions. The 2025 checkpoint was chosen in 2025 by looking at the old test
