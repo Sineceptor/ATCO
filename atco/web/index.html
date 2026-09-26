@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ATCO · Speech notebook</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main>
+    <header><a class="name" href="/">ATCO</a><span>Speech notebook</span></header>
+    <section class="intro">
+      <p class="eyebrow">AIR TRAFFIC SPEECH EXPERIMENT</p>
+      <h1>From a recording<br>to written instructions.</h1>
+      <p>Record a short instruction or choose an audio file. The program transcribes it,
+         identifies the callsign and command, and can read the extracted words aloud.</p>
+    </section>
+    <div class="workspace">
+      <section class="panel input-panel" aria-labelledby="input-heading">
+        <div class="section-label">01 <h2 id="input-heading">Audio in</h2></div>
+        <p>One instruction, up to 30 seconds.</p>
+        <div class="record-row"><button id="record" class="record"><span class="record-dot"></span>Record voice</button>
+          <span id="timer" class="timer">0:00</span></div>
+        <div class="divider"><span>or choose a recording</span></div>
+        <label class="file-label" for="file">Audio file</label>
+        <input id="file" type="file" accept="audio/*">
+        <p id="source" class="source">No recording selected.</p>
+        <audio id="preview" controls hidden aria-label="Input recording"></audio>
+        <label class="check"><input id="speech" type="checkbox" checked> Generate a spoken readback</label>
+        <button id="transcribe" class="primary" disabled>Transcribe recording <span aria-hidden="true">→</span></button>
+        <details><summary>Try a typed instruction</summary>
+          <label for="typed">Skip speech recognition and test the entity model.</label>
+          <textarea id="typed" rows="3" placeholder="jetstar one squawk four five eight two"></textarea>
+          <button id="parse" class="secondary">Extract from text</button>
+        </details>
+      </section>
+      <section class="panel result-panel" aria-labelledby="result-heading">
+        <div class="section-label">02 <h2 id="result-heading">Text out</h2></div>
+        <p id="status" role="status" aria-live="polite">Ready when you are.</p>
+        <div id="empty" class="empty"><span aria-hidden="true">Aa</span><p>Your transcript will appear here.</p></div>
+        <div id="result" hidden>
+          <h3>Transcript</h3><p id="transcript" class="transcript"></p>
+          <div class="text-actions"><button id="copy" class="text-button">Copy text</button>
+            <a id="download" download="transcript.txt">Save .txt</a>
+            <a id="details" download="result.json">Save details</a></div>
+          <h3>Extracted words</h3><div id="entities" class="entities"></div>
+          <ul id="warnings" class="warnings" hidden></ul>
+          <div id="readback-section" hidden><h3>Readback</h3><p id="readback"></p>
+            <audio id="output-audio" controls hidden aria-label="Generated readback"></audio></div>
+          <p id="speech-error" class="error" hidden></p>
+        </div>
+      </section>
+    </div>
+    <footer><p>Whisper → DistilBERT → SpeechT5</p>
+      <p>A student research prototype. Transcription and entity errors remain visible;
+         extracted words can omit parts of an instruction. Not for operational ATC use.</p>
+      <p>Audio is processed on this computer. Recordings and results are saved in <code>outputs/browser</code>.
+         The models run locally.</p></footer>
+  </main>
+</body>
+</html>

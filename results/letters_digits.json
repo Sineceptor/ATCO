@@ -1,0 +1,305 @@
+{
+  "about": "Share of spelled phonetic-alphabet letters and digit words in the reference transcripts that each model transcribes exactly, after aligning its transcript with the reference. Spelling variants of the same letter or digit count as the same word (alfa/alpha, niner/nine, juliet/juliett, whisky/whiskey). Produced by evaluation/letters_digits.py.",
+  "validation": {
+    "zero_shot": {
+      "decoding": "beam",
+      "spelled_words": 479,
+      "right": 290,
+      "accuracy": 0.6054,
+      "letters": 157,
+      "letters_right": 44,
+      "letter_accuracy": 0.2803,
+      "commonest_confusions": [
+        "hotel -> the (4)",
+        "nine -> (missed) (3)",
+        "mike -> (missed) (3)",
+        "zero -> (missed) (3)",
+        "oscar -> oskar (2)",
+        "two -> (missed) (2)",
+        "two -> to (2)",
+        "five -> (missed) (2)",
+        "zulu -> zero (2)",
+        "juliett -> it (2)",
+        "charlie -> (missed) (2)",
+        "alpha -> zero (1)"
+      ]
+    },
+    "checkpoint_2025": {
+      "decoding": "beam",
+      "spelled_words": 479,
+      "right": 437,
+      "accuracy": 0.9123,
+      "letters": 157,
+      "letters_right": 132,
+      "letter_accuracy": 0.8408,
+      "commonest_confusions": [
+        "two -> (missed) (2)",
+        "three -> six (2)",
+        "papa -> bye (2)",
+        "zulu -> zero (2)",
+        "kilo -> (missed) (2)",
+        "four -> fatot (1)",
+        "hotel -> six (1)",
+        "xray -> three (1)",
+        "victor -> vista (1)",
+        "tango -> bye (1)",
+        "mike -> bye (1)",
+        "oscar -> squawk (1)"
+      ]
+    },
+    "fixed": {
+      "decoding": "beam",
+      "spelled_words": 479,
+      "right": 447,
+      "accuracy": 0.9332,
+      "letters": 157,
+      "letters_right": 137,
+      "letter_accuracy": 0.8726,
+      "commonest_confusions": [
+        "zulu -> zero (2)",
+        "four -> five (1)",
+        "hotel -> (missed) (1)",
+        "xray -> (missed) (1)",
+        "mike -> bye (1)",
+        "oscar -> squawk (1)",
+        "five -> charlie (1)",
+        "delta -> alpha (1)",
+        "hotel -> kev (1)",
+        "three -> two (1)",
+        "juliett -> delet (1)",
+        "five -> (missed) (1)"
+      ]
+    },
+    "real_data": {
+      "decoding": "beam",
+      "spelled_words": 479,
+      "right": 439,
+      "accuracy": 0.9165,
+      "letters": 157,
+      "letters_right": 133,
+      "letter_accuracy": 0.8471,
+      "commonest_confusions": [
+        "two -> to (3)",
+        "three -> report (1)",
+        "four -> (missed) (1)",
+        "four -> fatot (1)",
+        "two -> (missed) (1)",
+        "hotel -> six (1)",
+        "xray -> three (1)",
+        "nine -> (missed) (1)",
+        "tango -> (missed) (1)",
+        "papa -> (missed) (1)",
+        "mike -> bye (1)",
+        "oscar -> squawk (1)"
+      ]
+    },
+    "medium_real": {
+      "decoding": "beam",
+      "spelled_words": 479,
+      "right": 460,
+      "accuracy": 0.9603,
+      "letters": 157,
+      "letters_right": 150,
+      "letter_accuracy": 0.9554,
+      "commonest_confusions": [
+        "four -> fatot (1)",
+        "two -> (missed) (1)",
+        "mike -> bye (1)",
+        "delta -> alpha (1)",
+        "hotel -> heli (1)",
+        "three -> two (1)",
+        "five -> (missed) (1)",
+        "foxtrot -> zulu (1)",
+        "nine -> via (1)",
+        "two -> twenty (1)",
+        "kilo -> (missed) (1)",
+        "nine -> one (1)"
+      ]
+    },
+    "soup_medium": {
+      "decoding": "beam",
+      "spelled_words": 479,
+      "right": 460,
+      "accuracy": 0.9603,
+      "letters": 157,
+      "letters_right": 150,
+      "letter_accuracy": 0.9554,
+      "commonest_confusions": [
+        "four -> fatot (1)",
+        "two -> (missed) (1)",
+        "mike -> bye (1)",
+        "delta -> alpha (1)",
+        "hotel -> heli (1)",
+        "three -> two (1)",
+        "five -> (missed) (1)",
+        "foxtrot -> zulu (1)",
+        "nine -> via (1)",
+        "two -> twenty (1)",
+        "kilo -> (missed) (1)",
+        "nine -> one (1)"
+      ]
+    }
+  },
+  "test": {
+    "zero_shot": {
+      "decoding": "beam",
+      "spelled_words": 428,
+      "right": 284,
+      "accuracy": 0.6636,
+      "letters": 150,
+      "letters_right": 61,
+      "letter_accuracy": 0.4067,
+      "commonest_confusions": [
+        "one -> you (2)",
+        "zero -> (missed) (2)",
+        "two -> to (2)",
+        "mike -> my (2)",
+        "five -> the (2)",
+        "kilo -> (missed) (2)",
+        "golf -> (missed) (2)",
+        "three -> two (2)",
+        "bravo -> a (2)",
+        "mike -> (missed) (2)",
+        "hotel -> the (2)",
+        "one -> to (2)"
+      ]
+    },
+    "checkpoint_2025": {
+      "decoding": "beam",
+      "spelled_words": 428,
+      "right": 399,
+      "accuracy": 0.9322,
+      "letters": 150,
+      "letters_right": 137,
+      "letter_accuracy": 0.9133,
+      "commonest_confusions": [
+        "eight -> (missed) (1)",
+        "november -> then (1)",
+        "juliett -> two (1)",
+        "echo -> (missed) (1)",
+        "one -> zulu (1)",
+        "zero -> oscar (1)",
+        "five -> alpha (1)",
+        "three -> right (1)",
+        "papa -> hotel (1)",
+        "papa -> one (1)",
+        "three -> six (1)",
+        "seven -> thirty (1)"
+      ]
+    },
+    "fixed": {
+      "decoding": "beam",
+      "spelled_words": 428,
+      "right": 398,
+      "accuracy": 0.9299,
+      "letters": 150,
+      "letters_right": 136,
+      "letter_accuracy": 0.9067,
+      "commonest_confusions": [
+        "delta -> golf (1)",
+        "eight -> (missed) (1)",
+        "november -> then (1)",
+        "kilo -> circle (1)",
+        "three -> red (1)",
+        "two -> feet (1)",
+        "one -> want (1)",
+        "zero -> to (1)",
+        "five -> charlie (1)",
+        "three -> right (1)",
+        "papa -> one (1)",
+        "seven -> thirty (1)"
+      ]
+    },
+    "real_data": {
+      "decoding": "beam",
+      "spelled_words": 428,
+      "right": 401,
+      "accuracy": 0.9369,
+      "letters": 150,
+      "letters_right": 138,
+      "letter_accuracy": 0.92,
+      "commonest_confusions": [
+        "five -> (missed) (2)",
+        "delta -> golf (1)",
+        "november -> then (1)",
+        "kilo -> call (1)",
+        "echo -> (missed) (1)",
+        "one -> is (1)",
+        "zero -> a (1)",
+        "one -> alpha (1)",
+        "three -> eight (1)",
+        "papa -> one (1)",
+        "seven -> twenty (1)",
+        "four -> forty (1)"
+      ]
+    },
+    "medium_real": {
+      "decoding": "beam",
+      "spelled_words": 428,
+      "right": 405,
+      "accuracy": 0.9463,
+      "letters": 150,
+      "letters_right": 140,
+      "letter_accuracy": 0.9333,
+      "commonest_confusions": [
+        "november -> then (1)",
+        "zero -> one (1)",
+        "one -> alpha (1)",
+        "five -> (missed) (1)",
+        "three -> right (1)",
+        "papa -> alpha (1)",
+        "papa -> one (1)",
+        "seven -> seventy (1)",
+        "delta -> hotel (1)",
+        "three -> touch (1)",
+        "five -> and (1)",
+        "tango -> go (1)"
+      ]
+    },
+    "soup_medium": {
+      "decoding": "beam",
+      "spelled_words": 428,
+      "right": 404,
+      "accuracy": 0.9439,
+      "letters": 150,
+      "letters_right": 138,
+      "letter_accuracy": 0.92,
+      "commonest_confusions": [
+        "zero -> (missed) (2)",
+        "delta -> golf (1)",
+        "november -> then (1)",
+        "one -> you (1)",
+        "zero -> want (1)",
+        "three -> right (1)",
+        "papa -> bravo (1)",
+        "papa -> one (1)",
+        "seven -> seventy (1)",
+        "delta -> hotel (1)",
+        "three -> touch (1)",
+        "five -> and (1)"
+      ]
+    }
+  },
+  "rejected_trials": {
+    "alphabet_prompt": {
+      "model": "soup_medium",
+      "clips": "the 101 validation clips only; not adopted, so never scored on test",
+      "prompt": "alpha bravo charlie ... x ray yankee zulu (the phonetic alphabet)",
+      "greedy": {
+        "wer": 0.1608,
+        "letters_and_digits": 0.9541,
+        "letters": 0.9427
+      },
+      "beam": {
+        "wer": 0.1696,
+        "letters_and_digits": 0.9311,
+        "letters": 0.8726
+      },
+      "beamplain": {
+        "wer": 0.1495,
+        "letters_and_digits": 0.9541,
+        "letters": 0.9427
+      }
+    }
+  }
+}

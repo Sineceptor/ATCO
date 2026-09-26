@@ -1,0 +1,38 @@
+/* Print styles for atco_paper.pdf. */
+@page { size: A4; margin: 22mm 20mm 22mm 20mm; }
+html { font-size: 10.5pt; }
+body {
+  font-family: Charter, "Bitstream Charter", Georgia, "Times New Roman", serif;
+  color: #15222D; line-height: 1.45; max-width: none; margin: 0; padding: 0;
+  hyphens: auto; text-align: justify;
+}
+header#title-block-header { text-align: center; margin-bottom: 1.6em; }
+h1.title { font-size: 1.55rem; line-height: 1.25; margin: 0 0 0.6em; font-weight: 600; text-align: center; }
+p.author { font-size: 1.05rem; margin: 0; }
+p.date { font-size: 0.95rem; color: #475866; margin: 0.2em 0 0; }
+h2, h3 {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: #173D52;
+  break-after: avoid; text-align: left;
+}
+h2 { font-size: 1.12rem; margin: 1.5em 0 0.5em; }
+h3 { font-size: 0.98rem; margin: 1.2em 0 0.4em; }
+p { margin: 0 0 0.7em; }
+ol, ul { margin: 0 0 0.8em 1.3em; padding: 0; }
+li { margin-bottom: 0.25em; }
+figure { margin: 1em 0 1.1em; break-inside: avoid; text-align: center; }
+figure img { max-width: 100%; max-height: 88mm; }
+figcaption { font-size: 0.86rem; color: #475866; margin-top: 0.35em; text-align: left; }
+table {
+  border-collapse: collapse; width: 100%; margin: 0.4em 0 1.1em; font-size: 0.86rem;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; break-inside: avoid;
+}
+th, td { padding: 3px 7px; border-bottom: 1px solid #D2D9DE; text-align: left; }
+th { border-bottom: 1.5px solid #15222D; font-weight: 600; }
+td[style*="right"], th[style*="right"] { font-variant-numeric: tabular-nums; }
+code { font-family: Menlo, monospace; font-size: 0.85em; }
+a { color: #173D52; text-decoration: none; }
+strong { font-weight: 600; }
+#references + p, h2#references ~ p { font-size: 0.9rem; text-align: left; }
+caption { caption-side: top; text-align: left; font-size: 0.86rem; color: #475866; padding-bottom: 0.35em;
+  font-family: Charter, Georgia, serif; }
+th { hyphens: none; }

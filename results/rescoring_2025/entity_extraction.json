@@ -1,0 +1,107 @@
+{
+  "component": "PyTorch DistilBERT (app model)",
+  "sequences": 89,
+  "scored_words": 1001,
+  "truncated_words": 0,
+  "correct_words": 871,
+  "report": {
+    "O": {
+      "precision": 0.9736842105263158,
+      "recall": 0.5285714285714286,
+      "f1-score": 0.6851851851851852,
+      "support": 140.0
+    },
+    "CALLSIGN": {
+      "precision": 0.961352657004831,
+      "recall": 0.8257261410788381,
+      "f1-score": 0.8883928571428571,
+      "support": 241.0
+    },
+    "COMMAND": {
+      "precision": 0.9411764705882353,
+      "recall": 0.9655172413793104,
+      "f1-score": 0.9531914893617022,
+      "support": 116.0
+    },
+    "VALUE": {
+      "precision": 0.91,
+      "recall": 0.9820143884892086,
+      "f1-score": 0.9446366782006921,
+      "support": 278.0
+    },
+    "WAYPOINT": {
+      "precision": 0.7123745819397993,
+      "recall": 0.9424778761061947,
+      "f1-score": 0.8114285714285714,
+      "support": 226.0
+    },
+    "accuracy": 0.8701298701298701,
+    "macro avg": {
+      "precision": 0.8997175840118363,
+      "recall": 0.8488614151249962,
+      "f1-score": 0.8565669562638016,
+      "support": 1001.0
+    },
+    "weighted avg": {
+      "precision": 0.8902646412772012,
+      "recall": 0.8701298701298701,
+      "f1-score": 0.8657249459999614,
+      "support": 1001.0
+    }
+  },
+  "labels": [
+    "O",
+    "CALLSIGN",
+    "COMMAND",
+    "VALUE",
+    "WAYPOINT"
+  ],
+  "confusion_matrix": [
+    [
+      74,
+      0,
+      0,
+      0,
+      66
+    ],
+    [
+      0,
+      199,
+      2,
+      25,
+      15
+    ],
+    [
+      0,
+      0,
+      112,
+      0,
+      4
+    ],
+    [
+      0,
+      3,
+      1,
+      273,
+      1
+    ],
+    [
+      2,
+      5,
+      4,
+      2,
+      213
+    ]
+  ],
+  "manifest_sha256": "be3dc0619460e41c99cb6cec020b878414a8e4d3dc2f62417ce5aac6b20b89e3",
+  "model_sha256": "48e6a3e8982d8c8a4caaaedbda7ec7c9871259875959b440f63bfec6d37ae1b9",
+  "method": "First subword per word; BIO prefixes collapsed; rule-generated targets. This is word-label F1, including O, not exact entity-span F1.",
+  "packages": {
+    "torch": "2.8.0",
+    "transformers": "4.57.6",
+    "tensorflow": "2.20.0",
+    "tf-keras": "2.20.1",
+    "jiwer": "4.0.0",
+    "scikit-learn": "1.9.1"
+  }
+}

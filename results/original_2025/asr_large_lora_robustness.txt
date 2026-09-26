@@ -1,0 +1,9 @@
+Test Set             | WER        | CER        | Samples 
+---------------------------------------------------------
+Original (Clean)     | 27.86%   | 18.20%   | 175     
+Noisy (+Noise)       | 34.42%   | 24.32%   | 175     
+Fast (Speed 1.1x)    | 28.78%   | 18.91%   | 175     
+
+=== Configuration ===
+Model: atc_whisper_lora_v18_augmented
+Base: openai/whisper-large-v3

@@ -1,0 +1,35 @@
+{
+  "method": "Archived mismatches plus matching manifest; unlogged rows assumed perfect, following the old evaluator's log format. No new model inference.",
+  "reports": [
+    {
+      "report": "archived/quick_test_predictions.txt",
+      "manifest": "archived/quick_test_manifest.jsonl",
+      "clips": 176,
+      "mismatch_records": 147,
+      "unlogged_assumed_matches": 29,
+      "report_sha256": "98266a168d37ad957e821c22d7c00eb39ee3453d422d02eeb0d3d01190e9eee1",
+      "manifest_sha256": "46ab5a7212aa240add96cd17adf03b4321d556235aa441a97e15d99282462144",
+      "wer": 0.27185398655139287,
+      "cer": 0.18226807582620366,
+      "word_errors": 566,
+      "reference_words": 2082,
+      "character_errors": 2173,
+      "reference_characters": 11922
+    },
+    {
+      "report": "archived/beam_predictions.txt",
+      "manifest": "speech/test.jsonl",
+      "clips": 175,
+      "mismatch_records": 123,
+      "unlogged_assumed_matches": 52,
+      "report_sha256": "60d864fbc1adc75b0eeb49bea60233bdb011589c14a7b80138887b06113749d0",
+      "manifest_sha256": "516ca280b6d46392031686b9af66352c4fbaf72f88063381a4b53c91cf1d4f81",
+      "wer": 0.1923837784371909,
+      "cer": 0.12915462427745664,
+      "word_errors": 389,
+      "reference_words": 2022,
+      "character_errors": 1430,
+      "reference_characters": 11072
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+Accuracy: 0.5321
+
+              precision    recall  f1-score   support
+
+  B-CALLSIGN     0.3415    0.7778    0.4746        36
+   B-COMMAND     0.8077    0.8660    0.8358        97
+     B-VALUE     0.6562    0.7326    0.6923        86
+  B-WAYPOINT     0.5986    0.4038    0.4823       421
+  I-CALLSIGN     0.2640    0.2554    0.2597       184
+   I-COMMAND     0.0000    0.0000    0.0000         0
+     I-VALUE     0.7126    0.8380    0.7702       142
+           O     0.3966    0.5565    0.4631       124
+
+    accuracy                         0.5321      1090
+   macro avg     0.4721    0.5538    0.4972      1090
+weighted avg     0.5486    0.5321    0.5278      1090

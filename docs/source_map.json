@@ -1,0 +1,374 @@
+{
+  "note": "Where each file came from. Original names are kept for tracing only; paths and imports were updated, and unused launchers were removed. Hashes are of the archived experiment files as of September 2026, after comments and formatting were tidied. This map traces files, not authorship.",
+  "maintained_modules": [
+    {
+      "file": "atco/speech_recognition.py",
+      "original_file": "ASR/inference.py",
+      "original_sha256": "870e55e9d3d14628991c1cc6de5dafd032a55c023b2cd199f669c4a2276a364b"
+    },
+    {
+      "file": "atco/entity_extraction.py",
+      "original_file": "NLP/nlp_12_inference_full_guard.py",
+      "original_sha256": "97e5d1213d9a7596aba140bc04992027616217d28baba8e0c464d7222a33ee5d"
+    },
+    {
+      "file": "atco/speech_synthesis.py",
+      "original_file": "TTS/test.py",
+      "original_sha256": "d8353ce224930985715ee83ff092969e124f45a5c1edb1b3df7c8e59dfaa18a2"
+    },
+    {
+      "file": "training/train_whisper.py",
+      "original_file": "ASR2/train_atc.py",
+      "original_sha256": "df562354a9a2abb43f1537d2b8f735dbfa1a969c823aa8cd14ccbc61b4c40b92"
+    },
+    {
+      "file": "training/train_distilbert.py",
+      "original_file": "NLP/nlp_05_train_bert.py",
+      "original_sha256": "56fcec6d593252bf7036a924f50b120ba1d182363c11bf3ff7dff4cf1070f471"
+    },
+    {
+      "file": "training/pretrain_bert.py",
+      "original_file": "NLP/train_mlm.py",
+      "original_sha256": "3413e59844db7ec7f52b2ff44ccd02eea268fc2088383cf18c10e44b3959fd6f"
+    },
+    {
+      "file": "training/train_bert.py",
+      "original_file": "NLP/train_mlm_finetune.py",
+      "original_sha256": "f6edb2e4ed598a4c8eab219a4f23ff4f5dc72b78a770000ddfa0b49c186613b1"
+    },
+    {
+      "file": "training/prepare_speech.py",
+      "original_file": "ASR2/clean_data.py",
+      "original_sha256": "a59cd09e661c6551be1eabf677078fa1e37fbafacb0f422ce847431bd7bf4bbe"
+    },
+    {
+      "file": "training/entity_labels.py",
+      "original_file": "NLP/prepare_ner_mlm.py",
+      "original_sha256": "267d560408c49df26665859502c6a3b310e486473670a3cd6d514fceea42736c"
+    },
+    {
+      "file": "evaluation/reference_labels.py",
+      "original_file": "NLP/bert_analyzer_testset_tf.py",
+      "original_sha256": "d4dfe179a93c060fc3ad98a9a893894cc031007869ceb03762b3a071d3153174"
+    },
+    {
+      "file": "evaluation/historical_normalization.py",
+      "original_file": "ASR2/tchr_inference.py",
+      "original_sha256": "b3d29d445fbb4e1a276201ed40e515a8c9f5f6a3033a483211da4afa146d9360"
+    }
+  ],
+  "archived_experiments": [
+    {
+      "file": "experiments/asr/01_data_preparation/prepare_atco2_segments.py",
+      "original_file": "ASR/Data_reduc.py",
+      "archived_sha256": "2b47ae0596d40e125004b585d569155f5a50fae5160c9a5abef4d08b55c27487",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/01_data_preparation/split_train_test.py",
+      "original_file": "ASR/划分训练集.py",
+      "archived_sha256": "3b2482dd1df0ee54165a0147f0047f0943abdcb71ee3ae491617e335a59399a1",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/01_data_preparation/extract_lid_english.py",
+      "original_file": "extract_english.py",
+      "archived_sha256": "3792c7e9c0d9411cd90f703657684a467fcb86ccf649609d2ac389d38bf0063a",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/02_whisper_small_full_finetune/train_small_500_steps.py",
+      "original_file": "ASR/train_atc.py",
+      "archived_sha256": "5ffed519f2860ab6f33b70b2bf57c8a4591d309fe472dbba1516db46aa5bb90f",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/02_whisper_small_full_finetune/train_small_2500_steps_cosine.py",
+      "original_file": "ASR/train_atc_v4_test.py",
+      "archived_sha256": "7a54a55ed0bfe056c05c1985e5a52d937f4ef77bc2f5f9ddf4653f8d22d3d8c3",
+      "paths_scrubbed": 1
+    },
+    {
+      "file": "experiments/asr/02_whisper_small_full_finetune/train_small_raw_plus_augmented_3_epochs.py",
+      "original_file": "ASR/train_asr_mixed_v5.py",
+      "archived_sha256": "2ce44402f4655e88c879fac674ab73e747f8496b8a289b99506d18fd30bfcf6a",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/02_whisper_small_full_finetune/eval_greedy_plain_normalisation.py",
+      "original_file": "ASR2/quick_test.py",
+      "archived_sha256": "e32abf5aa43f0ee2c33f05d70bc299097798f6532b40b638c56f5d0f3b596559",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/03_whisper_large_lora/train_large_v3_lora_v1.py",
+      "original_file": "ASR/train_atc_improve.py",
+      "archived_sha256": "2310c516cd741057e57e1230d9332b49f5cc6e49094ec03cb02ad83abec51c15",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/03_whisper_large_lora/train_large_v3_lora_v17_cleaned_labels.py",
+      "original_file": "ASR/train_atc_v17.py",
+      "archived_sha256": "335656f6e76b590c3a4e3ff62eebaddcf6b81ce49e699b939d76ecaa7c622966",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/03_whisper_large_lora/train_large_v3_lora_v18_augmented.py",
+      "original_file": "ASR/train_atc_augment.py",
+      "archived_sha256": "fed81da156156886f5dd9cd88650b6b7b8898a929c48ba696c173f6993dd2628",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/03_whisper_large_lora/train_small_lora_8bit.py",
+      "original_file": "ASR/80%train.py",
+      "archived_sha256": "5fc5b754aa84448edc11d376f328b31799e3662ff167e60d17706f49801b5501",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/03_whisper_large_lora/make_noisy_and_fast_test_sets.py",
+      "original_file": "ASR/augment_test_robustness.py",
+      "archived_sha256": "1e40f3631e3acb0c25860b2c81332bb0e5f3d22ed6164e5f0ddc4bd6419c4bd6",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/03_whisper_large_lora/eval_large_lora_clean_noisy_fast.py",
+      "original_file": "ASR/evaluate_all.py",
+      "archived_sha256": "62f0c634af8bda97dbf80575bf8801319f75a321124e7b81ceb053f80d7c6f6f",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/04_augmentation_and_synthetic_speech/augment_noise_and_speed.py",
+      "original_file": "ASR/augment_data.py",
+      "archived_sha256": "a19ce69f8ac227b1d8dc2e8711d45f80898eae885a14758a89f27ca93df26b36",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/04_augmentation_and_synthetic_speech/synthesize_atc_sentences_with_tts.py",
+      "original_file": "ASR/augment_grammar.py",
+      "archived_sha256": "70c39bd45287f10931cef22fa78e57c9e45f1c1f0076f6c000d6c91ce0e50574",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/04_augmentation_and_synthetic_speech/simulate_radio_channel.py",
+      "original_file": "ASR/make_it_real.py",
+      "archived_sha256": "1625725350ac8b87180ef105cf21cd0ce827c6884be25d1f7fa6c9af8caf1843",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/04_augmentation_and_synthetic_speech/train_frozen_encoder_real_aug_tts.py",
+      "original_file": "ASR/train_atc_augment_v2.py",
+      "archived_sha256": "8b54ce0cfc1e5a2b55478d003ddb913b61f6cfec45a014f102c0be005b401707",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/04_augmentation_and_synthetic_speech/train_frozen_encoder_plus_hard_word_tts.py",
+      "original_file": "ASR/train_atc_augment_v3.py",
+      "archived_sha256": "627fc8db36b953c79491067076a848757171bfc9fd4805a34e5b4bca5fcc7e70",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/04_augmentation_and_synthetic_speech/train_frozen_encoder_plus_vocab_tts.py",
+      "original_file": "ASR/train_atc_with_vocab.py",
+      "archived_sha256": "4f4dda24d8011455568ed6e055056dd6251d3ab0ba4f34cbb722a68c27231640",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/05_three_round_training/train_round1_raw.py",
+      "original_file": "ASR/train_finale_v2.py",
+      "archived_sha256": "6ea715382ac8d0a88e926c460e9d698d296c241134f0964ba82dc49d90b0ef1d",
+      "paths_scrubbed": 1
+    },
+    {
+      "file": "experiments/asr/05_three_round_training/train_round2_augmented.py",
+      "original_file": "ASR/train_finale_v2_round2.py",
+      "archived_sha256": "a5ee47ce6b24cd5a91adb4a66ec3d4706a5a0a6e532430c3d9c968e052597a29",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/05_three_round_training/train_round3_tts_radio_mixed.py",
+      "original_file": "ASR/train_finale_v2_round3_gan.py",
+      "archived_sha256": "15523bcd5de3d32c5153357f0f7b3fa0265ab7b63a68944ae88bdca1035ec48e",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/06_decoding_and_prompts/build_vocab_master.py",
+      "original_file": "ASR/build_master_vocab.py",
+      "archived_sha256": "88a9f07e198280bc570b5fcc843a880cfdb6255b936189ac2bbb0ecf70940661",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/06_decoding_and_prompts/eval_vocab_prompt.py",
+      "original_file": "ASR/eval_vocab_constrained.py",
+      "archived_sha256": "7bd7a303204a9bb6386b2008ecd71ee9fbb31665f311036525c1167704de71e5",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/06_decoding_and_prompts/eval_structured_prompt.py",
+      "original_file": "ASR/v2_raw_inference_v2.py",
+      "archived_sha256": "ff8583f15a48dd9eebe39611e685bc2ffaf5ac35446b7951bb46809af4eec73e",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/06_decoding_and_prompts/eval_round2_prompt_beam15.py",
+      "original_file": "ASR/1.py",
+      "archived_sha256": "f6bd10fe4a85508f794ff6062d66bbbeaa518e71d8f101c75659fbb1287f0a57",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/06_decoding_and_prompts/eval_small_lora_tuned_decoding.py",
+      "original_file": "ASR/eval_vocab_optimized.py",
+      "archived_sha256": "41da672af97773034b214a01b09b1d236b24a11048c5a1a03aa5c4199b0c006b",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/06_decoding_and_prompts/eval_vad_trim_and_prompt.py",
+      "original_file": "ASR/eval_advanced.py",
+      "archived_sha256": "8a24e9fe1b7e0f0ffc04602a753af44760ef2c422e78ee3b62fdd19915262c64",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/06_decoding_and_prompts/eval_llm_correction_deepseek.py",
+      "original_file": "ASR/v2_raw_inference_with_deepseek.py",
+      "archived_sha256": "d0136c68c6b0b02fec078c0b458c72d8d37a0098c02a4d475837998c5a3dca5b",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/07_scoring_variants/eval_raw_vs_cleaned_wer.py",
+      "original_file": "ASR/eval_normalizer.py",
+      "archived_sha256": "1bda9db580b492277478b3984dbca340c58a7e01b1941073e1cc218a21e55253",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/07_scoring_variants/eval_excluding_hard_words.py",
+      "original_file": "ASR/test_exclusion.py",
+      "archived_sha256": "0c03819529cf3c0eff49b98509de4322e3b8350d34ec64ea8375f5b04477f339",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/asr/07_scoring_variants/eval_beam_with_error_mappings.py",
+      "original_file": "ASR2/inference.py",
+      "archived_sha256": "9c258b2f223813831f2ff3e3a5213c115446aa243654508ae3d9db1f8af6a53b",
+      "paths_scrubbed": 1
+    },
+    {
+      "file": "experiments/nlp/01_data_and_rule_labels/merge_clips_into_sessions.py",
+      "original_file": "NLP/merge.py",
+      "archived_sha256": "883db1431c7a87c6a3bbcc04cfbbb50b9a60f7eefd026cfde9594a3c58c9467e",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/nlp/01_data_and_rule_labels/split_sessions_train_test.py",
+      "original_file": "NLP/split_dataset_raw.py",
+      "archived_sha256": "25502a20cd45b60d17c2fff0bdf008c0f56b6f8f92c9ffad5a3c00305c478bee",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/nlp/01_data_and_rule_labels/build_mlm_corpus.py",
+      "original_file": "NLP/atc_corpus.py",
+      "archived_sha256": "de336a5398e5f11a0be29835bc3b656009deeff9837ccbb22b949f85b0c08f19",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/nlp/01_data_and_rule_labels/label_entities_rules_v1.py",
+      "original_file": "NLP/prepare_ner_data_strict.py",
+      "archived_sha256": "a970dd83ed5f3043ad704724b92997247237335cb16814e43a9d168a66ad1799",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/nlp/02_ner_training/train_distilbert_ner_tensorflow.py",
+      "original_file": "NLP/train_bert_ner_tf.py",
+      "archived_sha256": "03c36b252ca0ca707be97cfa6be4d6e0c8480047e3f4d3d06508aa39a6df160a",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/nlp/02_ner_training/probe_mlm_fill_mask.py",
+      "original_file": "NLP/test_bert_mlm.py",
+      "archived_sha256": "f8a738c541a254329ff8e9753c994a3a6fe33d26bbe0526f34611f676d5c9cce",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/nlp/03_ner_evaluation/eval_bert_word_level.py",
+      "original_file": "NLP/evaluate bert finetuned.py",
+      "archived_sha256": "bf14b7785ef6f010c95e62343f63412d1d32656d1f5fb93102caa62d4bbc2363",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/nlp/03_ner_evaluation/eval_bert_token_level_first_attempt.py",
+      "original_file": "NLP/atc inference.py",
+      "archived_sha256": "4555e7da932d36cd48d2497c92b6ec8e697407637a134ab23ebc90b57b97520c",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/nlp/03_ner_evaluation/eval_distilbert_with_rule_patch.py",
+      "original_file": "NLP/bert_analyzer_testset.py",
+      "archived_sha256": "4a3ce395b9e8fe5fd731cbcec8c86325065651392b599dc4bddeceb9d94a76de",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/nlp/03_ner_evaluation/eval_distilbert_with_rule_patch_v3.py",
+      "original_file": "NLP/bert_analyzer_testset_tf.py",
+      "archived_sha256": "53ac7e3ecb647c2235ec868c79fef46f22269ad15aa3c49c492d00bc9e9cd87c",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/nlp/03_ner_evaluation/eval_distilbert_exact_span.py",
+      "original_file": "NLP/test_bert_prediction.py",
+      "archived_sha256": "ddbc544839db69862c1854b903a36212c7f14032c95ac698742fd3792c3d37c8",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/nlp/03_ner_evaluation/smoke_test_five_handwritten_sentences.py",
+      "original_file": "NLP/test bert.py",
+      "archived_sha256": "eabcbd2c239df3292cda09efe4bdf1696cffe2dc823af95f3359311563e5c21f",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/nlp/03_ner_evaluation/demo_entities_to_intent.py",
+      "original_file": "NLP/test_bert_full.py",
+      "archived_sha256": "9e3072e43570c880882ec3ebda366395424843e22b1141e39adcda504406689d",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/nlp/03_ner_evaluation/interactive_tagger_with_range_checks.py",
+      "original_file": "NLP/nlp_12_inference_full_guard.py",
+      "archived_sha256": "3f25ed200e95e2dcbb5893b6b605478b538fc0cf581bc93c29caeb80ca909155",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/nlp/04_small_llm_comparison/eval_phi3_mini_few_shot.py",
+      "original_file": "NLP/evaluate_phi3.py",
+      "archived_sha256": "28872809ee184be0a501341a0b64f1965cd5ac6105f4c4bd0d187fa44dcaff5b",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/nlp/04_small_llm_comparison/eval_qwen25_3b_few_shot.py",
+      "original_file": "NLP/evaluate_qwen.py",
+      "archived_sha256": "0e0636a4bf410e78eff1adc805ad02da9026450aef933555b5d10d12a5d827bc",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/nlp/05_speaker_role_and_wav2vec2/train_bert_speaker_role.py",
+      "original_file": "NLP/comparison_train_bert_srd.py",
+      "archived_sha256": "2656b11432d1b64322482a21b1a8c79c4ab922e1f49a080ffbe256996ac619fb",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/nlp/05_speaker_role_and_wav2vec2/train_wav2vec2_ctc_baseline.py",
+      "original_file": "NLP/comparison_train_pure_asr.py",
+      "archived_sha256": "977d915c8d28734bea62fc7361c403a7d72a26b543f39e9791195d3025096695",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/nlp/05_speaker_role_and_wav2vec2/eval_wav2vec2_wer.py",
+      "original_file": "NLP/test_asr_comparison.py",
+      "archived_sha256": "317569bd5c173a7d6e6595f590d7ab279b4ee96d0318b55de261ae39fcffa2fe",
+      "paths_scrubbed": 0
+    },
+    {
+      "file": "experiments/nlp/05_speaker_role_and_wav2vec2/eval_asr_then_speaker_role.py",
+      "original_file": "NLP/test_asr_srd.py",
+      "archived_sha256": "cdab36a78f970c5daa94200bcd71a0e4db321dd7341d166c9f7977d19c202b5f",
+      "paths_scrubbed": 0
+    }
+  ]
+}

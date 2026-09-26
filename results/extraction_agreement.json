@@ -1,0 +1,303 @@
+{
+  "tagger": "distilbert",
+  "method": "DistilBERT run on the reference and on each model's transcript; extracted (field, words) pairs compared per clip. Text lower-cased, digits spelled out, punctuation removed.",
+  "models": {
+    "zero_shot": {
+      "decoding": "beam",
+      "clips": 74,
+      "all_fields_identical": 0,
+      "callsign": {
+        "reference_items": 71,
+        "recall": 0.0563,
+        "precision": 0.1538,
+        "clips_with_field": 59,
+        "clips_where_it_matches": 3
+      },
+      "command": {
+        "reference_items": 104,
+        "recall": 0.5192,
+        "precision": 0.7941,
+        "clips_with_field": 56,
+        "clips_where_it_matches": 19
+      },
+      "value": {
+        "reference_items": 103,
+        "recall": 0.3981,
+        "precision": 0.3628,
+        "clips_with_field": 58,
+        "clips_where_it_matches": 11
+      },
+      "waypoint": {
+        "reference_items": 314,
+        "recall": 0.4586,
+        "precision": 0.2939,
+        "clips_with_field": 70,
+        "clips_where_it_matches": 0
+      },
+      "missed_callsigns": {
+        "count": 67,
+        "starting_with_a_word_never_in_training": 0
+      }
+    },
+    "checkpoint_2025": {
+      "decoding": "beam",
+      "clips": 74,
+      "all_fields_identical": 20,
+      "callsign": {
+        "reference_items": 71,
+        "recall": 0.6056,
+        "precision": 0.5733,
+        "clips_with_field": 59,
+        "clips_where_it_matches": 33
+      },
+      "command": {
+        "reference_items": 104,
+        "recall": 0.875,
+        "precision": 0.8585,
+        "clips_with_field": 56,
+        "clips_where_it_matches": 37
+      },
+      "value": {
+        "reference_items": 103,
+        "recall": 0.7864,
+        "precision": 0.7364,
+        "clips_with_field": 58,
+        "clips_where_it_matches": 35
+      },
+      "waypoint": {
+        "reference_items": 314,
+        "recall": 0.7038,
+        "precision": 0.7391,
+        "clips_with_field": 70,
+        "clips_where_it_matches": 24
+      },
+      "missed_callsigns": {
+        "count": 28,
+        "starting_with_a_word_never_in_training": 0
+      }
+    },
+    "fixed": {
+      "decoding": "beam",
+      "clips": 74,
+      "all_fields_identical": 17,
+      "callsign": {
+        "reference_items": 71,
+        "recall": 0.5634,
+        "precision": 0.5479,
+        "clips_with_field": 59,
+        "clips_where_it_matches": 29
+      },
+      "command": {
+        "reference_items": 104,
+        "recall": 0.875,
+        "precision": 0.8667,
+        "clips_with_field": 56,
+        "clips_where_it_matches": 40
+      },
+      "value": {
+        "reference_items": 103,
+        "recall": 0.7864,
+        "precision": 0.7714,
+        "clips_with_field": 58,
+        "clips_where_it_matches": 35
+      },
+      "waypoint": {
+        "reference_items": 314,
+        "recall": 0.7006,
+        "precision": 0.7166,
+        "clips_with_field": 70,
+        "clips_where_it_matches": 21
+      },
+      "missed_callsigns": {
+        "count": 31,
+        "starting_with_a_word_never_in_training": 0
+      }
+    },
+    "synthetic": {
+      "decoding": "beam",
+      "clips": 74,
+      "all_fields_identical": 18,
+      "callsign": {
+        "reference_items": 71,
+        "recall": 0.6056,
+        "precision": 0.6615,
+        "clips_with_field": 59,
+        "clips_where_it_matches": 34
+      },
+      "command": {
+        "reference_items": 104,
+        "recall": 0.8846,
+        "precision": 0.8679,
+        "clips_with_field": 56,
+        "clips_where_it_matches": 40
+      },
+      "value": {
+        "reference_items": 103,
+        "recall": 0.7961,
+        "precision": 0.7593,
+        "clips_with_field": 58,
+        "clips_where_it_matches": 35
+      },
+      "waypoint": {
+        "reference_items": 314,
+        "recall": 0.707,
+        "precision": 0.6873,
+        "clips_with_field": 70,
+        "clips_where_it_matches": 21
+      },
+      "missed_callsigns": {
+        "count": 28,
+        "starting_with_a_word_never_in_training": 0
+      }
+    },
+    "real_data": {
+      "decoding": "beam",
+      "clips": 74,
+      "all_fields_identical": 19,
+      "callsign": {
+        "reference_items": 71,
+        "recall": 0.6479,
+        "precision": 0.6479,
+        "clips_with_field": 59,
+        "clips_where_it_matches": 34
+      },
+      "command": {
+        "reference_items": 104,
+        "recall": 0.9135,
+        "precision": 0.8636,
+        "clips_with_field": 56,
+        "clips_where_it_matches": 41
+      },
+      "value": {
+        "reference_items": 103,
+        "recall": 0.8641,
+        "precision": 0.8091,
+        "clips_with_field": 58,
+        "clips_where_it_matches": 39
+      },
+      "waypoint": {
+        "reference_items": 314,
+        "recall": 0.7357,
+        "precision": 0.7624,
+        "clips_with_field": 70,
+        "clips_where_it_matches": 23
+      },
+      "missed_callsigns": {
+        "count": 25,
+        "starting_with_a_word_never_in_training": 0
+      }
+    },
+    "soup_fixed_real": {
+      "decoding": "beamplain",
+      "clips": 74,
+      "all_fields_identical": 20,
+      "callsign": {
+        "reference_items": 71,
+        "recall": 0.5775,
+        "precision": 0.6212,
+        "clips_with_field": 59,
+        "clips_where_it_matches": 32
+      },
+      "command": {
+        "reference_items": 104,
+        "recall": 0.9231,
+        "precision": 0.9412,
+        "clips_with_field": 56,
+        "clips_where_it_matches": 47
+      },
+      "value": {
+        "reference_items": 103,
+        "recall": 0.8447,
+        "precision": 0.8056,
+        "clips_with_field": 58,
+        "clips_where_it_matches": 40
+      },
+      "waypoint": {
+        "reference_items": 314,
+        "recall": 0.7389,
+        "precision": 0.7532,
+        "clips_with_field": 70,
+        "clips_where_it_matches": 23
+      },
+      "missed_callsigns": {
+        "count": 30,
+        "starting_with_a_word_never_in_training": 0
+      }
+    },
+    "medium_real": {
+      "decoding": "beam",
+      "clips": 74,
+      "all_fields_identical": 23,
+      "callsign": {
+        "reference_items": 71,
+        "recall": 0.6338,
+        "precision": 0.6522,
+        "clips_with_field": 59,
+        "clips_where_it_matches": 36
+      },
+      "command": {
+        "reference_items": 104,
+        "recall": 0.9423,
+        "precision": 0.875,
+        "clips_with_field": 56,
+        "clips_where_it_matches": 44
+      },
+      "value": {
+        "reference_items": 103,
+        "recall": 0.8544,
+        "precision": 0.8,
+        "clips_with_field": 58,
+        "clips_where_it_matches": 40
+      },
+      "waypoint": {
+        "reference_items": 314,
+        "recall": 0.7516,
+        "precision": 0.7789,
+        "clips_with_field": 70,
+        "clips_where_it_matches": 26
+      },
+      "missed_callsigns": {
+        "count": 26,
+        "starting_with_a_word_never_in_training": 0
+      }
+    },
+    "soup_medium": {
+      "decoding": "beam",
+      "clips": 74,
+      "all_fields_identical": 22,
+      "callsign": {
+        "reference_items": 71,
+        "recall": 0.6197,
+        "precision": 0.6286,
+        "clips_with_field": 59,
+        "clips_where_it_matches": 35
+      },
+      "command": {
+        "reference_items": 104,
+        "recall": 0.9135,
+        "precision": 0.8796,
+        "clips_with_field": 56,
+        "clips_where_it_matches": 44
+      },
+      "value": {
+        "reference_items": 103,
+        "recall": 0.8447,
+        "precision": 0.8365,
+        "clips_with_field": 58,
+        "clips_where_it_matches": 41
+      },
+      "waypoint": {
+        "reference_items": 314,
+        "recall": 0.7739,
+        "precision": 0.7915,
+        "clips_with_field": 70,
+        "clips_where_it_matches": 29
+      },
+      "missed_callsigns": {
+        "count": 27,
+        "starting_with_a_word_never_in_training": 0
+      }
+    }
+  },
+  "clips": "the 74 unseen-recording test clips"
+}

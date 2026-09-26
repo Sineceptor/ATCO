@@ -1,0 +1,13 @@
+Accuracy: 0.9540
+
+              precision    recall  f1-score   support
+
+           O     0.8394    0.9746    0.9020       118
+    CALLSIGN     0.9707    0.9627    0.9667       241
+     COMMAND     1.0000    0.9580    0.9785       119
+       VALUE     0.9750    0.9820    0.9785       278
+    WAYPOINT     0.9567    0.9020    0.9286       245
+
+    accuracy                         0.9540      1001
+   macro avg     0.9484    0.9559    0.9508      1001
+weighted avg     0.9565    0.9540    0.9544      1001

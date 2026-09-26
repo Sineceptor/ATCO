@@ -1,0 +1,5 @@
+# Install alongside the main requirements to rerun historical metrics.
+jiwer==4.0.0
+scikit-learn==1.9.1
+tensorflow==2.20.0
+tf-keras==2.20.1

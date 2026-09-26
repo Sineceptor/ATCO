@@ -1,0 +1,702 @@
+{
+  "split": {
+    "train": "the 699 clips the 2025 model was trained on",
+    "validation": "the 101 old test clips from recordings that also gave training clips; used to choose checkpoints and decoding",
+    "test": "the 74 old test clips from recordings that no model was trained on; never used for a choice"
+  },
+  "normalisation": "uppercase, punctuation removed, digits spelled out",
+  "interval_method": "95% interval from 10,000 resamples of whole clips; differences are paired",
+  "runs": {
+    "zero_shot": {
+      "description": "Unmodified openai/whisper-small, no fine-tuning",
+      "validation": {
+        "greedy": {
+          "wer": 0.6573,
+          "word_errors": 752,
+          "reference_words": 1144
+        },
+        "beam": {
+          "wer": 0.6381,
+          "word_errors": 730,
+          "reference_words": 1144
+        }
+      },
+      "test": {
+        "greedy": {
+          "wer": 0.5847,
+          "word_errors": 549,
+          "reference_words": 939
+        },
+        "beam": {
+          "wer": 0.5687,
+          "word_errors": 534,
+          "reference_words": 939
+        }
+      },
+      "decoding_chosen_on_validation": "beam",
+      "headline_test": {
+        "decoding": "beam",
+        "wer": 0.5687,
+        "interval_95": [
+          0.4953,
+          0.6481
+        ]
+      }
+    },
+    "checkpoint_2025": {
+      "description": "The 2025 checkpoint used by the app, unchanged",
+      "validation": {
+        "greedy": {
+          "wer": 0.222,
+          "word_errors": 254,
+          "reference_words": 1144
+        },
+        "beam": {
+          "wer": 0.2168,
+          "word_errors": 248,
+          "reference_words": 1144
+        },
+        "beamplain": {
+          "wer": 0.3182,
+          "word_errors": 364,
+          "reference_words": 1144
+        }
+      },
+      "test": {
+        "greedy": {
+          "wer": 0.1928,
+          "word_errors": 181,
+          "reference_words": 939
+        },
+        "beam": {
+          "wer": 0.1864,
+          "word_errors": 175,
+          "reference_words": 939
+        },
+        "beamplain": {
+          "wer": 0.1842,
+          "word_errors": 173,
+          "reference_words": 939
+        }
+      },
+      "decoding_chosen_on_validation": "beam",
+      "headline_test": {
+        "decoding": "beam",
+        "wer": 0.1864,
+        "interval_95": [
+          0.1444,
+          0.2319
+        ]
+      }
+    },
+    "fixed": {
+      "description": "Start-token fix, validation-based checkpoint choice, SpecAugment; real clips only",
+      "training": {
+        "epochs_run": 12,
+        "best_epoch": 9,
+        "extra_clips_per_epoch": 0,
+        "learning_rate": 1e-05,
+        "effective_batch": 16,
+        "validation_wer_by_epoch": [
+          0.3951,
+          0.3322,
+          0.2684,
+          0.2771,
+          0.2526,
+          0.2509,
+          0.257,
+          0.236,
+          0.2203,
+          0.2351,
+          0.236,
+          0.2343
+        ]
+      },
+      "validation": {
+        "greedy": {
+          "wer": 0.2736,
+          "word_errors": 313,
+          "reference_words": 1144
+        },
+        "beam": {
+          "wer": 0.2002,
+          "word_errors": 229,
+          "reference_words": 1144
+        },
+        "beamplain": {
+          "wer": 0.2509,
+          "word_errors": 287,
+          "reference_words": 1144
+        }
+      },
+      "test": {
+        "greedy": {
+          "wer": 0.2652,
+          "word_errors": 249,
+          "reference_words": 939
+        },
+        "beam": {
+          "wer": 0.1928,
+          "word_errors": 181,
+          "reference_words": 939
+        },
+        "beamplain": {
+          "wer": 0.1938,
+          "word_errors": 182,
+          "reference_words": 939
+        }
+      },
+      "decoding_chosen_on_validation": "beam",
+      "headline_test": {
+        "decoding": "beam",
+        "wer": 0.1928,
+        "interval_95": [
+          0.1537,
+          0.2335
+        ],
+        "change_from_2025_points": 0.64,
+        "change_interval_95_points": [
+          -2.13,
+          3.39
+        ],
+        "share_of_resamples_better": 0.3001
+      }
+    },
+    "synthetic": {
+      "description": "As fixed, plus 700 of my synthetic radio clips mixed in each epoch",
+      "training": {
+        "epochs_run": 8,
+        "best_epoch": 7,
+        "extra_clips_per_epoch": 700,
+        "learning_rate": 1e-05,
+        "effective_batch": 16,
+        "validation_wer_by_epoch": [
+          0.3418,
+          0.2955,
+          0.2797,
+          0.2622,
+          0.2552,
+          0.2535,
+          0.243,
+          0.243
+        ]
+      },
+      "validation": {
+        "greedy": {
+          "wer": 0.2465,
+          "word_errors": 282,
+          "reference_words": 1144
+        },
+        "beam": {
+          "wer": 0.2308,
+          "word_errors": 264,
+          "reference_words": 1144
+        },
+        "beamplain": {
+          "wer": 0.2343,
+          "word_errors": 268,
+          "reference_words": 1144
+        }
+      },
+      "test": {
+        "greedy": {
+          "wer": 0.2151,
+          "word_errors": 202,
+          "reference_words": 939
+        },
+        "beam": {
+          "wer": 0.2034,
+          "word_errors": 191,
+          "reference_words": 939
+        },
+        "beamplain": {
+          "wer": 0.2013,
+          "word_errors": 189,
+          "reference_words": 939
+        }
+      },
+      "decoding_chosen_on_validation": "beam",
+      "headline_test": {
+        "decoding": "beam",
+        "wer": 0.2034,
+        "interval_95": [
+          0.1605,
+          0.25
+        ],
+        "change_from_2025_points": 1.7,
+        "change_interval_95_points": [
+          -1.29,
+          4.87
+        ],
+        "share_of_resamples_better": 0.1265
+      }
+    },
+    "real_data": {
+      "description": "As fixed, plus 1,400 clips per epoch of real ATC speech from UWB-ATCC (10.5 hours, Czech airspace)",
+      "training": {
+        "epochs_run": 8,
+        "best_epoch": 8,
+        "extra_clips_per_epoch": 1400,
+        "learning_rate": 1e-05,
+        "effective_batch": 16,
+        "validation_wer_by_epoch": [
+          0.3278,
+          0.2911,
+          0.278,
+          0.271,
+          0.2343,
+          0.2448,
+          0.2308,
+          0.2247
+        ]
+      },
+      "validation": {
+        "greedy": {
+          "wer": 0.2203,
+          "word_errors": 252,
+          "reference_words": 1144
+        },
+        "beam": {
+          "wer": 0.2168,
+          "word_errors": 248,
+          "reference_words": 1144
+        },
+        "beamplain": {
+          "wer": 0.2657,
+          "word_errors": 304,
+          "reference_words": 1144
+        }
+      },
+      "test": {
+        "greedy": {
+          "wer": 0.1938,
+          "word_errors": 182,
+          "reference_words": 939
+        },
+        "beam": {
+          "wer": 0.1821,
+          "word_errors": 171,
+          "reference_words": 939
+        },
+        "beamplain": {
+          "wer": 0.18,
+          "word_errors": 169,
+          "reference_words": 939
+        }
+      },
+      "decoding_chosen_on_validation": "beam",
+      "headline_test": {
+        "decoding": "beam",
+        "wer": 0.1821,
+        "interval_95": [
+          0.1378,
+          0.2348
+        ],
+        "change_from_2025_points": -0.43,
+        "change_interval_95_points": [
+          -3.13,
+          2.42
+        ],
+        "share_of_resamples_better": 0.6048
+      }
+    },
+    "soup_fixed_real": {
+      "description": "Weight average of the fixed and real_data models (a model soup)",
+      "validation": {
+        "greedy": {
+          "wer": 0.2413,
+          "word_errors": 276,
+          "reference_words": 1144
+        },
+        "beam": {
+          "wer": 0.1783,
+          "word_errors": 204,
+          "reference_words": 1144
+        },
+        "beamplain": {
+          "wer": 0.1766,
+          "word_errors": 202,
+          "reference_words": 1144
+        }
+      },
+      "test": {
+        "greedy": {
+          "wer": 0.1896,
+          "word_errors": 178,
+          "reference_words": 939
+        },
+        "beam": {
+          "wer": 0.1693,
+          "word_errors": 159,
+          "reference_words": 939
+        },
+        "beamplain": {
+          "wer": 0.1672,
+          "word_errors": 157,
+          "reference_words": 939
+        }
+      },
+      "decoding_chosen_on_validation": "beamplain",
+      "headline_test": {
+        "decoding": "beamplain",
+        "wer": 0.1672,
+        "interval_95": [
+          0.13,
+          0.2068
+        ],
+        "change_from_2025_points": -1.92,
+        "change_interval_95_points": [
+          -4.54,
+          0.75
+        ],
+        "share_of_resamples_better": 0.917
+      }
+    },
+    "medium_real": {
+      "description": "Whisper-medium with LoRA adapters (rank 32), real clips plus 1,000 UWB-ATCC clips per epoch",
+      "training": {
+        "epochs_run": 6,
+        "best_epoch": 6,
+        "extra_clips_per_epoch": 1000,
+        "learning_rate": 0.0005,
+        "effective_batch": 16,
+        "validation_wer_by_epoch": [
+          0.2902,
+          0.2351,
+          0.2299,
+          0.2107,
+          0.2019,
+          0.1792
+        ]
+      },
+      "validation": {
+        "greedy": {
+          "wer": 0.1757,
+          "word_errors": 201,
+          "reference_words": 1144
+        },
+        "beam": {
+          "wer": 0.1661,
+          "word_errors": 190,
+          "reference_words": 1144
+        },
+        "beamplain": {
+          "wer": 0.1661,
+          "word_errors": 190,
+          "reference_words": 1144
+        }
+      },
+      "test": {
+        "greedy": {
+          "wer": 0.1555,
+          "word_errors": 146,
+          "reference_words": 939
+        },
+        "beam": {
+          "wer": 0.1523,
+          "word_errors": 143,
+          "reference_words": 939
+        },
+        "beamplain": {
+          "wer": 0.1555,
+          "word_errors": 146,
+          "reference_words": 939
+        }
+      },
+      "decoding_chosen_on_validation": "beam",
+      "headline_test": {
+        "decoding": "beam",
+        "wer": 0.1523,
+        "interval_95": [
+          0.1169,
+          0.1913
+        ],
+        "change_from_2025_points": -3.41,
+        "change_interval_95_points": [
+          -5.77,
+          -1.08
+        ],
+        "share_of_resamples_better": 0.9975
+      }
+    },
+    "soup_medium": {
+      "description": "Weight average of medium_real and the ATCO2-only Whisper-medium",
+      "validation": {
+        "greedy": {
+          "wer": 0.1538,
+          "word_errors": 176,
+          "reference_words": 1144
+        },
+        "beam": {
+          "wer": 0.1486,
+          "word_errors": 170,
+          "reference_words": 1144
+        },
+        "beamplain": {
+          "wer": 0.1503,
+          "word_errors": 172,
+          "reference_words": 1144
+        }
+      },
+      "test": {
+        "greedy": {
+          "wer": 0.1406,
+          "word_errors": 132,
+          "reference_words": 939
+        },
+        "beam": {
+          "wer": 0.1438,
+          "word_errors": 135,
+          "reference_words": 939
+        },
+        "beamplain": {
+          "wer": 0.1427,
+          "word_errors": 134,
+          "reference_words": 939
+        }
+      },
+      "decoding_chosen_on_validation": "beam",
+      "headline_test": {
+        "decoding": "beam",
+        "wer": 0.1438,
+        "interval_95": [
+          0.1095,
+          0.1817
+        ],
+        "change_from_2025_points": -4.26,
+        "change_interval_95_points": [
+          -6.61,
+          -1.96
+        ],
+        "share_of_resamples_better": 0.9998
+      }
+    }
+  },
+  "chosen_on_validation": "soup_medium",
+  "ablations": {
+    "medium_atco2_only": {
+      "description": "Whisper-medium with LoRA adapters (rank 32) on the ATCO2 clips only, to separate model size from the extra UWB-ATCC speech",
+      "training": {
+        "epochs_run": 5,
+        "best_epoch": 5,
+        "extra_clips_per_epoch": 0,
+        "learning_rate": 0.0005,
+        "effective_batch": 16,
+        "validation_wer_by_epoch": [
+          0.2876,
+          0.2421,
+          0.236,
+          0.208,
+          0.2045
+        ]
+      },
+      "validation": {
+        "greedy": {
+          "wer": 0.2002,
+          "word_errors": 229,
+          "reference_words": 1144
+        },
+        "beam": {
+          "wer": 0.1766,
+          "word_errors": 202,
+          "reference_words": 1144
+        },
+        "beamplain": {
+          "wer": 0.1766,
+          "word_errors": 202,
+          "reference_words": 1144
+        }
+      },
+      "test": {
+        "greedy": {
+          "wer": 0.1661,
+          "word_errors": 156,
+          "reference_words": 939
+        },
+        "beam": {
+          "wer": 0.1565,
+          "word_errors": 147,
+          "reference_words": 939
+        },
+        "beamplain": {
+          "wer": 0.1555,
+          "word_errors": 146,
+          "reference_words": 939
+        }
+      },
+      "decoding_chosen_on_validation": "beam",
+      "headline_test": {
+        "decoding": "beam",
+        "wer": 0.1565,
+        "interval_95": [
+          0.1238,
+          0.1917
+        ],
+        "change_from_2025_points": -2.98,
+        "change_interval_95_points": [
+          -5.26,
+          -0.67
+        ],
+        "share_of_resamples_better": 0.9945
+      }
+    }
+  },
+  "noise_sweep": {
+    "clips": "the 74 unseen test clips",
+    "noise": "white Gaussian noise added at the stated signal-to-noise ratio",
+    "decoding": "greedy, English, max_new_tokens=128, repetition_penalty=1.2, no_repeat_ngram_size=3",
+    "retrained_model": "outputs/training/soup_medium/best",
+    "results": {
+      "zero_shot": [
+        {
+          "added_noise_snr_db": null,
+          "wer": 0.5879
+        },
+        {
+          "added_noise_snr_db": 30,
+          "wer": 0.5921
+        },
+        {
+          "added_noise_snr_db": 20,
+          "wer": 0.6219
+        },
+        {
+          "added_noise_snr_db": 15,
+          "wer": 0.6443
+        },
+        {
+          "added_noise_snr_db": 10,
+          "wer": 0.705
+        },
+        {
+          "added_noise_snr_db": 5,
+          "wer": 0.8051
+        },
+        {
+          "added_noise_snr_db": 0,
+          "wer": 0.9308
+        }
+      ],
+      "checkpoint_2025": [
+        {
+          "added_noise_snr_db": null,
+          "wer": 0.1981
+        },
+        {
+          "added_noise_snr_db": 30,
+          "wer": 0.2023
+        },
+        {
+          "added_noise_snr_db": 20,
+          "wer": 0.2215
+        },
+        {
+          "added_noise_snr_db": 15,
+          "wer": 0.2343
+        },
+        {
+          "added_noise_snr_db": 10,
+          "wer": 0.2801
+        },
+        {
+          "added_noise_snr_db": 5,
+          "wer": 0.3365
+        },
+        {
+          "added_noise_snr_db": 0,
+          "wer": 0.4803
+        }
+      ],
+      "retrained": [
+        {
+          "added_noise_snr_db": null,
+          "wer": 0.1544
+        },
+        {
+          "added_noise_snr_db": 30,
+          "wer": 0.1608
+        },
+        {
+          "added_noise_snr_db": 20,
+          "wer": 0.1629
+        },
+        {
+          "added_noise_snr_db": 15,
+          "wer": 0.1693
+        },
+        {
+          "added_noise_snr_db": 10,
+          "wer": 0.2087
+        },
+        {
+          "added_noise_snr_db": 5,
+          "wer": 0.2577
+        },
+        {
+          "added_noise_snr_db": 0,
+          "wer": 0.4026
+        }
+      ],
+      "zero_shot_bandpass": [
+        {
+          "added_noise_snr_db": null,
+          "wer": 0.558
+        },
+        {
+          "added_noise_snr_db": 30,
+          "wer": 0.5676
+        },
+        {
+          "added_noise_snr_db": 20,
+          "wer": 0.5985
+        },
+        {
+          "added_noise_snr_db": 15,
+          "wer": 0.64
+        },
+        {
+          "added_noise_snr_db": 10,
+          "wer": 0.6763
+        },
+        {
+          "added_noise_snr_db": 5,
+          "wer": 0.7859
+        },
+        {
+          "added_noise_snr_db": 0,
+          "wer": 0.9073
+        }
+      ],
+      "retrained_bandpass": [
+        {
+          "added_noise_snr_db": null,
+          "wer": 0.1693
+        },
+        {
+          "added_noise_snr_db": 30,
+          "wer": 0.1736
+        },
+        {
+          "added_noise_snr_db": 20,
+          "wer": 0.1693
+        },
+        {
+          "added_noise_snr_db": 15,
+          "wer": 0.1661
+        },
+        {
+          "added_noise_snr_db": 10,
+          "wer": 0.2066
+        },
+        {
+          "added_noise_snr_db": 5,
+          "wer": 0.2481
+        },
+        {
+          "added_noise_snr_db": 0,
+          "wer": 0.3642
+        }
+      ]
+    }
+  }
+}

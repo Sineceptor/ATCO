@@ -1,0 +1,24 @@
+{
+  "asr_train_rows": 699,
+  "asr_test_rows": 175,
+  "asr_duplicate_train_filenames": 0,
+  "asr_duplicate_test_filenames": 0,
+  "asr_shared_filenames": 0,
+  "asr_shared_sessions": 92,
+  "asr_test_sessions": 158,
+  "asr_test_clips_in_shared_sessions": 101,
+  "nlp_train_sessions": 504,
+  "nlp_test_sessions": 56,
+  "nlp_shared_sessions": 0,
+  "nlp_matching_test_sequences": 89,
+  "nlp_total_test_words": 1001,
+  "nlp_changed_collapsed_word_labels": 25,
+  "note": "ASR session IDs inferred by removing the final clip-number suffix. NER stored labels are used for DistilBERT; regenerated labels are used by the old TensorFlow BERT evaluator.",
+  "hashes": {
+    "speech/train.jsonl": "02ac302787ebc07a02eaea0ad328f1e260d4633b0e247c1e546382981b03f6a8",
+    "speech/test.jsonl": "516ca280b6d46392031686b9af66352c4fbaf72f88063381a4b53c91cf1d4f81",
+    "entities/raw/train.json": "b2fd49457e042474bfa59fc48aa2417a3c9b102921efd01f9576486a6a204df8",
+    "entities/raw/test.json": "1eb0612a64176115abf9906816ca1e226aeabdeab4a416323b53ace1860e3d87",
+    "entities/test.jsonl": "be3dc0619460e41c99cb6cec020b878414a8e4d3dc2f62417ce5aac6b20b89e3"
+  }
+}

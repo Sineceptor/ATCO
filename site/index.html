@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ATCO: a small speech model for air traffic control radio · Ethan Zhang</title>
+<meta name="description" content="A student research project by Ethan Zhang: a small speech model that transcribes air traffic control radio, the ideas he tried with one hour of real audio, and what he found when he audited his own results.">
+<meta name="author" content="Ethan Zhang">
+<meta name="theme-color" content="#F4F6F7">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ATCO: a small speech model for air traffic control radio">
+<meta property="og:description" content="Ethan Zhang's student research project: what he built, the ideas he tried with one hour of real audio, and what he found when he checked his own results.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&amp;family=Source+Sans+3:wght@400;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23285B73'/><path d='M7 22h18M9 17.5h14M11 13h10' stroke='%23F4F6F7' stroke-width='2.2' stroke-linecap='round'/></svg>">
+</head>
+<body>
+<!-- Every number on this page comes from a file in results/. The charts are drawn by
+     site/tools/build_charts.py, and site/tools/check_evidence.py fails if anything disagrees. -->
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="wrap site-header__inner">
+    <a class="mark" href="#top">ATCO</a>
+    <nav aria-label="Sections">
+      <a href="#built" data-covers="built">The call</a>
+      <a href="#data" data-covers="data">The data</a>
+      <a href="#audit" data-covers="audit results next">Results</a>
+      <a href="#credit" data-covers="credit">About</a>
+    </nav>
+    <a class="repo" href="https://github.com/Sineceptor/ATCO">Code</a>
+  </div>
+</header>
+
+<main id="main">
+
+<section id="top" class="hero">
+  <div class="wrap herogrid">
+    <div class="herocopy">
+      <p class="eyebrow">Ethan Zhang &middot; student research project &middot; 2025&ndash;26</p>
+      <h1>I could hear every word. I couldn&rsquo;t follow a sentence.</h1>
+      <p class="lede">That was me on a seaplane in the Maldives, listening to the pilots&rsquo; radio. So I
+        trained a small speech model to transcribe air traffic control, with one hour of real audio to
+        teach it, and then checked whether my own results held up.</p>
+      <p class="owns">In 2026 I went back over everything, found what was wrong with my own testing,
+        fixed it and retrained.</p>
+      <p class="resultline">On recordings it had never heard, my best model&rsquo;s word error rate is
+        <b>14.38%</b>. My 2025 model: <b>18.64%</b>. Whisper out of the box: <b>56.87%</b>.</p>
+      <p class="scopeline">699 real training clips &middot; 4,808 clips of generated speech &middot; about 30 experiments</p>
+      <p class="actions">
+        <a class="btn" href="#built">Watch one call go through it</a>
+        <a class="btn ghost" href="#results">See the results</a>
+        <a class="paperlink" href="https://github.com/Sineceptor/ATCO/blob/main/paper/atco_paper.pdf">Read the paper (PDF)</a>
+      </p>
+      <p class="warnline">Research prototype. Not for operational use.</p>
+    </div>
+
+    <figure class="heroev">
+      <p class="tag">Archived app output &middot; not live</p>
+      <div class="evcrop">
+        <img src="images/app-output.jpg" alt="Crop of a saved screenshot of the app: the transcript 'portion startup approved on position three foxtrot as squawk four four zero two eurotrans one three juliett', and below it the words it extracted, each with a label." width="569" height="777" loading="eager" decoding="async">
+      </div>
+      <figcaption>A saved run on a real 6-second recording. The model has already made a mistake:
+        it heard <q>push and start</q> as <q>portion startup</q>.
+        <a href="#built">Traced step by step below.</a></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="why">
+  <div class="wrap col">
+    <h2 class="serif">A small, strict code that borrows English</h2>
+    <p>After that flight I watched recordings of pilots and controllers, then read about the aircraft: the
+      history of different models, how a plane is built, how a three-spool engine works. What I had heard
+      wasn&rsquo;t quite English. Numbers are read one digit at a time, and nine is
+      <span class="say">niner</span>. Most calls follow one pattern: who is being called, what to do, and
+      a number, said fast, in every accent, over a channel that cuts off the top and bottom of the
+      voice.</p>
+    <p>OpenAI&rsquo;s Whisper learnt speech from 680,000 hours of audio, 438,000 of them English
+      (<a href="https://huggingface.co/openai/whisper-small">model card</a>). In my first tests it turned
+      the callsign <span class="say">Eurotrans</span> into <span class="say err">year trans</span>, and given
+      pure static, it wrote down a whole sentence nobody had said. On this radio, a model that invents words
+      is worse than one that mishears them. So my question was: can a small model get better at this
+      language with very little data?</p>
+  </div>
+</section>
+
+<section id="built" class="tint">
+  <div class="wrap">
+    <div class="col">
+      <h2>One radio call, traced through the system</h2>
+      <p>It runs on my own computer in three steps. <strong>Whisper-small</strong>, fine-tuned on the 699
+        clips, turns audio into words. <strong>DistilBERT</strong> labels each word as a
+        <em>callsign</em> (who is being spoken to), a <em>command</em> or a <em>value</em>. Then
+        <strong>plain rules</strong> check that each number is even possible. Here is one real call going
+        through it.</p>
+    </div>
+
+    <p class="tag wide">Archived output from the app. No model runs in this page.</p>
+    <ol class="trace">
+      <li>
+        <h3><span class="step">1</span> What the model heard</h3>
+        <p class="tx"><mark class="miss">portion startup</mark> approved on position three foxtrot as
+          squawk four four zero two eurotrans one three juliett</p>
+        <p>Whisper&rsquo;s transcript of a 6.12-second recording, which actually says <q>push and start
+          approved</q>, a standard instruction my own generator also uses. Every later step inherits the
+          mistake.</p>
+        <p class="note">This clip is one of the 74 clean test clips. My best 2026 model hears it as
+          <q>proceed and start approved</q>: closer, but still not <q>push</q>. A smaller 2026 model
+          heard <q>sion start approved</q>, because Sion is one of the airports in its training data.</p>
+      </li>
+      <li>
+        <h3><span class="step">2</span> How it labelled each word</h3>
+        <ul class="chips" aria-label="Words and the labels DistilBERT gave them">
+          <li class="bad"><b>portion</b><span>waypoint</span></li>
+          <li class="bad"><b>startup</b><span>waypoint</span></li>
+          <li><b>approved</b><span>command</span></li>
+          <li class="bad"><b>position</b><span>waypoint</span></li>
+          <li><b>three</b><span>value</span></li>
+          <li><b>foxtrot</b><span>waypoint</span></li>
+          <li><b>squawk</b><span>command</span></li>
+          <li><b>four four zero two</b><span>value</span></li>
+          <li class="bad"><b>eurotrans</b><span>waypoint</span></li>
+          <li class="bad"><b>one three</b><span>value</span></li>
+          <li class="bad"><b>juliett</b><span>waypoint</span></li>
+        </ul>
+        <p>It got the commands and the transponder code right, and went wrong on words it didn&rsquo;t know:
+          <q>portion</q>, <q>startup</q> and <q>position</q> became waypoints, and the callsign
+          <q>eurotrans one three juliett</q> was split in three. Its training labels came from my word lists,
+          which called any unfamiliar word of three or more letters a waypoint. That is the likeliest reason,
+          though I haven&rsquo;t tested it.
+          <span class="legend"><span class="key bad"></span> marked words are the ones it got wrong</span></p>
+      </li>
+      <li>
+        <h3><span class="step">3</span> Whether the numbers are possible</h3>
+        <p>Transponder codes are octal, so a squawk needs four digits with no 8 or 9.
+          <span class="say ok">4402</span> passes. (This describes the rule in the code; the saved run
+          doesn&rsquo;t log the check.)</p>
+        <p class="limit">Passing doesn&rsquo;t make an instruction right. The prototype knows nothing about
+          where the aircraft is, what traffic is around it, or whether the instruction was allowed.</p>
+      </li>
+    </ol>
+
+    <div class="col">
+      <details class="more">
+        <summary>See the full screenshot</summary>
+        <img class="fullshot" src="images/app-output.jpg" alt="The full saved screenshot of the app's output page: transcript, extracted words with labels, and a spoken readback player." width="569" height="777" loading="lazy" decoding="async">
+      </details>
+      <details class="more">
+        <summary>Why this is a saved run rather than a live demo</summary>
+        <p>A live version would play real audio beside the model&rsquo;s outputs. The model files are
+          several gigabytes and run on my own machine, not in a browser, so this page shows a run I saved
+          from the app instead of inventing one. A replay with audio needs a recording I have the right to
+          publish; I haven&rsquo;t made that yet.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section id="data">
+  <div class="wrap">
+    <div class="col">
+      <h2>Teaching it with one hour of audio</h2>
+      <p>The only free air traffic audio I found at the time was the one-hour
+        <a href="https://www.atco2.org/data">ATCO2</a> set: 699 short clips to train a model with about 240
+        million parameters. Copying clips faster, slower and noisier made little difference, because the
+        model still heard the same voices saying the same sentences. So I made new ones.</p>
+
+      <h3 class="idea">Write sentences that could be real</h3>
+      <p>Air traffic phrasing is regular enough to generate, so I wrote templates for taxiing, take-off,
+        landing, radar vectors and handoffs, and filled them with numbers that obey the rules. Transponder
+        codes, for example, are octal: <span class="say">squawk 4408</span> sounds plausible and cannot
+        exist, so the generator never makes it. Synthetic data only helps if it could have been real. Then 31
+        text-to-speech voices, from British and Indian to Nigerian and Filipino English, read the sentences
+        at random speeds: 4,808 clips.</p>
+      <details class="more">
+        <summary>The ranges the generator used</summary>
+        <p>Only the first three are real format rules. The rest are intervals I chose, not rules of
+          aviation, and the app&rsquo;s own checker uses much wider limits.</p>
+        <table class="rules">
+          <caption class="sr-only">Ranges used by the synthetic-data generator</caption>
+          <tbody>
+            <tr><th scope="row">Squawk</th><td>four digits, 0 to 7 only<span class="why">Transponder codes are octal.</span></td></tr>
+            <tr><th scope="row">Heading</th><td>001 to 360, three digits, read digit by digit<span class="why">A compass heading, said the way controllers say it.</span></td></tr>
+            <tr><th scope="row">Frequency</th><td>118 to 136&nbsp;MHz plus a decimal<span class="why">Inside the aviation voice band.</span></td></tr>
+            <tr><th scope="row">Flight level</th><td>FL060 to FL430<span class="why">My choice. Levels outside it exist.</span></td></tr>
+            <tr><th scope="row">Speed</th><td>160 to 320 knots, in tens<span class="why">My choice.</span></td></tr>
+            <tr><th scope="row">Wind</th><td>any direction, 3 to 25 knots<span class="why">My choice.</span></td></tr>
+          </tbody>
+        </table>
+      </details>
+
+      <h3 class="idea">Make clean speech sound like a radio</h3>
+      <p>Text-to-speech sounds like a studio, so I wrote a simulated radio: cut everything above
+        4&nbsp;kHz, add engine rumble and static, crush the signal into coarse levels, keep only the 300 to
+        3,400&nbsp;Hz band a voice radio carries, overdrive it, and end with the click of the transmit button.
+        Each stage has a reason. The engine rumble is white noise added up over time; adding up is a discrete
+        integral, which divides each frequency&rsquo;s amplitude by that frequency, so the power falls as
+        1/f&sup2; and you hear a roar, not a hiss.</p>
+      <p>I called these clips my <q>GAN</q> data at the time. Wrong word: a GAN trains two networks against
+        each other, and nothing here is trained. It is signal processing.</p>
+    </div>
+
+    <div class="lab" id="chain">
+      <div class="labhead">
+        <h3>Listen: one call, clean and through my simulated radio</h3>
+        <p>A sentence from my generator, read by a text-to-speech voice: the one my app uses for its spoken
+          readback. It is not a recording of a real
+          controller, and no model runs on it here: this only shows what the radio does to a voice.</p>
+      </div>
+      <div class="demo" id="demo">
+        <div class="demo-ctl">
+          <button type="button" id="play" class="btn">Start</button>
+          <fieldset class="seg">
+            <legend class="sr-only">Channel</legend>
+            <label><input type="radio" name="preset" value="clean"> Clean</label>
+            <label><input type="radio" name="preset" value="radio" checked> Radio</label>
+          </fieldset>
+          <fieldset class="seg seg-src">
+            <legend class="sr-only">Sound source</legend>
+            <label><input type="radio" name="src" value="phrase" checked> Spoken call</label>
+            <label><input type="radio" name="src" value="voice"> Test vowel</label>
+            <label><input type="radio" name="src" value="sweep"> Sweep</label>
+          </fieldset>
+          <p class="presetstate">Channel: <span id="presetstate" data-state="radio">Radio</span></p>
+        </div>
+        <audio id="phrase" src="audio/phrase.m4a" loop preload="none"></audio>
+        <p class="srcstate" id="srcstate" role="status" hidden></p>
+        <p class="hint" id="hint" role="status">Press Start, then flip between Clean and Radio. Both replay
+          the same recording, so the only thing changing is the channel.</p>
+
+        <figure class="spectro">
+          <div class="scopelabels" aria-hidden="true">
+            <span><b>Input</b> before the radio</span>
+            <span><b>Processed</b> after it</span>
+            <span class="freqkey">80&nbsp;Hz to 8&nbsp;kHz, log scale &middot; copper lines at 300&nbsp;Hz and 3.4&nbsp;kHz</span>
+          </div>
+          <canvas id="canvas" width="1000" height="360" role="img" aria-label="Two scrolling spectrograms: the input above and the processed signal below. Darker means a stronger frequency. With the radio on, the processed panel loses everything above about 3.4 kilohertz and gains a noise floor."></canvas>
+          <p class="scopefall" id="scopefall">Time runs left to right, frequency bottom to top, darker is
+            stronger. With the radio on, the lower panel loses everything above about 3.4&nbsp;kHz and gains a
+            floor of noise.</p>
+          <figcaption>The same kind of picture a speech model works from, though not Whisper&rsquo;s exact
+            input.</figcaption>
+        </figure>
+
+        <details class="more" id="stages-detail">
+          <summary>Switch the seven stages on and off</summary>
+          <p class="note">In the order my Python script applies them. The browser version approximates it,
+            and says where.</p>
+          <ol class="stages">
+            <li><label><input type="checkbox" id="s-band" checked> <b>Band-limiting</b></label>
+              <p>Throws away everything above 4&nbsp;kHz. <em>The Python version resamples to 8&nbsp;kHz and
+                back; the browser uses low-pass filters at 4&nbsp;kHz, which is similar but not identical.</em></p></li>
+            <li><label><input type="checkbox" id="s-brown" checked> <b>Engine noise</b></label>
+              <p>A low rumble: white noise summed over time, so its power falls as 1/f&sup2;.</p></li>
+            <li><label><input type="checkbox" id="s-white" checked> <b>Static</b></label>
+              <p>Receiver hiss with a flat spectrum. This is the kind of noise early Whisper wrote whole
+                sentences out of.</p></li>
+            <li><label><input type="checkbox" id="s-mulaw" checked> <b>&micro;-law companding</b></label>
+              <p>Squashes the signal into coarse steps and back, which adds grit. <em>My code rounds to steps
+                of 1/128 over a signed range, which gives 257 possible values, not 128.</em> Real airband
+                radio is analogue AM and has no such stage. I borrowed it from telephones, and it is the part
+                of the chain I would defend least.</p></li>
+            <li><label><input type="checkbox" id="s-bp" checked> <b>Voice-band filter</b></label>
+              <p>Keeps only 300 to 3,400&nbsp;Hz, the band a voice radio carries. <em>The browser stacks two
+                second-order filters on each edge; I haven&rsquo;t checked that this exactly matches the
+                Python filter.</em></p></li>
+            <li><label><input type="checkbox" id="s-clip" checked> <b>Overdrive</b></label>
+              <p>Amplifies and flattens the peaks, like a microphone held too close. Clipping creates
+                frequencies that weren&rsquo;t in the original.</p></li>
+            <li><label><input type="checkbox" id="s-sq" checked> <b>Squelch tail</b></label>
+              <p>A short burst of noise, the click when the transmit button is let go.
+                <button type="button" id="squelch" class="btn ghost small">Play one</button></p></li>
+          </ol>
+          <div class="micbox">
+            <h4>Try your own voice</h4>
+            <p>Your audio stays in this page. Nothing is recorded, saved or sent, and you won&rsquo;t hear
+              yourself unless you tick the box, so it can&rsquo;t feed back.</p>
+            <p>
+              <button type="button" id="micbtn" class="btn ghost">Use microphone</button>
+              <button type="button" id="micstop" class="btn ghost" hidden>Stop microphone</button>
+            </p>
+            <label class="mon" id="monwrap" hidden><input type="checkbox" id="monitor"> Hear it (use headphones)</label>
+            <p class="micstate" id="micstate" role="status"></p>
+          </div>
+          <p class="note">The noise levels are set by ear, not calibrated, so no signal-to-noise ratio is
+            shown. <b>Clean</b> opens each filter up to the edges of the audio range rather than removing it,
+            so it is close to a bypass but not exactly one. The test vowel and sweep are generated fresh each
+            time, so only the spoken call gives a fair before-and-after.</p>
+        </details>
+        <noscript><p class="note">This part needs JavaScript. Everything it demonstrates is described in the
+          paragraph above.</p></noscript>
+      </div>
+    </div>
+
+    <div class="col">
+      <aside class="aside">
+        <p><b>Why aviation still uses AM radio.</b> With FM, the stronger of two overlapping transmissions
+          captures the receiver and the weaker one disappears. With AM you hear both, as a squeal, so a
+          controller knows two aircraft spoke at once.</p>
+      </aside>
+
+      <h3 class="idea">Half a point</h3>
+      <p>I trained in three rounds, real clips first and synthetic last, and generated extra sentences around
+        names the model kept missing, like Stefanik and Eurotrans. I tried a model six times bigger, a list of
+        callsigns to steer the decoder, and a language model to tidy the transcripts. It barely moved: the
+        scores I recorded changed by less than half a point, and the bigger model did worse with my
+        settings. Looking back in 2026, I found four likely reasons. Text-to-speech voices are calmer than
+        real controllers. A file-path bug fed one training round mostly silence. And two were about my own
+        measuring: I had chosen the hard words by looking at the test clips, and the test clips themselves
+        turned out to overlap with training.</p>
+      <p>So in 2026 I tested it again, properly: the same model trained with and without the synthetic
+        clips, scored on recordings neither had heard. The synthetic clips still didn&rsquo;t help
+        (<a href="#results">results below</a>).</p>
+    </div>
+  </div>
+</section>
+
+<section id="audit" class="tint">
+  <div class="wrap col">
+    <h2>Going back over everything</h2>
+    <p>In 2026 I went back over every script and every number before showing this to anyone. I found
+      four problems. Then I fixed what I could and trained the model again, this time testing it
+      properly.</p>
+
+    <ol class="findings">
+      <li>
+        <h3>The test wasn&rsquo;t really unseen</h3>
+        <p>I had split clips, not recordings, so 101 of my 175 test clips came from recordings the model
+          had trained on: same voices, same frequency, same background hum. I had also used the test clips
+          to pick checkpoints and tune the decoder.</p>
+        <div class="split" role="img" aria-label="101 of the 175 test clips share a source recording with the training data; the other 74 do not.">
+          <span class="shared" style="width:57.7%">101 share a recording with training</span><span class="unshared" style="width:42.3%">74 don&rsquo;t</span>
+        </div>
+        <p class="so"><b>What I did:</b> kept the 74 clips from recordings no model had trained on as a
+          clean test, and used the other 101 only for making choices. On the clean clips my 2025 model
+          scores 18.64%, better than its 20.31% overall, so the overlap hadn&rsquo;t flattered it.</p>
+      </li>
+      <li>
+        <h3>A bug in how the model learned</h3>
+        <p>My training code gave the model its <q>start of transcript</q> marker twice, and left out the
+          <q>English</q> and <q>transcribe</q> markers it is always given when it runs. So it practised a
+          slightly different task from the one it was used for.</p>
+        <p class="so"><b>What I did:</b> fixed both, wrote a test for it, and retrained from scratch. The
+          fixed model scores 19.28% on the clean clips, the same as the old one within noise. The bug cost
+          less than I expected.</p>
+      </li>
+      <li>
+        <h3>One old score was too good</h3>
+        <p>A 2025 script reached about 19% by quietly rewriting known mistakes into the right answer on
+          both sides, turning <span class="say">ONE NINE JAPAN</span> into <span class="say">O NI PAN</span>.</p>
+        <p class="so"><b>What I did:</b> kept it as a record and stopped counting it. Every number below
+          is scored plainly.</p>
+      </li>
+      <li>
+        <h3>The tagger was marking its own homework</h3>
+        <p>Its reference labels came from my word lists, not a person. Of the 140 words those rules
+          called ordinary, it labelled 66 as waypoints.</p>
+        <p class="so"><b>Still open:</b> telling the model&rsquo;s mistakes from the rules&rsquo; needs a
+          person to label a sample by hand.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section id="results">
+  <div class="wrap col">
+    <h2>What the numbers say now</h2>
+    <p>With the test fixed, I tried to beat my 2025 model. I retrained it with the fixes alone; with my
+      synthetic radio clips mixed in; and with ten and a half hours of real controller and pilot speech
+      from Czech airspace, the <a href="https://huggingface.co/datasets/Jzuluaga/uwb_atcc">UWB-ATCC</a>
+      corpus. I averaged the weights of two of those models, a trick called a model soup: models
+      fine-tuned from the same start often sit in the same valley of the error surface, so their average
+      can beat both. Last, I trained Whisper-medium, three times the size of small, on the same real
+      speech. To fit it in my laptop&rsquo;s memory I froze its weights and trained small add-on
+      matrices instead (LoRA), about 4% as many numbers as the whole model. Trained on my 699 clips alone,
+      the bigger model already scored 15.65%, so most of its gain comes from size, not from the extra
+      speech. Averaging those two Whisper-medium models, the same soup trick, gave my best model. Training
+      the bigger model for longer did not help.</p>
+    <p>Everything here is measured on the 74 clean clips, from recordings none of these models heard in
+      training. Each model and its decoding settings were chosen on the other 101 clips, so the test
+      clips played no part in any choice.</p>
+
+    <figure class="chartfig">
+<!-- chart:bars -->
+<div class="werbars" role="img" aria-label="Word error rate on the 74 unseen-recording clips. Whisper-small, not fine-tuned: 56.87%, 95% range 49.53 to 64.81; My 2025 model: 18.64%, 95% range 14.44 to 23.19; Retrained with the fixes: 19.28%, 95% range 15.37 to 23.35; + my synthetic radio clips: 20.34%, 95% range 16.05 to 25.00; + 10.5 hours of real ATC speech: 18.21%, 95% range 13.78 to 23.48; Soup: fixes-only + real speech: 16.72%, 95% range 13.00 to 20.68; Whisper-medium + real speech: 15.23%, 95% range 11.69 to 19.13; Soup of two Whisper-medium models: 14.38%, 95% range 10.95 to 18.17">
+<div class="wrow base"><span class="wl">Whisper-small, not fine-tuned</span><span class="wt"><i style="width:81.24%"></i><b style="left:70.76%;width:calc(92.59% - 70.76%)"></b></span><span class="wv">56.87%</span></div>
+<div class="wrow old"><span class="wl">My 2025 model</span><span class="wt"><i style="width:26.63%"></i><b style="left:20.63%;width:calc(33.13% - 20.63%)"></b></span><span class="wv">18.64%</span></div>
+<div class="wrow"><span class="wl">Retrained with the fixes</span><span class="wt"><i style="width:27.54%"></i><b style="left:21.96%;width:calc(33.36% - 21.96%)"></b></span><span class="wv">19.28%</span></div>
+<div class="wrow"><span class="wl">+ my synthetic radio clips</span><span class="wt"><i style="width:29.06%"></i><b style="left:22.93%;width:calc(35.71% - 22.93%)"></b></span><span class="wv">20.34%</span></div>
+<div class="wrow"><span class="wl">+ 10.5 hours of real ATC speech</span><span class="wt"><i style="width:26.01%"></i><b style="left:19.69%;width:calc(33.54% - 19.69%)"></b></span><span class="wv">18.21%</span></div>
+<div class="wrow"><span class="wl">Soup: fixes-only + real speech</span><span class="wt"><i style="width:23.89%"></i><b style="left:18.57%;width:calc(29.54% - 18.57%)"></b></span><span class="wv">16.72%</span></div>
+<div class="wrow"><span class="wl">Whisper-medium + real speech</span><span class="wt"><i style="width:21.76%"></i><b style="left:16.70%;width:calc(27.33% - 16.70%)"></b></span><span class="wv">15.23%</span></div>
+<div class="wrow best"><span class="wl">Soup of two Whisper-medium models</span><span class="wt"><i style="width:20.54%"></i><b style="left:15.64%;width:calc(25.96% - 15.64%)"></b></span><span class="wv">14.38%</span></div>
+<div class="wrow waxis" aria-hidden="true"><span></span><span class="wticks"><span style="left:0.00%">0%</span><span style="left:14.29%">10%</span><span style="left:28.57%">20%</span><span style="left:42.86%">30%</span><span style="left:57.14%">40%</span><span style="left:71.43%">50%</span><span style="left:85.71%">60%</span><span style="left:100.00%">70%</span></span><span></span></div>
+</div>
+<!-- /chart:bars -->
+      <figcaption>Word error rate: the share of words that had to be inserted, deleted or changed to
+        match what was said. Lines show a 95% range from resampling the clips. With only 74 clips, a
+        difference of a point or two is within noise.</figcaption>
+    </figure>
+
+    <div class="statrow">
+      <div class="stat"><p class="big">56.87% &rarr; 18.64%</p><p>Fine-tuning on 699 clips cut unmodified
+        Whisper-small&rsquo;s error rate by two thirds.</p></div>
+      <div class="stat"><p class="big">14.38%</p><p>My best model now, a soup of two Whisper-medium
+        models: 4.26 points better than 2025. Even at the edge of its 95% range it is 1.96 points
+        better.</p></div>
+      <div class="stat"><p class="big">20.34%</p><p>My synthetic radio speech didn&rsquo;t help, even
+        tested properly. Ten and a half hours of real ATC speech helped a little, mostly by stopping the model
+        getting stuck repeating itself.</p></div>
+    </div>
+
+    <h3>Every recording, not just 74 clips</h3>
+    <p>74 clips is a small test, so I also ran five-fold cross-validation. I split all 874 clips by
+      recording into five groups and trained five fresh copies of the fixes-only model, each tested on the
+      group it never heard. Pooled over every clip, it scores 19.16% (95% range 17.90% to 20.45%), against
+      53.44% for Whisper out of the box. The five groups ranged from 17.74% to 21.01%: that is how much a
+      single small test can swing depending on which recordings it happens to hold.</p>
+
+    <h3>From words to instructions</h3>
+    <p>A word error rate near 14% sounds like six words in seven are right. For an instruction it is
+      worse. I ran my word tagger on each correct transcript and on the model&rsquo;s version, and
+      compared what came out. My best model now gets the command right in 44 of the 56 clips that have
+      one (the 2025 model: 37) and the numbers right in 41 of 58 (2025: 35). Callsigns are the weak
+      point: 35 of 59, and every field matched in only 22 of the 74 clips. Unmodified Whisper-small got
+      every field right in none.</p>
+    <p>I expected the missed callsigns to be airlines the model had never heard of. They weren&rsquo;t:
+      every one started with a word from the training data. Most were spelled-out letters and numbers
+      heard wrong, like <span class="say">hotel delta lima</span> as <span class="say err">hotel golf
+      lima</span>, which is exactly what the phonetic alphabet exists to prevent, and exactly what a
+      crackly channel attacks.</p>
+    <p>Letter by letter, the model is already good: it gets 94.39% of spelled letters and digits right on
+      the clean clips (the 2025 model: 93.22%). A callsign fails when any one of its four or five words
+      is wrong, which is why whole callsigns match so much less often. Giving Whisper the phonetic alphabet
+      as a prompt made it worse, so I dropped the idea.</p>
+
+    <h3>What noise does</h3>
+    <p>This is the measurement I should have made in 2025, before building a whole simulated radio. I
+      added white noise to every clean clip at a fixed signal-to-noise ratio, from 30&nbsp;dB down to
+      0&nbsp;dB, where the noise is as loud as the speech, and transcribed each one again. Every 10&nbsp;dB
+      is a factor of ten in power.</p>
+    <figure class="chartfig">
+<!-- chart:noise -->
+<svg class="chart noise" viewBox="0 0 516 258" role="img" aria-labelledby="noise-title noise-desc">
+<title id="noise-title">Word error rate as noise is added</title>
+<desc id="noise-desc">Not fine-tuned: as recorded 58.79%, 30 dB 59.21%, 20 dB 62.19%, 15 dB 64.43%, 10 dB 70.50%, 5 dB 80.51%, 0 dB 93.08%; My 2025 model: as recorded 19.81%, 30 dB 20.23%, 20 dB 22.15%, 15 dB 23.43%, 10 dB 28.01%, 5 dB 33.65%, 0 dB 48.03%; Best 2026 model: as recorded 15.44%, 30 dB 16.08%, 20 dB 16.29%, 15 dB 16.93%, 10 dB 20.87%, 5 dB 25.77%, 0 dB 40.26%</desc>
+<line class="grid" x1="44" x2="374" y1="212.0" y2="212.0"/><text class="tick" x="36" y="216.0" text-anchor="end">0%</text>
+<line class="grid" x1="44" x2="374" y1="162.0" y2="162.0"/><text class="tick" x="36" y="166.0" text-anchor="end">25%</text>
+<line class="grid" x1="44" x2="374" y1="112.0" y2="112.0"/><text class="tick" x="36" y="116.0" text-anchor="end">50%</text>
+<line class="grid" x1="44" x2="374" y1="62.0" y2="62.0"/><text class="tick" x="36" y="66.0" text-anchor="end">75%</text>
+<line class="grid" x1="44" x2="374" y1="12.0" y2="12.0"/><text class="tick" x="36" y="16.0" text-anchor="end">100%</text>
+<text class="tick" x="44.0" y="232" text-anchor="middle">as recorded</text>
+<text class="tick" x="99.0" y="232" text-anchor="middle">30 dB</text>
+<text class="tick" x="154.0" y="232" text-anchor="middle">20 dB</text>
+<text class="tick" x="209.0" y="232" text-anchor="middle">15 dB</text>
+<text class="tick" x="264.0" y="232" text-anchor="middle">10 dB</text>
+<text class="tick" x="319.0" y="232" text-anchor="middle">5 dB</text>
+<text class="tick" x="374.0" y="232" text-anchor="middle">0 dB</text>
+<text class="axis" x="209.0" y="254" text-anchor="middle">signal-to-noise ratio after adding noise (less is noisier)</text>
+<polyline class="line base" points="44.0,94.4 99.0,93.6 154.0,87.6 209.0,83.1 264.0,71.0 319.0,51.0 374.0,25.8"/>
+<circle class="dot base" cx="44.0" cy="94.4" r="3.5"/>
+<circle class="dot base" cx="99.0" cy="93.6" r="3.5"/>
+<circle class="dot base" cx="154.0" cy="87.6" r="3.5"/>
+<circle class="dot base" cx="209.0" cy="83.1" r="3.5"/>
+<circle class="dot base" cx="264.0" cy="71.0" r="3.5"/>
+<circle class="dot base" cx="319.0" cy="51.0" r="3.5"/>
+<circle class="dot base" cx="374.0" cy="25.8" r="3.5"/>
+<text class="serieslabel base" x="384" y="30.8">Not fine-tuned</text>
+<polyline class="line old" points="44.0,172.4 99.0,171.5 154.0,167.7 209.0,165.1 264.0,156.0 319.0,144.7 374.0,115.9"/>
+<circle class="dot old" cx="44.0" cy="172.4" r="3.5"/>
+<circle class="dot old" cx="99.0" cy="171.5" r="3.5"/>
+<circle class="dot old" cx="154.0" cy="167.7" r="3.5"/>
+<circle class="dot old" cx="209.0" cy="165.1" r="3.5"/>
+<circle class="dot old" cx="264.0" cy="156.0" r="3.5"/>
+<circle class="dot old" cx="319.0" cy="144.7" r="3.5"/>
+<circle class="dot old" cx="374.0" cy="115.9" r="3.5"/>
+<text class="serieslabel old" x="384" y="120.9">My 2025 model</text>
+<polyline class="line best" points="44.0,181.1 99.0,179.8 154.0,179.4 209.0,178.1 264.0,170.3 319.0,160.5 374.0,131.5"/>
+<circle class="dot best" cx="44.0" cy="181.1" r="3.5"/>
+<circle class="dot best" cx="99.0" cy="179.8" r="3.5"/>
+<circle class="dot best" cx="154.0" cy="179.4" r="3.5"/>
+<circle class="dot best" cx="209.0" cy="178.1" r="3.5"/>
+<circle class="dot best" cx="264.0" cy="170.3" r="3.5"/>
+<circle class="dot best" cx="319.0" cy="160.5" r="3.5"/>
+<circle class="dot best" cx="374.0" cy="131.5" r="3.5"/>
+<text class="serieslabel best" x="384" y="137.9">Best 2026 model</text>
+</svg>
+<!-- /chart:noise -->
+      <figcaption>Word error rate on the 74 clean clips as noise is added. Greedy decoding with repetition
+        guards, so the starting points sit a little above the beam-search numbers above. Each clip gets its
+        own fixed noise, so all three models hear exactly the same audio.</figcaption>
+    </figure>
+    <p>At 10&nbsp;dB my best model goes from 15.44% to 20.87%; at 0&nbsp;dB, to 40.26%. My 2025 model
+      goes from 19.81% to 28.01% and 48.03%, and unmodified Whisper from 58.79% to 93.08%. So the bigger
+      model is not just more accurate, it holds up better: at 10&nbsp;dB it loses 5.43 points where the
+      2025 model loses 8.20. My smaller retrained models, trained on the same real speech, followed the
+      2025 curve closely, so the robustness seems to come mostly from the bigger model.</p>
+
+
+    <details class="more">
+      <summary>The tagger on its own</summary>
+      <p>Against my rule-generated labels, DistilBERT scores a weighted F1 of <b>0.8657</b>. That
+        measures agreement with the word lists, not accuracy against a person.</p>
+          <div class="bars" role="img" aria-label="Per-label F1 against the rule-generated labels: command 0.953 on 116 words, value 0.945 on 278, callsign 0.888 on 241, waypoint 0.811 on 226, other 0.685 on 140.">
+            <div class="metric-row"><span class="bl">Command <em>116</em></span><span class="bt"><i style="width:95.3%"></i></span><span class="bv">0.953</span></div>
+            <div class="metric-row"><span class="bl">Value <em>278</em></span><span class="bt"><i style="width:94.5%"></i></span><span class="bv">0.945</span></div>
+            <div class="metric-row"><span class="bl">Callsign <em>241</em></span><span class="bt"><i style="width:88.8%"></i></span><span class="bv">0.888</span></div>
+            <div class="metric-row"><span class="bl">Waypoint <em>226</em></span><span class="bt"><i style="width:81.1%"></i></span><span class="bv">0.811</span></div>
+            <div class="metric-row"><span class="bl">Other <em>140</em></span><span class="bt"><i style="width:68.5%"></i></span><span class="bv">0.685</span></div>
+            <div class="axis" aria-hidden="true"><span>0</span><span>0.5</span><span>1</span></div>
+          </div>
+          <div class="tablewrap" tabindex="0" role="region" aria-label="Confusion matrix, scrollable">
+            <table class="cm">
+              <caption>Rows: the label my rules gave. Columns: what DistilBERT predicted.
+                O is other, CS callsign, CMD command, VAL value, WPT waypoint.</caption>
+              <thead><tr><td></td><th scope="col">O</th><th scope="col">CS</th><th scope="col">CMD</th><th scope="col">VAL</th><th scope="col">WPT</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Other</th><td class="t4">74</td><td class="t0">0</td><td class="t0">0</td><td class="t0">0</td><td class="t3 cm-flag">66</td></tr>
+                <tr><th scope="row">Callsign</th><td class="t0">0</td><td class="t5">199</td><td class="t1">2</td><td class="t2">25</td><td class="t2">15</td></tr>
+                <tr><th scope="row">Command</th><td class="t0">0</td><td class="t0">0</td><td class="t6">112</td><td class="t0">0</td><td class="t1">4</td></tr>
+                <tr><th scope="row">Value</th><td class="t0">0</td><td class="t1">3</td><td class="t1">1</td><td class="t6">273</td><td class="t1">1</td></tr>
+                <tr><th scope="row">Waypoint</th><td class="t1">2</td><td class="t1">5</td><td class="t1">4</td><td class="t1">2</td><td class="t6">213</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="note">Separately, 871 of 1,001 words got the same label as the reference, which is a different
+            measure from F1. The ringed cell is the 66 words from finding 4. A separate 2025 experiment scored a
+            BERT tagger at 0.9544, but against a different version of the same rules (the two label sets
+            disagree on 25 words), so the two can&rsquo;t be compared. Saved result:
+            <a href="https://github.com/Sineceptor/ATCO/blob/main/results/rescoring_2025/entity_extraction.json"><code>results/rescoring_2025/entity_extraction.json</code></a></p>
+    </details>
+
+    <details class="more">
+      <summary>Older numbers I don&rsquo;t use, and why</summary>
+      <p><b>20.31% on all 175 old test clips.</b> My original headline: 423 word edits across 2,083
+        reference words, with beam search. It mixes the clean clips with ones from training
+        recordings, and its settings were tuned on the same clips, so the 74-clip numbers above replace
+        it.</p>
+      <p><b>The half-point scores. Historical values; metric not established.</b> A 2025 code comment
+        records 76.18, 76.23 and 76.67 after the three training rounds, labelled <code>acc-</code>. My
+        2025 scripts computed that as 100 minus word error rate, but only after a clean-up step that cut
+        tag strings out of both sides, sometimes from inside real words (<code>THESE</code> became
+        <code>TE</code>), and with a decoding prompt whose words I had picked by looking at errors on the
+        test clips. I also can&rsquo;t confirm which test file each number came from.</p>
+      <p><b>The bigger model.</b> Whisper-large-v3, compressed to 4-bit with LoRA adapters, scored 27.86%
+        clean, 34.42% with added noise and 28.78% at 1.1&times; speed on the old test clips. Its
+        training, compression and decoding all differ from the small model, so this doesn&rsquo;t show
+        that size was the problem.</p>
+    </details>
+  </div>
+</section>
+
+<section id="next">
+  <div class="wrap col">
+    <h2>What I&rsquo;d do next</h2>
+    <p>Label a thousand words by hand, so the tagger is finally tested against a person instead of my own
+      rules. Then find more clean test recordings: 74 clips is enough to see big effects, like
+      fine-tuning, but not to separate two models that are a point apart.</p>
+  </div>
+</section>
+
+<section id="haneda" class="tint">
+  <div class="wrap col">
+    <h2 class="serif">Hearing every word isn&rsquo;t understanding it</h2>
+    <p>The January 2024 runway collision at Tokyo Haneda was one of the things that got me started. After
+      months of trying to get a machine to hear every word, I went back to it. The exchange was in English
+      and the instruction was read back correctly; the investigators&rsquo;
+      <a href="https://jtsb.mlit.go.jp/eng-air_report/interim20241225-JA722A_JA13XJ.pdf">interim report</a>
+      centres instead on what one phrase was understood to mean. A transcript records every word. It
+      can&rsquo;t show what each person took them to mean, and my format checks sit right at that edge: they
+      can tell a transponder code is possible, not that it&rsquo;s the right one.</p>
+    <p>The most convincing use of speech recognition in air traffic control I&rsquo;ve found isn&rsquo;t
+      preventing accidents. In a trial, radar labels filled in from controllers&rsquo; own speech reduced
+      wrong or missing entries and lightened their workload
+      (<a href="https://www.mdpi.com/2226-4310/10/6/538">Helmke et al., 2023</a>), and they scored whether
+      each command was recognised, not every word. It&rsquo;s a smaller claim than <q>AI will make flying
+      safer</q>, and one I believe.</p>
+    <p class="note">I&rsquo;m not suggesting this prototype would have changed what happened at Haneda. The
+      report is interim, not a final account.</p>
+  </div>
+</section>
+
+<section id="credit">
+  <div class="wrap col">
+    <h2>How I made this</h2>
+    <p>It started in 2025 as a team idea for an AI that could act like an air traffic controller. That was
+      far too big for the time I had, so I narrowed it to one piece: turning the radio into text a computer
+      can check. The team didn&rsquo;t continue, and I carried on alone, teaching myself how to train a
+      model, and the maths underneath it, as I went.</p>
+
+    <p id="small">Everything I trained for this project ran on my own laptop. That began as the only
+      hardware I had, and turned out to matter: a model I can run end to end is one I can re-run and check,
+      which is the only reason I could go back over these numbers at all.</p>
+
+    <p class="credits">The models are other people&rsquo;s work, and the real audio comes from the ATCO2 and
+      UWB-ATCC research corpora. None of their audio or transcripts are published here. I used AI coding
+      tools to help write the code.</p>
+    <details class="more">
+      <summary>Credits and data citation</summary>
+      <p>Whisper, BERT, DistilBERT, SpeechT5, HiFi-GAN, wav2vec2, Phi-3 and Qwen are other people&rsquo;s
+        models, used through Hugging Face. I&rsquo;m not proposing a new model or training method. The 4,808
+        generated clips are mine.</p>
+      <p class="cite">Zuluaga-Gomez, J., Vesel&yacute;, K., Sz&ouml;ke, I., Motlicek, P., et&nbsp;al.
+        <em>ATCO2 corpus: A Large-Scale Dataset for Research on Automatic Speech Recognition and Natural
+        Language Understanding of Air Traffic Control Communications.</em>
+        <a href="https://arxiv.org/abs/2211.04054">arXiv:2211.04054</a>, 2022. Corpus at
+        <a href="https://www.atco2.org/data">atco2.org/data</a>. The one-hour set was published as a test
+        set; I split it into my own training and test clips, so my scores can&rsquo;t be compared with
+        published ATCO2 results. This project isn&rsquo;t affiliated with ATCO2.</p>
+      <p class="cite">&Scaron;m&iacute;dl, L., &Scaron;vec, J., Tihelka, D., et&nbsp;al. <em>Air traffic control
+        communication (ATCC) speech corpora and their use for ASR and TTS development.</em> Language
+        Resources and Evaluation 53, 2019. The UWB-ATCC corpus, used for training only, under CC BY-NC-SA
+        4.0 via <a href="https://huggingface.co/datasets/Jzuluaga/uwb_atcc">Hugging Face</a>. None of its
+        audio is published here.</p>
+    </details>
+
+    <div class="links" id="links">
+      <a class="btn" href="https://github.com/Sineceptor/ATCO">Read the code</a>
+      <ul>
+        <li><a href="https://github.com/Sineceptor/ATCO/blob/main/paper/atco_paper.pdf">The full write-up, as a paper (PDF)</a></li>
+        <li><a href="https://github.com/Sineceptor/ATCO/blob/main/site/EVIDENCE.md">Every claim on this page and where it comes from</a></li>
+        <li><a href="https://github.com/Sineceptor/ATCO/blob/main/experiments/README.md">All the experiments, with what went wrong in each</a></li>
+        <li><a href="https://github.com/Sineceptor/ATCO/blob/main/docs/limited_data_and_radio_physics.md">How the generator and the simulated radio work</a></li>
+        <li><a href="https://github.com/Sineceptor/ATCO/blob/main/docs/evaluation.md">How everything was scored, and what that misses</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap col">
+    <p class="warnline">Research prototype. Not for operational use.</p>
+    <p>ATCO stands for Air Traffic Control Officer. Built by Ethan Zhang, 2025&ndash;26.</p>
+  </div>
+</footer>
+
+<script src="radio.js" defer></script>
+<script src="story.js" defer></script>
+</body>
+</html>

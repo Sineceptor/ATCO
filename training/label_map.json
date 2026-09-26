@@ -1,0 +1,24 @@
+{
+    "id2label": {
+        "0": "O",
+        "1": "B-CALLSIGN",
+        "2": "I-CALLSIGN",
+        "3": "B-COMMAND",
+        "4": "I-COMMAND",
+        "5": "B-VALUE",
+        "6": "I-VALUE",
+        "7": "B-WAYPOINT",
+        "8": "I-WAYPOINT"
+    },
+    "label2id": {
+        "O": 0,
+        "B-CALLSIGN": 1,
+        "I-CALLSIGN": 2,
+        "B-COMMAND": 3,
+        "I-COMMAND": 4,
+        "B-VALUE": 5,
+        "I-VALUE": 6,
+        "B-WAYPOINT": 7,
+        "I-WAYPOINT": 8
+    }
+}

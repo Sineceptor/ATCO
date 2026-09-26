@@ -1,0 +1,48 @@
+{
+  "component": "Whisper-small",
+  "attempted": 175,
+  "completed": 175,
+  "failures": [],
+  "metrics": {
+    "greedy": {
+      "wer": 0.2088334133461354,
+      "cer": 0.1313682058272278,
+      "word_errors": 435,
+      "reference_words": 2083,
+      "character_errors": 1542,
+      "reference_characters": 11738,
+      "scored": 175
+    },
+    "beam": {
+      "wer": 0.20307249159865579,
+      "cer": 0.12847163060146533,
+      "word_errors": 423,
+      "reference_words": 2083,
+      "character_errors": 1508,
+      "reference_characters": 11738,
+      "scored": 175
+    },
+    "beam_cleaned": {
+      "wer": 0.19090009891196835,
+      "cer": 0.1287030346820809,
+      "word_errors": 386,
+      "reference_words": 2022,
+      "character_errors": 1425,
+      "reference_characters": 11072,
+      "scored": 175
+    }
+  },
+  "elapsed_seconds": 356.1013309999835,
+  "manifest_sha256": "516ca280b6d46392031686b9af66352c4fbaf72f88063381a4b53c91cf1d4f81",
+  "model_sha256": "a1004afcc67a18de21e62a7c587ad4b1514b82d269f8ee07eb0e85beac9f6c85",
+  "decoding": "English transcription; max_new_tokens=128; CPU float32. Beam: num_beams=5, repetition_penalty=1.2, length_penalty=1, no_repeat_ngram_size=3. Explicit task/language replace legacy forced IDs.",
+  "normalization": "greedy/beam: uppercase, remove punctuation, collapse spaces. beam_cleaned: historical phrase/digit mappings and substring removals on BOTH sides.",
+  "packages": {
+    "torch": "2.8.0",
+    "transformers": "4.57.6",
+    "tensorflow": "2.20.0",
+    "tf-keras": "2.20.1",
+    "jiwer": "4.0.0",
+    "scikit-learn": "1.9.1"
+  }
+}

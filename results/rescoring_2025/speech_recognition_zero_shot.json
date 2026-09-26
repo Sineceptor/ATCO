@@ -1,0 +1,66 @@
+{
+  "component": "Whisper-small",
+  "attempted": 175,
+  "completed": 175,
+  "failures": [],
+  "metrics": {
+    "greedy": {
+      "wer": 0.7849255880940951,
+      "cer": 0.5196796728573863,
+      "word_errors": 1635,
+      "reference_words": 2083,
+      "character_errors": 6100,
+      "reference_characters": 11738,
+      "scored": 175
+    },
+    "beam": {
+      "wer": 0.770523283725396,
+      "cer": 0.5050264099505878,
+      "word_errors": 1605,
+      "reference_words": 2083,
+      "character_errors": 5928,
+      "reference_characters": 11738,
+      "scored": 175
+    },
+    "beam_cleaned": {
+      "wer": 0.7769535113748763,
+      "cer": 0.41609465317919075,
+      "word_errors": 1571,
+      "reference_words": 2022,
+      "character_errors": 4607,
+      "reference_characters": 11072,
+      "scored": 175
+    },
+    "greedy_digits_spelled": {
+      "wer": 0.6245799327892463,
+      "cer": 0.3739989776793321,
+      "word_errors": 1301,
+      "reference_words": 2083,
+      "character_errors": 4390,
+      "reference_characters": 11738,
+      "scored": 175
+    },
+    "beam_digits_spelled": {
+      "wer": 0.6068170907345175,
+      "cer": 0.3601124552734708,
+      "word_errors": 1264,
+      "reference_words": 2083,
+      "character_errors": 4227,
+      "reference_characters": 11738,
+      "scored": 175
+    }
+  },
+  "elapsed_seconds": 1104.8895552500035,
+  "manifest_sha256": "516ca280b6d46392031686b9af66352c4fbaf72f88063381a4b53c91cf1d4f81",
+  "model": "openai/whisper-small (Hugging Face revision 973afd24965f72e36ca33b3055d56a652f456b4d), not fine-tuned",
+  "model_sha256": "1d7734884874f1a1513ed9aa760a4f8e97aaa02fd6d93a3a85d27b2ae9ca596b",
+  "decoding": "English transcription; max_new_tokens=128; CPU float32. Beam: num_beams=5, repetition_penalty=1.2, length_penalty=1, no_repeat_ngram_size=3. Explicit task/language replace legacy forced IDs.",
+  "normalization": "greedy/beam: uppercase, remove punctuation, collapse spaces. beam_cleaned: historical phrase/digit mappings and substring removals on BOTH sides.",
+  "packages": {
+    "torch": "2.8.0",
+    "transformers": "4.57.6",
+    "jiwer": "4.0.0",
+    "scikit-learn": "1.9.1"
+  },
+  "note": "The same 175 clips and settings as results/rescoring_2025/speech_recognition.json. The unmodified model writes digits (\"4402\") where the references spell them out, so compare the *_digits_spelled rows."
+}

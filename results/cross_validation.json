@@ -1,0 +1,61 @@
+{
+  "method": "Five folds by recording over all 874 ATCO2 clips; each fold's model trained on the other four folds minus a validation tenth, which chose its checkpoint. Word error rate pooled over all clips.",
+  "decoding": "beam search, 5 beams, repetition_penalty 1.2, no repeated 3-grams (fixed in advance)",
+  "normalisation": "uppercase, punctuation removed, digits spelled out",
+  "clips": 874,
+  "folds": [
+    {
+      "fold": 0,
+      "clips": 174,
+      "wer": 0.1872,
+      "best_epoch": 5,
+      "best_validation_wer": 0.1798
+    },
+    {
+      "fold": 1,
+      "clips": 175,
+      "wer": 0.1793,
+      "best_epoch": 8,
+      "best_validation_wer": 0.2126
+    },
+    {
+      "fold": 2,
+      "clips": 177,
+      "wer": 0.2101,
+      "best_epoch": 7,
+      "best_validation_wer": 0.2084
+    },
+    {
+      "fold": 3,
+      "clips": 174,
+      "wer": 0.2036,
+      "best_epoch": 7,
+      "best_validation_wer": 0.1971
+    },
+    {
+      "fold": 4,
+      "clips": 174,
+      "wer": 0.1774,
+      "best_epoch": 8,
+      "best_validation_wer": 0.2519
+    }
+  ],
+  "retrained": {
+    "wer": 0.1916,
+    "word_errors": 2094,
+    "reference_words": 10930,
+    "interval_95": [
+      0.179,
+      0.2045
+    ]
+  },
+  "zero_shot": {
+    "wer": 0.5344,
+    "word_errors": 5841,
+    "reference_words": 10930,
+    "interval_95": [
+      0.5113,
+      0.5581
+    ]
+  }
+}

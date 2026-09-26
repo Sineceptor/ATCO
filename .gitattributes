@@ -1,0 +1,6 @@
+*.pdf binary
+*.png binary
+
+# Preserve saved labels and the reference report byte for byte.
+results/original_2025/*.txt -text
+training/label_map.json -text

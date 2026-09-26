@@ -1,0 +1,107 @@
+{
+  "component": "TensorFlow BERT-base",
+  "sequences": 89,
+  "scored_words": 1001,
+  "truncated_words": 0,
+  "correct_words": 955,
+  "report": {
+    "O": {
+      "precision": 0.8394160583941606,
+      "recall": 0.9745762711864406,
+      "f1-score": 0.9019607843137255,
+      "support": 118.0
+    },
+    "CALLSIGN": {
+      "precision": 0.9707112970711297,
+      "recall": 0.9626556016597511,
+      "f1-score": 0.9666666666666667,
+      "support": 241.0
+    },
+    "COMMAND": {
+      "precision": 1.0,
+      "recall": 0.957983193277311,
+      "f1-score": 0.9785407725321889,
+      "support": 119.0
+    },
+    "VALUE": {
+      "precision": 0.975,
+      "recall": 0.9820143884892086,
+      "f1-score": 0.978494623655914,
+      "support": 278.0
+    },
+    "WAYPOINT": {
+      "precision": 0.9567099567099567,
+      "recall": 0.9020408163265307,
+      "f1-score": 0.9285714285714286,
+      "support": 245.0
+    },
+    "accuracy": 0.954045954045954,
+    "macro avg": {
+      "precision": 0.9483674624350493,
+      "recall": 0.9558540541878484,
+      "f1-score": 0.9508468551479847,
+      "support": 1001.0
+    },
+    "weighted avg": {
+      "precision": 0.956479976901691,
+      "recall": 0.954045954045954,
+      "f1-score": 0.9544114850383225,
+      "support": 1001.0
+    }
+  },
+  "labels": [
+    "O",
+    "CALLSIGN",
+    "COMMAND",
+    "VALUE",
+    "WAYPOINT"
+  ],
+  "confusion_matrix": [
+    [
+      115,
+      1,
+      0,
+      0,
+      2
+    ],
+    [
+      0,
+      232,
+      0,
+      7,
+      2
+    ],
+    [
+      0,
+      0,
+      114,
+      0,
+      5
+    ],
+    [
+      0,
+      4,
+      0,
+      273,
+      1
+    ],
+    [
+      22,
+      2,
+      0,
+      0,
+      221
+    ]
+  ],
+  "manifest_sha256": "1eb0612a64176115abf9906816ca1e226aeabdeab4a416323b53ace1860e3d87",
+  "model_sha256": "c89a55df56dd1ec178f9cb39b2299ee3c0a3cdcaeb0cfc7a7db8f5dd2aafd4ae",
+  "method": "First subword per word; BIO prefixes collapsed; rule-generated targets. This is word-label F1, including O, not exact entity-span F1.",
+  "packages": {
+    "torch": "2.8.0",
+    "transformers": "4.57.6",
+    "tensorflow": "2.20.0",
+    "tf-keras": "2.20.1",
+    "jiwer": "4.0.0",
+    "scikit-learn": "1.9.1"
+  }
+}
