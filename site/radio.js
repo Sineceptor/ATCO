@@ -78,8 +78,7 @@
   /* mu-law: compress, quantise, expand. The grit comes from quantisation error,
      which is proportional to the signal. NOTE: round(y*128)/128 snaps to steps of
      1/128 across a signed domain, so it yields 257 possible output values, not 128
-     levels. The page says 257; this comment used to say 128. The historical Python
-     experiment is left exactly as it was. */
+     levels. The historical Python experiment is left exactly as it was. */
   function muLawCurve() {
     var c = new Float32Array(CURVE_N), mu = 255, i, x, y;
     for (i = 0; i < CURVE_N; i++) {
@@ -183,7 +182,9 @@
     g.mu.curve = g.muCurve;
     g.noiseMix.connect(g.mu);
 
-    /* 5. 300-3400 Hz Butterworth band-pass, 4th order each side */
+    /* 5. 300-3400 Hz band-pass: two identical second-order sections (Q 0.7071) on
+       each edge. A true 4th-order Butterworth would use two different Q values, so this
+       is a little softer at the corner than the Python filter. */
     g.hpA = highpass(ac, 300); g.hpB = highpass(ac, 300);
     g.lpC = lowpass(ac, 3400); g.lpD = lowpass(ac, 3400);
     g.mu.connect(g.hpA); g.hpA.connect(g.hpB); g.hpB.connect(g.lpC); g.lpC.connect(g.lpD);
