@@ -262,6 +262,9 @@ adopted model is scored on the test clips.
 - The word tagger has never been scored against labels written by a person:
   the sheet and the [labelling guide](hand_labelling_guide.md) are ready.
 - The longer Whisper-medium run (section 13) is running; its result will be
-  added here whatever it shows.
+  added here whatever it shows. The first attempt was lost on 27 September at
+  14:20, in epoch 2, when the external drive disconnected (epoch 1 had reached
+  29.11% on validation). It was restarted from scratch with the same settings
+  and the same rule, reading and writing only the internal disk.
 - More test recordings from new airports, to separate models a point apart.
 - Training audio of spelled-out registrations, the other way to work on callsign letters.
