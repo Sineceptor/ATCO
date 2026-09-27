@@ -158,7 +158,7 @@ The cross-validation still lets each model hear other recordings from the same a
 
 ### 5.3 Noise robustness
 
-![Figure 4. Word error rate on the 74 test clips as white noise is added. Greedy decoding with repetition guards.](figures/fig4_noise.png)
+![Figure 4. Word error rate on the 74 test clips as white noise is added. Greedy decoding with repetition guards. The filtered clips receive about 2 dB less noise at each nominal ratio, because the filter lowers the clip power the noise is set from.](figures/fig4_noise.png)
 
 : Table 5. Word error rate as white noise is added.
 
