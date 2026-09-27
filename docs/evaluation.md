@@ -140,6 +140,11 @@ Whisper-small trained for each fold and checkpoints chosen on a held-out tenth o
 each fold's training recordings, gives a pooled WER of 19.16% (95% interval
 17.90 to 20.45) against 53.44% for the unmodified model; the folds range from
 17.74% to 21.01% ([cross_validation.json](../results/cross_validation.json)).
+Leaving out one whole airport at a time instead, seven times, gives
+26.48% (95% interval 24.96 to 27.99) on the same 874 clips,
+7.32 points worse than by recording (paired interval 6.32 to 8.36); Sydney,
+the only airport outside Europe, goes from 18.80% to 41.44%
+([leave_one_airport_out.json](../results/leave_one_airport_out.json)).
 
 Scored on their own, spelled phonetic-alphabet letters and digit words are
 mostly right: 94.41% for the selected model and 93.24% for the 2025 checkpoint on

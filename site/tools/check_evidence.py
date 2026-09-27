@@ -128,6 +128,21 @@ if cv_path.exists():
           f"| {pct(cv['zero_shot']['wer'])} | {100 * z_lo:.2f} to {100 * z_hi:.2f} |" in paper
           and f"| {pct(cv['retrained']['wer'])} | {100 * lo_cv:.2f} to {100 * hi_cv:.2f} |" in paper)
 
+if (RESULTS / 'leave_one_airport_out.json').exists():
+    air = load('leave_one_airport_out.json')
+    pa, lo_a, hi_a = air['pooled']['new_airport'], *air['pooled']['new_airport']['interval_95']
+    shown('new-airport word error rate', f"scores {pct(pa['wer'])} (95% range {pct(lo_a)} to {pct(hi_a)})")
+    shown('cost of a new airport', f"{air['pooled']['new_airport_minus_new_recording_points']['change']:.2f} points worse")
+    syd = next(a for a in air['airports'] if a['airport'] == 'YSSY')
+    shown('Sydney', f"went from {pct(syd['new_recording'])} to {pct(syd['new_airport'])}")
+    check('leave-one-airport-out covers every clip', air['clips'] == splits['asr_train_rows'] + splits['asr_test_rows'])
+    check('new-recording column matches the cross-validation',
+          air['pooled']['new_recording']['wer'] == load('cross_validation.json')['retrained']['wer'])
+    paper_text = (SITE.parent / 'paper' / 'atco_paper.md').read_text(encoding='utf-8')
+    check('the paper shows every airport row', all(
+        f"| {a['clips']} | {pct(a['new_airport'])} | {pct(a['new_recording'])} | {pct(a['zero_shot'])} |" in paper_text
+        for a in air['airports']))
+
 for name, run in retrain.get('ablations', {}).items():
     shown(f'ablation {name}', pct(run['headline_test']['wer']))
 

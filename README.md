@@ -96,7 +96,10 @@ Word error rate on the 74 unseen clips ([retraining.json](results/retraining.jso
 - Fine-tuning is by far the biggest effect. Five-fold cross-validation by
   recording over all 874 clips puts the retrained Whisper-small at 19.16%
   (95% range 17.90 to 20.45) against 53.44% unmodified
-  ([cross_validation.json](results/cross_validation.json)).
+  ([cross_validation.json](results/cross_validation.json)). Leaving out a whole
+  airport is harder: 26.48% (95% range 24.96 to 27.99), and 41.44% for Sydney, the
+  only airport outside Europe
+  ([leave_one_airport_out.json](results/leave_one_airport_out.json)).
 - I can't detect any help the old model got from the overlap: it does slightly
   better on the unseen clips than on all 175 (20.31%).
 - My synthetic speech did not help, even tested properly.

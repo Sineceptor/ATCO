@@ -338,7 +338,8 @@
         <h3>The test wasn&rsquo;t really unseen</h3>
         <p>I had split clips, not recordings, so 101 of my 175 test clips came from recordings the model
           had trained on: same voices, same frequency, same background hum. (Unseen here means a different
-          recording, not a different airport or controller.) I had also used the test clips
+          recording, not a different airport or controller; a whole new airport is
+          <a href="#results">tested below</a>.) I had also used the test clips
           to pick checkpoints and tune the decoder.</p>
         <div class="split" role="img" aria-label="101 of the 175 test clips share a source recording with the training data; the other 74 do not.">
           <span class="shared" style="width:57.7%">101 share a recording with training</span><span class="unshared" style="width:42.3%">74 don&rsquo;t</span>
@@ -432,6 +433,13 @@
       group it never heard. Pooled over every clip, it scores 19.16% (95% range 17.90% to 20.45%), against
       53.44% for Whisper out of the box. The five groups ranged from 17.74% to 21.01%: that is how much a
       single small test can swing depending on which recordings it happens to hold.</p>
+    <p>Cross-validation still lets the model hear other recordings from the same airport: the same
+      controllers and place names. So I also left out one whole airport at a time, seven times. On an
+      airport it had never heard, the same recipe scores 26.48% (95% range 24.96% to 27.99%),
+      7.32 points worse than on a new recording from a familiar airport, and still about half
+      of Whisper out of the box. It depends on the airport: little changed at Brno and Bern, but Sydney,
+      the only airport outside Europe, went from 18.80% to 41.44%. That model had never heard Australian
+      speech.</p>
 
     <h3>From words to instructions</h3>
     <p>A word error rate near 14% sounds like six words in seven are right. For an instruction it is

@@ -218,6 +218,23 @@ measurement, not a choice: no model from it can be adopted. It will be reported
 per airport and pooled over all 874 clips, next to the five-fold
 cross-validation by recording (19.16%) on the same clips.
 
+*Result (27 September, 09:48):* 26.48% pooled (95% range 24.96 to 27.99),
+7.32 points worse than by recording (paired range 6.32 to 8.36); unmodified
+53.44% ([leave_one_airport_out.json](../results/leave_one_airport_out.json)).
+
+| Airport left out | Clips | Never heard the airport | Heard other recordings | Not fine-tuned |
+| --- | ---: | ---: | ---: | ---: |
+| Prague (LKPR) | 104 | 30.24% | 24.85% | 60.70% |
+| Brno (LKTB) | 32 | 22.57% | 23.67% | 57.74% |
+| Sion (LSGS) | 258 | 31.81% | 20.00% | 62.08% |
+| Bern (LSZB) | 173 | 17.69% | 16.29% | 44.03% |
+| Zurich (LSZH) | 126 | 20.74% | 16.54% | 48.67% |
+| Bratislava (LZIB) | 79 | 23.85% | 19.08% | 46.53% |
+| Sydney (YSSY) | 102 | 41.44% | 18.80% | 56.13% |
+
+Six of the seven models used all 8 planned epochs; Zurich's stopped at 6 (best
+epoch 3).
+
 **A longer Whisper-medium run (`medium_long`).** The same settings as
 `medium_real`, but with 12 planned epochs instead of 6 (patience 3), so the
 learning-rate schedule spans the longer run. Two candidates: `medium_long` on
@@ -244,7 +261,7 @@ adopted model is scored on the test clips.
 
 - The word tagger has never been scored against labels written by a person:
   the sheet and the [labelling guide](hand_labelling_guide.md) are ready.
-- The leave-one-airport-out test and the longer Whisper-medium run (section 13)
-  are running; their results will be added here whatever they show.
+- The longer Whisper-medium run (section 13) is running; its result will be
+  added here whatever it shows.
 - More test recordings from new airports, to separate models a point apart.
 - Training audio of spelled-out registrations, the other way to work on callsign letters.

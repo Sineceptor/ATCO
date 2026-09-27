@@ -1,0 +1,136 @@
+{
+  "method": "Recipe A (fixes only, Whisper-small, 8 planned epochs, patience 3) trained once per ATCO2 airport without that airport, a tenth of the other airports' recordings held out to choose the checkpoint, then scored on every clip from the airport it never heard. Compared on the same 874 clips with the five-fold cross-validation by recording and with unmodified Whisper-small.",
+  "decoding": "beam search, 5 beams, repetition_penalty 1.2, no repeated 3-grams (fixed in advance)",
+  "normalisation": "uppercase, punctuation removed, digits spelled out",
+  "clips": 874,
+  "pooled": {
+    "new_airport": {
+      "wer": 0.2648,
+      "interval_95": [
+        0.2496,
+        0.2799
+      ]
+    },
+    "new_recording": {
+      "wer": 0.1916,
+      "interval_95": [
+        0.179,
+        0.2045
+      ]
+    },
+    "zero_shot": {
+      "wer": 0.5344,
+      "interval_95": [
+        0.5113,
+        0.5581
+      ]
+    },
+    "new_airport_minus_new_recording_points": {
+      "change": 7.32,
+      "interval_95": [
+        6.32,
+        8.36
+      ]
+    }
+  },
+  "airports": [
+    {
+      "airport": "LKPR",
+      "place": "Prague",
+      "clips": 104,
+      "reference_words": 1336,
+      "new_airport": 0.3024,
+      "new_recording": 0.2485,
+      "zero_shot": 0.607,
+      "training": {
+        "epochs_run": 8,
+        "best_epoch": 6,
+        "best_validation_wer": 0.1969
+      }
+    },
+    {
+      "airport": "LKTB",
+      "place": "Brno",
+      "clips": 32,
+      "reference_words": 452,
+      "new_airport": 0.2257,
+      "new_recording": 0.2367,
+      "zero_shot": 0.5774,
+      "training": {
+        "epochs_run": 8,
+        "best_epoch": 5,
+        "best_validation_wer": 0.1857
+      }
+    },
+    {
+      "airport": "LSGS",
+      "place": "Sion",
+      "clips": 258,
+      "reference_words": 2785,
+      "new_airport": 0.3181,
+      "new_recording": 0.2,
+      "zero_shot": 0.6208,
+      "training": {
+        "epochs_run": 8,
+        "best_epoch": 7,
+        "best_validation_wer": 0.1898
+      }
+    },
+    {
+      "airport": "LSZB",
+      "place": "Bern",
+      "clips": 173,
+      "reference_words": 2369,
+      "new_airport": 0.1769,
+      "new_recording": 0.1629,
+      "zero_shot": 0.4403,
+      "training": {
+        "epochs_run": 8,
+        "best_epoch": 8,
+        "best_validation_wer": 0.2312
+      }
+    },
+    {
+      "airport": "LSZH",
+      "place": "Zurich",
+      "clips": 126,
+      "reference_words": 1808,
+      "new_airport": 0.2074,
+      "new_recording": 0.1654,
+      "zero_shot": 0.4867,
+      "training": {
+        "epochs_run": 6,
+        "best_epoch": 3,
+        "best_validation_wer": 0.1812
+      }
+    },
+    {
+      "airport": "LZIB",
+      "place": "Bratislava",
+      "clips": 79,
+      "reference_words": 1111,
+      "new_airport": 0.2385,
+      "new_recording": 0.1908,
+      "zero_shot": 0.4653,
+      "training": {
+        "epochs_run": 8,
+        "best_epoch": 8,
+        "best_validation_wer": 0.1855
+      }
+    },
+    {
+      "airport": "YSSY",
+      "place": "Sydney",
+      "clips": 102,
+      "reference_words": 1069,
+      "new_airport": 0.4144,
+      "new_recording": 0.188,
+      "zero_shot": 0.5613,
+      "training": {
+        "epochs_run": 8,
+        "best_epoch": 8,
+        "best_validation_wer": 0.2408
+      }
+    }
+  ]
+}

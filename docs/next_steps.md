@@ -12,6 +12,7 @@
 | Does a bigger model help, done properly? | Yes: Whisper-medium with LoRA adapters and the same real speech gave 15.23%, and 15.65% on the ATCO2 clips alone, so most of the gain is from size. Averaging those two models gave 14.38%, 4.26 points better than 2025 with a 95% range that excludes zero. Restarting with fresh adapters for more epochs did not help; every kept run was still improving at its last planned epoch | same file |
 | How much of the error reaches the instruction? | Most clips still lose at least one field: callsign, command and numbers all match in 34 of 74 for the best model; callsigns are the weakest of the three | [extraction_agreement.json](../results/extraction_agreement.json) |
 | How well does the recipe do on every recording? | 19.16% pooled over all 874 clips in five-fold cross-validation by recording, against 53.44% unmodified | [cross_validation.json](../results/cross_validation.json) |
+| Does it work at an airport it has never heard? | Worse: 26.48% pooled when each airport is left out in turn, against 19.16% by recording; Sydney, the only airport outside Europe, 41.44% | [leave_one_airport_out.json](../results/leave_one_airport_out.json) |
 | How does accuracy fall as noise is added? | See the noise sweep in [retraining.json](../results/retraining.json) | `noise_sweep` |
 
 ## Still open
