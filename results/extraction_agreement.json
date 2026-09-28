@@ -305,6 +305,44 @@
         "count": 24,
         "starting_with_a_word_never_in_training": 0
       }
+    },
+    "soup_medium_long": {
+      "decoding": "beam",
+      "clips": 74,
+      "all_fields_identical": 25,
+      "callsign_command_value_identical": 38,
+      "callsign": {
+        "reference_items": 71,
+        "recall": 0.662,
+        "precision": 0.6812,
+        "clips_with_field": 59,
+        "clips_where_it_matches": 38
+      },
+      "command": {
+        "reference_items": 104,
+        "recall": 0.9135,
+        "precision": 0.8482,
+        "clips_with_field": 56,
+        "clips_where_it_matches": 44
+      },
+      "value": {
+        "reference_items": 103,
+        "recall": 0.9126,
+        "precision": 0.8704,
+        "clips_with_field": 58,
+        "clips_where_it_matches": 46
+      },
+      "waypoint": {
+        "reference_items": 315,
+        "recall": 0.7683,
+        "precision": 0.7883,
+        "clips_with_field": 70,
+        "clips_where_it_matches": 28
+      },
+      "missed_callsigns": {
+        "count": 24,
+        "starting_with_a_word_never_in_training": 0
+      }
     }
   }
 }

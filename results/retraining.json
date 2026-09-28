@@ -486,9 +486,61 @@
         ],
         "share_of_resamples_better": 0.9998
       }
+    },
+    "soup_medium_long": {
+      "description": "Weight average of medium_long (medium_real's settings with 12 planned epochs) and the ATCO2-only Whisper-medium",
+      "validation": {
+        "greedy": {
+          "wer": 0.1556,
+          "word_errors": 178,
+          "reference_words": 1144
+        },
+        "beam": {
+          "wer": 0.1442,
+          "word_errors": 165,
+          "reference_words": 1144
+        },
+        "beamplain": {
+          "wer": 0.146,
+          "word_errors": 167,
+          "reference_words": 1144
+        }
+      },
+      "test": {
+        "greedy": {
+          "wer": 0.1448,
+          "word_errors": 136,
+          "reference_words": 939
+        },
+        "beam": {
+          "wer": 0.1427,
+          "word_errors": 134,
+          "reference_words": 939
+        },
+        "beamplain": {
+          "wer": 0.1416,
+          "word_errors": 133,
+          "reference_words": 939
+        }
+      },
+      "decoding_chosen_on_validation": "beam",
+      "headline_test": {
+        "decoding": "beam",
+        "wer": 0.1427,
+        "interval_95": [
+          0.1093,
+          0.1799
+        ],
+        "change_from_2025_points": -4.37,
+        "change_interval_95_points": [
+          -6.76,
+          -2.07
+        ],
+        "share_of_resamples_better": 1.0
+      }
     }
   },
-  "chosen_on_validation": "soup_medium",
+  "chosen_on_validation": "soup_medium_long",
   "ablations": {
     "medium_atco2_only": {
       "description": "Whisper-medium with LoRA adapters (rank 32) on the ATCO2 clips only, to separate model size from the extra UWB-ATCC speech",
@@ -562,6 +614,52 @@
     }
   },
   "not_scored_on_test": {
+    "medium_long": {
+      "description": "medium_real's settings with 12 planned epochs instead of 6 (patience 3); run from the internal disk after two attempts were lost to the external drive being unplugged",
+      "training": {
+        "epoch_budget": 12,
+        "patience": 3,
+        "epochs_run": 12,
+        "stopped": "at the epoch budget",
+        "best_epoch": 9,
+        "validation_wer_before_training": 0.6967,
+        "extra_clips_per_epoch": 1000,
+        "learning_rate": 0.0005,
+        "effective_batch": 16,
+        "validation_wer_by_epoch": [
+          0.2911,
+          0.2622,
+          0.2517,
+          0.2194,
+          0.2072,
+          0.2098,
+          0.1809,
+          0.208,
+          0.1731,
+          0.1879,
+          0.1862,
+          0.1801
+        ]
+      },
+      "validation": {
+        "greedy": {
+          "wer": 0.1731,
+          "word_errors": 198,
+          "reference_words": 1144
+        },
+        "beam": {
+          "wer": 0.1565,
+          "word_errors": 179,
+          "reference_words": 1144
+        },
+        "beamplain": {
+          "wer": 0.2072,
+          "word_errors": 237,
+          "reference_words": 1144
+        }
+      },
+      "outcome": "worse on validation than its soup with the ATCO2-only model, so not scored on test"
+    },
     "continued": {
       "description": "The 2025 checkpoint trained further with the start-token fix, learning rate 5e-6",
       "training": {
@@ -633,7 +731,7 @@
     "clips": "the 74 unseen test clips",
     "noise": "white Gaussian noise added at the stated signal-to-noise ratio, measured over the whole clip (pauses included) after the optional band-pass filter",
     "decoding": "greedy, English, max_new_tokens=128, repetition_penalty=1.2, no_repeat_ngram_size=3",
-    "retrained_model": "outputs/training/soup_medium/best",
+    "retrained_model": "outputs/training/soup_medium_long/best",
     "results": {
       "zero_shot": [
         {
@@ -698,31 +796,31 @@
       "retrained": [
         {
           "added_noise_snr_db": null,
-          "wer": 0.1544
+          "wer": 0.1597
         },
         {
           "added_noise_snr_db": 30,
-          "wer": 0.1608
-        },
-        {
-          "added_noise_snr_db": 20,
           "wer": 0.1629
         },
         {
+          "added_noise_snr_db": 20,
+          "wer": 0.1704
+        },
+        {
           "added_noise_snr_db": 15,
-          "wer": 0.1693
+          "wer": 0.1736
         },
         {
           "added_noise_snr_db": 10,
-          "wer": 0.2087
+          "wer": 0.1906
         },
         {
           "added_noise_snr_db": 5,
-          "wer": 0.2577
+          "wer": 0.2449
         },
         {
           "added_noise_snr_db": 0,
-          "wer": 0.4026
+          "wer": 0.3951
         }
       ],
       "zero_shot_bandpass": [
@@ -758,31 +856,31 @@
       "retrained_bandpass": [
         {
           "added_noise_snr_db": null,
-          "wer": 0.1693
+          "wer": 0.1555
         },
         {
           "added_noise_snr_db": 30,
-          "wer": 0.1736
+          "wer": 0.1704
         },
         {
           "added_noise_snr_db": 20,
-          "wer": 0.1693
+          "wer": 0.18
         },
         {
           "added_noise_snr_db": 15,
-          "wer": 0.1661
+          "wer": 0.1725
         },
         {
           "added_noise_snr_db": 10,
-          "wer": 0.2066
+          "wer": 0.1991
         },
         {
           "added_noise_snr_db": 5,
-          "wer": 0.2481
+          "wer": 0.2236
         },
         {
           "added_noise_snr_db": 0,
-          "wer": 0.3642
+          "wer": 0.3387
         }
       ]
     },
@@ -905,6 +1003,66 @@
         {
           "added_noise_snr_db": 0,
           "wer": 0.3845
+        }
+      ],
+      "soup_medium": [
+        {
+          "added_noise_snr_db": null,
+          "wer": 0.1544
+        },
+        {
+          "added_noise_snr_db": 30,
+          "wer": 0.1608
+        },
+        {
+          "added_noise_snr_db": 20,
+          "wer": 0.1629
+        },
+        {
+          "added_noise_snr_db": 15,
+          "wer": 0.1693
+        },
+        {
+          "added_noise_snr_db": 10,
+          "wer": 0.2087
+        },
+        {
+          "added_noise_snr_db": 5,
+          "wer": 0.2577
+        },
+        {
+          "added_noise_snr_db": 0,
+          "wer": 0.4026
+        }
+      ],
+      "soup_medium_bandpass": [
+        {
+          "added_noise_snr_db": null,
+          "wer": 0.1693
+        },
+        {
+          "added_noise_snr_db": 30,
+          "wer": 0.1736
+        },
+        {
+          "added_noise_snr_db": 20,
+          "wer": 0.1693
+        },
+        {
+          "added_noise_snr_db": 15,
+          "wer": 0.1661
+        },
+        {
+          "added_noise_snr_db": 10,
+          "wer": 0.2066
+        },
+        {
+          "added_noise_snr_db": 5,
+          "wer": 0.2481
+        },
+        {
+          "added_noise_snr_db": 0,
+          "wer": 0.3642
         }
       ]
     },

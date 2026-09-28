@@ -1,6 +1,17 @@
 {
   "method": "The tagger is run on the correct transcript and on the model's transcript, as in\nevaluation.extraction_agreement. Each callsign found in the correct transcript\nbut not in the model's is aligned with the model's transcript and sorted into:",
   "models": {
+    "soup_medium_long": {
+      "decoding": "beam",
+      "missed_callsigns": 24,
+      "clips_with_a_missed_callsign": 21,
+      "by_cause": {
+        "letters or digits": 14,
+        "tagger": 7,
+        "mostly lost": 2,
+        "airline word": 1
+      }
+    },
     "soup_medium": {
       "decoding": "beam",
       "missed_callsigns": 24,

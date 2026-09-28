@@ -28,6 +28,14 @@ RUNS = {
     "medium_real": "Whisper-medium with LoRA adapters (rank 32), real clips plus 1,000 UWB-ATCC clips per epoch",
     "soup_medium": "Weight average of medium_real and the ATCO2-only Whisper-medium",
     "medium_longer": "medium_real trained for up to three more epochs with fresh rank-32 adapters, learning rate 2e-4",
+    "soup_medium_long": "Weight average of medium_long (medium_real's settings with 12 planned epochs) and the "
+                        "ATCO2-only Whisper-medium",
+}
+# Trained and scored on validation only: the rule written before the run compared it
+# with its soup, and only the better of the two could be scored on test.
+VALIDATION_ONLY = {
+    "medium_long": "medium_real's settings with 12 planned epochs instead of 6 (patience 3); run from the internal "
+                   "disk after two attempts were lost to the external drive being unplugged",
 }
 # Declared in advance as ablations: reported under "ablations", never eligible to be chosen.
 ABLATIONS = {
@@ -141,6 +149,18 @@ def main():
     # Runs that were never scored on the test clips: stopped because they never
     # beat their starting point, beaten on validation, or not run at all.
     not_scored = {}
+    for name, description in VALIDATION_ONLY.items():
+        log_path = OUT / "training" / name / "training_log.json"
+        folder = OUT / "evaluation" / f"{name}_validation" / "asr_predictions.jsonl"
+        if log_path.exists() and folder.exists():
+            val = predictions(f"{name}_validation")
+            entry = dict(description=description, training=training_summary(log_path), validation={})
+            for mode in MODES:
+                edits, words = scores(val, mode)
+                entry["validation"][mode] = dict(wer=round(float(edits.sum() / words.sum()), 4),
+                                                 word_errors=int(edits.sum()), reference_words=int(words.sum()))
+            entry["outcome"] = "worse on validation than its soup with the ATCO2-only model, so not scored on test"
+            not_scored[name] = entry
     for name in ["continued", "medium_longer"]:
         log_path = OUT / "training" / name / "training_log.json"
         if log_path.exists():
@@ -187,7 +207,8 @@ def main():
         # The same sweep for two more models, and the first sweep, which had no
         # repetition guards and was redone because greedy decoding looped.
         others = {}
-        for name, folder in [("soup_fixed_real", "noise_soup"), ("medium_real", "noise_medium_real")]:
+        for name, folder in [("soup_fixed_real", "noise_soup"), ("medium_real", "noise_medium_real"),
+                             ("soup_medium", "noise_soup_medium")]:
             for label, key in [("retrained", name), ("retrained_bandpass", f"{name}_bandpass")]:
                 found = sweep(folder, label)
                 if found:

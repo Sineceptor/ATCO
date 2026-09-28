@@ -138,6 +138,29 @@
         "kilo -> (missed) (1)",
         "nine -> one (1)"
       ]
+    },
+    "soup_medium_long": {
+      "decoding": "beam",
+      "spelled_words": 479,
+      "right": 461,
+      "accuracy": 0.9624,
+      "letters": 157,
+      "letters_right": 149,
+      "letter_accuracy": 0.949,
+      "commonest_confusions": [
+        "four -> fato (1)",
+        "two -> (missed) (1)",
+        "mike -> bye (1)",
+        "victor -> the (1)",
+        "delta -> alpha (1)",
+        "hotel -> heli (1)",
+        "three -> two (1)",
+        "five -> (missed) (1)",
+        "foxtrot -> sunt (1)",
+        "nine -> mike (1)",
+        "two -> twenty (1)",
+        "kilo -> sierra (1)"
+      ]
     }
   },
   "test": {
@@ -277,6 +300,29 @@
         "delta -> hotel (1)",
         "three -> touch (1)",
         "five -> and (1)"
+      ]
+    },
+    "soup_medium_long": {
+      "decoding": "beam",
+      "spelled_words": 429,
+      "right": 406,
+      "accuracy": 0.9464,
+      "letters": 151,
+      "letters_right": 140,
+      "letter_accuracy": 0.9272,
+      "commonest_confusions": [
+        "eight -> (missed) (2)",
+        "delta -> golf (1)",
+        "november -> then (1)",
+        "three -> right (1)",
+        "papa -> one (1)",
+        "seven -> seventy (1)",
+        "four -> forty (1)",
+        "delta -> hotel (1)",
+        "three -> touch (1)",
+        "five -> and (1)",
+        "tango -> go (1)",
+        "two -> three (1)"
       ]
     }
   },
