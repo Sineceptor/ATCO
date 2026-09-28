@@ -239,8 +239,11 @@ if '--release' in sys.argv:
     except Exception as e:
         code = getattr(e, 'code', 'unreachable')
     check('repository is public', code == 200, f'HTTP {code}: readers would see a 404 on every code link')
+    # A tag-only checkout (as in CI on a tag push) has no origin/main; check the commit itself then.
+    ref = 'origin/main' if subprocess.run(['git', 'rev-parse', '--verify', '--quiet', 'origin/main'],
+                                          cwd=SITE.parent, capture_output=True).returncode == 0 else 'HEAD'
     for path in sorted(set(re.findall(r'https://github\.com/Sineceptor/ATCO/blob/main/([^"#]+)', HTML))):
-        ok = subprocess.run(['git', 'cat-file', '-e', f'origin/main:{path}'], cwd=SITE.parent,
+        ok = subprocess.run(['git', 'cat-file', '-e', f'{ref}:{path}'], cwd=SITE.parent,
                             capture_output=True).returncode == 0
         check(f'linked file is on main: {path}', ok, 'not pushed yet')
 

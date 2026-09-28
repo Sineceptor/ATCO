@@ -4,6 +4,7 @@ name: Tests
 
 on:
   push:
+    branches: ["**"]   # not tags: a tagged commit was already tested when it was pushed
   pull_request:
 
 permissions:
