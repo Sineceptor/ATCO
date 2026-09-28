@@ -1,0 +1,123 @@
+{
+  "who_labelled": "an AI model (Claude), not a person, following docs/hand_labelling_guide.md, which was written before any labelling; it read only the sentences, not the stored labels or the tagger's output",
+  "what_this_is_not": "not a human evaluation: the tagger has still not been scored against labels written by a person",
+  "sentences": 89,
+  "words": 1001,
+  "left_out_as_unsure": 19,
+  "tagger": {
+    "accuracy": 0.5733,
+    "weighted_f1": 0.6233,
+    "per_label": {
+      "O": {
+        "precision": 0.8649,
+        "recall": 0.2591,
+        "f1": 0.3988,
+        "support": 247
+      },
+      "CALLSIGN": {
+        "precision": 0.9034,
+        "recall": 0.6071,
+        "f1": 0.7262,
+        "support": 308
+      },
+      "COMMAND": {
+        "precision": 0.6923,
+        "recall": 0.6328,
+        "f1": 0.6612,
+        "support": 128
+      },
+      "VALUE": {
+        "precision": 0.7251,
+        "recall": 0.7962,
+        "f1": 0.759,
+        "support": 265
+      },
+      "WAYPOINT": {
+        "precision": 0.0683,
+        "recall": 0.5882,
+        "f1": 0.1223,
+        "support": 34
+      }
+    },
+    "confusion_rows_ai_label_columns_tagger": {
+      "O": {
+        "O": 64,
+        "CALLSIGN": 1,
+        "COMMAND": 7,
+        "VALUE": 2,
+        "WAYPOINT": 173
+      },
+      "CALLSIGN": {
+        "O": 0,
+        "CALLSIGN": 187,
+        "COMMAND": 2,
+        "VALUE": 71,
+        "WAYPOINT": 48
+      },
+      "COMMAND": {
+        "O": 10,
+        "CALLSIGN": 0,
+        "COMMAND": 81,
+        "VALUE": 4,
+        "WAYPOINT": 33
+      },
+      "VALUE": {
+        "O": 0,
+        "CALLSIGN": 8,
+        "COMMAND": 27,
+        "VALUE": 211,
+        "WAYPOINT": 19
+      },
+      "WAYPOINT": {
+        "O": 0,
+        "CALLSIGN": 11,
+        "COMMAND": 0,
+        "VALUE": 3,
+        "WAYPOINT": 20
+      }
+    }
+  },
+  "word_list_rules": {
+    "accuracy": 0.6507,
+    "weighted_f1": 0.7011,
+    "confusion_rows_ai_label_columns_rules": {
+      "O": {
+        "O": 112,
+        "CALLSIGN": 0,
+        "COMMAND": 9,
+        "VALUE": 4,
+        "WAYPOINT": 122
+      },
+      "CALLSIGN": {
+        "O": 4,
+        "CALLSIGN": 221,
+        "COMMAND": 0,
+        "VALUE": 48,
+        "WAYPOINT": 35
+      },
+      "COMMAND": {
+        "O": 19,
+        "CALLSIGN": 0,
+        "COMMAND": 78,
+        "VALUE": 3,
+        "WAYPOINT": 28
+      },
+      "VALUE": {
+        "O": 0,
+        "CALLSIGN": 8,
+        "COMMAND": 27,
+        "VALUE": 211,
+        "WAYPOINT": 19
+      },
+      "WAYPOINT": {
+        "O": 2,
+        "CALLSIGN": 12,
+        "COMMAND": 0,
+        "VALUE": 3,
+        "WAYPOINT": 17
+      }
+    }
+  },
+  "for_comparison": "the tagger against its own word-list rules: 871 of 1,001 words (87.01%), weighted F1 0.8657",
+  "produced_by": "python -m evaluation.hand_labels score --sheet ai_labels.tsv --scores ai_label_scores.json"
+}

@@ -12,7 +12,7 @@ runs in the browser.
 | --- | --- |
 | 699 training clips, 175 old test clips | [`data_splits.json`](../results/rescoring_2025/data_splits.json) (`asr_train_rows`, `asr_test_rows`) |
 | 101 of the 175 test clips share a recording with training clips (92 shared recordings) | same file (`asr_test_clips_in_shared_sessions`, `asr_shared_sessions`) |
-| The 74 "clean" test clips come from recordings no model trained on; the other 101 are used only to make choices | `split_original_test` in [`evaluation/session_split.py`](../evaluation/session_split.py), tested in [`tests/test_retraining.py`](../tests/test_retraining.py) |
+| The 74 unseen test clips come from recordings no model trained on; the other 101 are used only to make choices | `split_original_test` in [`evaluation/session_split.py`](../evaluation/session_split.py), tested in [`tests/test_retraining.py`](../tests/test_retraining.py) |
 
 With 74 clips, a difference of one or two points can be chance, so every
 comparison in [`retraining.json`](../results/retraining.json) carries a 95%

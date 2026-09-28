@@ -90,7 +90,7 @@ def score(test_file, sheet, predictions_file, output):
     summary = {"words_left_out_as_unsure": len(unsure), "rules_vs_human": compare(reference, rules)}
     if predictions_file.is_file():
         predicted = {(r["index"], p): label for r in read_jsonl(predictions_file) for p, label in enumerate(r["prediction"])}
-        if set(predicted) == set(keys):
+        if set(keys) <= set(predicted) and len(predicted) == len(keys) + len(unsure):
             summary["distilbert_vs_human"] = compare(reference, [predicted[key] for key in keys])
         else:
             print("Model predictions cover different words (was --limit used?); skipping them.")
@@ -109,13 +109,16 @@ def main():
     cli.add_argument("action", choices=["export", "score"])
     cli.add_argument("--data-dir", type=Path, default=ROOT / "datasets")
     cli.add_argument("--output", type=Path, default=ROOT / "outputs/evaluation")
+    cli.add_argument("--sheet", default="hand_labels.tsv",
+                     help="Sheet name in --output; the default is the one for labelling by hand")
+    cli.add_argument("--scores", default="hand_label_scores.json", help="Where to write the scores, in --output")
     args = cli.parse_args()
     test_file = args.data_dir / "entities/test.jsonl"
-    sheet = args.output / "hand_labels.tsv"
+    sheet = args.output / args.sheet
     if args.action == "export":
         export(test_file, sheet)
     else:
-        score(test_file, sheet, args.output / "distilbert_predictions.jsonl", args.output / "hand_label_scores.json")
+        score(test_file, sheet, args.output / "distilbert_predictions.jsonl", args.output / args.scores)
 
 
 if __name__ == "__main__":

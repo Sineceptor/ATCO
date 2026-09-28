@@ -45,4 +45,7 @@ python -m evaluation.hand_labels score
    unfinished is scored by accident.
 
 Label one sentence at a time using the `whole_turn` column, and don't look at the
-stored labels, the tagger's output or `training/entity_labels.py` while doing it.
+stored labels, the tagger's output, `training/entity_labels.py`, or the
+AI-written labels in `outputs/evaluation/ai_labels.tsv` and
+`results/tagger_vs_ai_labels.json` while doing it. Once done, the two sets of
+labels can be compared to see how often a person and the AI model agree.

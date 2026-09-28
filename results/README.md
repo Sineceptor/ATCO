@@ -16,6 +16,7 @@ here. Each file records how it was produced; the scripts are in
 | [band_pass_power.json](band_pass_power.json) | How much power the 300-3,400 Hz filter removes from each of the 74 test clips, which sets how much less noise the filtered noise sweep added |
 | [clips/](clips/) | The split clip by clip (`split.csv`: all 874 clip IDs with recording, airport and split) and every model's word errors on each validation and test clip (`errors_*.csv`), so the intervals can be checked. IDs and counts only, no transcripts |
 | [leave_one_airport_out.json](leave_one_airport_out.json) | Leave one airport out: the fixes-only recipe trained seven times, each without one airport, scored on that airport's clips; pooled and per airport, next to the cross-validation by recording and the unmodified model on the same clips |
+| [tagger_vs_ai_labels.json](tagger_vs_ai_labels.json) | The word tagger and its word-list rules scored against labels written by an AI model following the labelling guide (not a person), with confusion tables |
 | [cross_validation.json](cross_validation.json) | Five-fold cross-validation by recording over all 874 clips: the retrained Whisper-small and the unmodified model, pooled and per fold |
 
 ## 2025 models, re-scored in 2026

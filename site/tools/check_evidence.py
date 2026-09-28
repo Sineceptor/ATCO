@@ -95,6 +95,14 @@ if (RESULTS / 'callsign_errors.json').exists():
 check('"every missed callsign started with a known word" matches the saved analysis',
       b['missed_callsigns']['starting_with_a_word_never_in_training'] == 0)
 
+if (RESULTS / 'tagger_vs_ai_labels.json').exists():
+    ai = load('tagger_vs_ai_labels.json')
+    paper_text = (SITE.parent / 'paper' / 'atco_paper.md').read_text(encoding='utf-8')
+    check('the paper quotes the AI-label check exactly',
+          f"{pct(ai['tagger']['accuracy'])} of words (weighted F1 {ai['tagger']['weighted_f1']:.4f})" in paper_text
+          and f"{pct(ai['word_list_rules']['accuracy'])} ({ai['word_list_rules']['weighted_f1']:.4f})" in paper_text)
+    check('the paper says the AI labels are not a person\'s', 'this is not a human evaluation' in paper_text)
+
 tag = load('rescoring_2025/entity_extraction.json')
 shown('tagger weighted F1', f"{tag['report']['weighted avg']['f1-score']:.4f}")
 cm = tag['confusion_matrix']

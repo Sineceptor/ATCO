@@ -47,8 +47,9 @@
         teach it, and then checked whether my own results held up.</p>
       <p class="owns">In 2026 I went back over everything, found what was wrong with my own testing,
         fixed it and retrained.</p>
-      <p class="resultline">On recordings it had never heard, my best model&rsquo;s word error rate is
-        <b>14.27%</b>. My 2025 model: <b>18.64%</b>. Whisper out of the box: <b>56.87%</b>.</p>
+      <p class="resultline">On recordings it had never heard, my best model&rsquo;s word error rate (the
+        share of words it gets wrong, so lower is better) is <b>14.27%</b>. My 2025 model: <b>18.64%</b>.
+        Whisper out of the box: <b>56.87%</b>.</p>
       <p class="scopeline">699 real training clips &middot; 4,808 clips of generated speech &middot; about 30 experiments</p>
       <p class="actions">
         <a class="btn" href="#built">Watch one call go through it</a>
@@ -389,8 +390,8 @@
       speech. To fit it in my laptop&rsquo;s memory I froze its weights and trained small add-on
       matrices instead (LoRA), about 4% as many numbers as the whole model. Trained on my 699 clips alone,
       the bigger model already scored 15.65%, so most of its gain comes from size, not from the extra
-      speech. Averaging those two Whisper-medium models, the same soup trick, beat both. Every run I kept
-      was still improving when it reached its planned number of epochs, so I trained the bigger model
+      speech. Averaging those two Whisper-medium models, the same soup trick, beat both. Both Whisper-medium
+      runs were still improving when they reached their planned number of epochs, so I trained the bigger model
       again with twice as many (12). Its best checkpoint came at epoch 9, and it did better on the 101
       choosing clips. Averaged with the ATCO2-only model, it made my best model, which I had decided in
       advance to adopt only if it beat the previous best on those clips. On the unseen clips, though, it is

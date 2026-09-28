@@ -209,9 +209,13 @@ Individual letters and digits are therefore mostly right; the remaining errors a
 
 Against its rule-generated references, the application's DistilBERT tagger [9] agrees with the rules on 871 of 1,001 words, a weighted F1 of 0.8657. These are the same sentences its training used to pick its best epoch, so the figure is somewhat optimistic even as a measure of agreement. A separate BERT tagger [10] scored 0.9544, but against a version of the rules that disagrees on 25 of the words, so the two cannot be compared. The largest error group is 66 of the 140 words the rules call ordinary being tagged as waypoints (Figure 6). Because the references come from rules, these scores measure agreement with the rules, not accuracy. The rules also call "and" a waypoint, and so does the tagger (Section 6).
 
+The tagger has not yet been scored against labels written by a person. As a stand-in, the 1,001 words were labelled by an AI model following a written guide fixed before any labelling, reading only the sentences; this is not a human evaluation, and the guide's conventions (for example, that "runway" belongs to the number after it) differ in places from the rules'. Leaving out the 19 words it marked unsure, the tagger agrees with those labels on 57.33% of words (weighted F1 0.6233), and the rules themselves on 65.07% (0.7011). Most of the disagreement is the known waypoint problem: of the 247 words labelled ordinary, the tagger calls 173 waypoints. Another 71 callsign words, mostly flight-number digits, are tagged as values. The 0.8657 therefore overstates the tagger's accuracy; a person's labels are still needed to measure it.
+
 ![Figure 6. DistilBERT confusion matrix on 1,001 words, against labels from the word-list rules.](figures/fig6_tagger_confusion.png)
 
 ## 6. Discussion
+
+For context, van Doorn et al. [12] fine-tuned Whisper on several ATC corpora and report 13.5% WER on ATCO2. Their data and split differ from those here, so the two numbers cannot be compared directly. Their ATCOSIM result, 1.17% with a random split against 3.88% when speakers are held out, shows the same effect that the audit in Section 3 found: letting recordings or speakers appear on both sides of a split flatters the score.
 
 The main result is that, on recordings the model has never heard, larger models with low-rank adapters reduce WER from 18.64% to 14.27% when two of them are averaged, that this gain survives a paired test on 74 clips, and that the ablation attributes most of it to the larger model rather than the extra speech. Most of the other interventions did not produce gains that a test of this size can detect, and one of them, synthetic radio speech, pointed the wrong way. The synthetic clips were designed with care, but text-to-speech voices are calm and clear where controllers are fast and clipped; a simulated channel changes the sound quality but not the way people speak. Real speech from another corpus, by contrast, made the model much less prone to looping (UWB-ATCC is from Czech airspace, which the ATCO2 subset also covers, through Prague and Brno), while the larger model accounted for most of the gain in accuracy and in robustness to noise.
 
@@ -252,6 +256,8 @@ I used AI coding tools to help write the code and to draft and edit this paper.
 [10] Devlin, J., Chang, M. W., Lee, K. and Toutanova, K. BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. arXiv:1810.04805, 2018.
 
 [11] International Civil Aviation Organization. Annex 10 to the Convention on International Civil Aviation, Aeronautical Telecommunications, Volume III: Communication Systems. Second edition, July 2007. Attachment to Part II, 1.1.2 (audio bandwidth assumed for 8.33 kHz equipment).
+
+[12] van Doorn, J., Sun, J., Hoekstra, J. M., Jonk, P. and de Vries, V. Whisper-ATC: Open Models for Air Traffic Control Automatic Speech Recognition with Accuracy. International Conference on Research in Air Transportation (ICRAT), Singapore, 2024.
 
 ## Data and code
 

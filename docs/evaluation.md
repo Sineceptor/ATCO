@@ -73,6 +73,14 @@ also used these test sentences while training: DistilBERT kept whichever epoch
 scored best on them, and the BERT script used them as its validation set. So
 these are development scores against labels made by rules, not a clean test.
 
+Until I label the words myself, I had an AI model label the same 1,001 words
+following my [labelling guide](hand_labelling_guide.md), reading only the
+sentences. Against those labels, which are not a person's, the tagger agrees on
+57.33% of the 982 words it was sure about (weighted F1 0.6233) and the word-list
+rules on 65.07%. Most of the gap is ordinary words called waypoints (173 of 247)
+and callsign digits called values (71)
+([tagger_vs_ai_labels.json](../results/tagger_vs_ai_labels.json)).
+
 ## Known weaknesses of the entity labels
 
 My rules call a word a WAYPOINT if it has three or more letters and isn't in any
@@ -188,9 +196,9 @@ are level. Trained alone, the 12-epoch model scores 15.65% on validation against
 16.61% for the 6-epoch one, and its best epoch was 9 of 12, so the 6-epoch run was
 somewhat undertrained.
 
-Every run that was kept reached its planned number of epochs while validation
-WER was still falling (run E at epoch 8 of 8, `medium_real` at 6 of 6, the
-ATCO2-only Whisper-medium at 5 of 5), and the learning rate decays to zero at that
+Run E and both Whisper-medium runs reached their planned number of epochs while
+validation WER was still falling (run E at epoch 8 of 8, `medium_real` at 6 of 6,
+the ATCO2-only Whisper-medium at 5 of 5; run A peaked earlier, at 9 of 12), and the learning rate decays to zero at that
 point, so these models may be undertrained; for Whisper-medium, the 12-epoch
 run above confirmed it. Only runs that never beat their starting point stopped
 early. Restarting `medium_real` with fresh adapters and a
@@ -207,22 +215,26 @@ weights were frozen and rank-32 LoRA adapters were trained on every attention
 and feed-forward layer (34.6 million trainable numbers, 4.3% of the model), so
 training fitted in 4.9 GB of GPU memory, at about 3 seconds per clip.
 
-## Connected application
+## The app, end to end
 
-A real 6.12-second file passes through the 2025 Whisper-small model, DistilBERT and SpeechT5/HiFi-GAN.
-It produces the transcript, extracted words and a 4.96-second mono WAV at 16 kHz.
-The browser upload and command-line routes give matching outputs for this file.
-The example misrecognises “push and start approved” as “portion startup approved”
-(the 2026 Whisper-medium soup hears “proceed and start approved”),
-showing that transcription errors can reach extraction and readback.
+I checked the whole app on one real 6.12-second recording, which says "push and
+start approved". It goes through the speech model, the word tagger and the
+SpeechT5 readback, and comes out as a transcript, the tagged words and a
+4.96-second spoken readback. The browser and the command line give the same
+result. My 2025 model hears "portion startup approved", and the current model
+hears "provision start approved", so the mistake travels into the tagged words
+and the readback either way.
 
-Since 2026 the application also removes waypoint labels from English function
-words such as "and" and "the". The tagger learned those labels from the
-word-list rules, which call any unfamiliar word of three or more letters a
-waypoint; the scores above describe the tagger's own output, before this step.
+Since 2026 the app also removes waypoint labels from small English words such
+as "and" and "the". The tagger learnt to call them waypoints from my word-list
+rules, which call any unfamiliar word of three or more letters a waypoint; the
+tagger scores above are from before this step.
 
-This verifies the connection and output files. Physical microphone capture and human
-speech intelligibility have not been verified. SpeechT5 retains the original random
-speaker embedding. There is no end-to-end instruction accuracy or operational
-validation result. A stronger evaluation needs independent human labels, new recording
-sessions and direct tests of whole instructions and speech intelligibility.
+How far does a transcription error travel? On the 74 unseen clips, the tagger
+finds the same callsign, command and numbers in the best model's transcript as
+in the correct one for 38 clips, and for 25 when waypoints are counted too
+([extraction_agreement.json](../results/extraction_agreement.json)). That is
+agreement with the tagger's reading of the correct transcript, not a check by a
+person that the instruction is right. I haven't tested a real microphone, how
+understandable the spoken readback is, or anything in live operation; the
+readback also uses SpeechT5's default speaker setting.

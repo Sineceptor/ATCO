@@ -15,8 +15,9 @@ goes wrong: "push and start" is heard as "portion startup", and the tagger
 calls words it does not know "waypoints". I left it in because those mistakes
 are most of what I learned from.
 
-The [project page](https://sineceptor.github.io/ATCO/) tells the same story in
-about two minutes, with a sound demo of the simulated radio.
+The [project page](https://sineceptor.github.io/ATCO/) tells the same story. Its
+top section takes about two minutes; the rest goes into the detail, with a sound
+demo of the simulated radio.
 
 ## Why I did this
 
@@ -157,7 +158,7 @@ python -m unittest discover -s tests
 | --- | --- |
 | [app.py](app.py), [transcribe.py](transcribe.py), [atco/](atco/) | The app: pipeline, the three model modules, browser page |
 | [training/](training/) | The training and labelling scripts behind the app's models |
-| [evaluation/](evaluation/) | Re-scoring, the clean split, model comparisons with intervals, the noise sweep |
+| [evaluation/](evaluation/) | Re-scoring, the split by recording, model comparisons with intervals, the noise sweep, the airport test |
 | [experiments/](experiments/README.md) | All the 2025 experiments, renamed and explained |
 | [results/](results/) | Score summaries, figure data and the original 2025 result files |
 | [paper/](paper/atco_paper.md) | The research paper, its figures and the scripts that build them |

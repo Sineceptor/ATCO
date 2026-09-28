@@ -11,7 +11,9 @@
 | Late September 2026 | I fixed what the review found and retrained: a test set of recordings no model had heard, the start-token bug, checkpoints chosen on validation clips, controlled tests of my synthetic data and of 10.5 hours of extra real speech, model soups, and Whisper-medium trained with LoRA adapters; the average of two Whisper-medium models became the best model. Results in [results/](../results/README.md) and the [paper](../paper/atco_paper.pdf). |
 
 The Git history starts in 2026 because I did the original work in a plain
-folder with no version control. Dates before that are from memory and from
+folder with no version control. The public history on GitHub starts again on
+26 September 2026: I started a fresh repository for the cleaned-up project, and
+kept the working history from before that privately. Dates before 2026 are from memory and from
 document metadata, not from commits.
 
 ## What I did and what I used

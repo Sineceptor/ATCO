@@ -1,6 +1,7 @@
 # Project page
 
-A single page about this project for someone who has a couple of minutes. Plain
+A single page about this project: the top section is for someone who has a
+couple of minutes, and the rest is for anyone who wants the detail. Plain
 HTML, CSS and JavaScript: no build step, no framework, no dependencies.
 
 | File | What it is |

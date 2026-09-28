@@ -186,19 +186,21 @@ not improve for two to four epochs (`training` in
 | `medium_longer` | 3 | 2 | none | early: never beat its start |
 
 The learning rate falls to zero at the end of the plan, so the runs that were
-still improving may be undertrained. Training one of them for longer, with the
-adoption rule written first, is the obvious next experiment.
+still improving may be undertrained. The 12-epoch repeat of `medium_real`
+(section 13) tested this: it peaked at epoch 9 and did better on validation.
 
-## 12. Corrections after an outside review, 27 September 2026
+## 12. Corrections after a review, 27 September 2026
 
-A reviewer read the repo and site before the numbers were frozen. Everything
-below was checked against the code and saved outputs before it was changed.
+Before freezing the numbers, I had the whole repo and site reviewed with an AI
+assistant, working from my own planning notes. Everything below was checked
+against the code and saved outputs before it was changed. Figures in this
+section describe the best model at the time, the 6-epoch soup.
 
 | Finding | What changed |
 | --- | --- |
 | The README and site described the 2025 Whisper-small app | Now describe the current app; the traced call is labelled as the 2025 model |
 | "Every field right in 22 of 74" included waypoint labels | Recounted without waypoints and both counts published |
-| Spelling variants (alfa and alpha, oskar and oscar) counted as missed callsigns | Treated as the same word in both the letters score and the instruction counts: best model 34 of 74 without waypoints, 23 with them; letters and digits 94.41% |
+| Spelling variants (alfa and alpha, oskar and oscar) counted as missed callsigns | Treated as the same word in both the letters score and the instruction counts: then-best model (6-epoch soup) 34 of 74 without waypoints, 23 with them; letters and digits 94.41% |
 | "Mostly misheard letters and digits" was not counted | Sorted by cause: 15 of the 24 missed callsigns |
 | "Training stops early" and "training longer did not help" | Epoch budgets published (section 11); wording now says what was actually run |
 | 45.79% and the `continued`, `medium_longer` and three-model soup numbers were not in `results/` | Added to `retraining.json` by the summary script |
@@ -275,16 +277,48 @@ callsign causes were re-run, and every page updated.
 | Engine noise in the 2025 radio script | About 99% of its power below 20 Hz; the script's own filter kept a median 0.012%, leaving it 34 dB below the static ([radio_chain_noise.json](../results/radio_chain_noise.json)) |
 | Why the filtered noise sweep scored better | The filter removes a median 2.05 dB of each test clip's power, so filtered clips got about 2 dB less noise ([band_pass_power.json](../results/band_pass_power.json)) |
 | The audio band | 300 to 3,400 Hz is the telephone band; ICAO's guidance for 8.33 kHz channels assumes about 2,500 Hz of audio |
-| Missed callsigns sorted by cause | Best model: 15 of 24 letters or digits, 7 the tagger's, 1 airline word, 1 mostly lost ([callsign_errors.json](../results/callsign_errors.json)) |
+| Missed callsigns sorted by cause | Then-best model (6-epoch soup): 15 of 24 letters or digits, 7 the tagger's, 1 airline word, 1 mostly lost; the current best: 14, 7, 1 and 2 ([callsign_errors.json](../results/callsign_errors.json)) |
 | Spelling variants | Now one word in every measure; changes the instruction counts and letters score slightly (section 12) |
 | Squawk check | Accepted codes with a leading zero wrongly; fixed, with tests |
 | ATCO2's own word tags as a human reference | Not usable: only 2 of 877 segments are marked as checked |
 | Hand labels for the tagger | Sheet exported and the rules for awkward words written first ([guide](hand_labelling_guide.md)); the labelling itself is still to do |
 | Clip IDs and per-clip errors | Published in [results/clips/](../results/clips/) |
 
+## 15. The tagger against AI-written labels, 28 September 2026
+
+The tagger has still not been scored against a person. As a stand-in, an AI
+model labelled the 1,001 words of its 89 test sentences, following the
+[labelling guide](hand_labelling_guide.md) written beforehand and reading only
+the sentences, in a separate sheet (`outputs/evaluation/ai_labels.tsv`), so my
+own sheet stays blank ([tagger_vs_ai_labels.json](../results/tagger_vs_ai_labels.json)).
+
+| Against the AI labels (982 words; 19 marked unsure) | Words agreeing | Weighted F1 |
+| --- | ---: | ---: |
+| The tagger (DistilBERT) | 57.33% | 0.6233 |
+| The word-list rules | 65.07% | 0.7011 |
+| For comparison: the tagger against the rules | 87.01% | 0.8657 |
+
+Most of the disagreement is ordinary words tagged as waypoints (173 of 247) and
+callsign words, mostly flight-number digits, tagged as values (71). Some is the
+guide's conventions differing from the rules', such as "runway" belonging to the
+number after it (27 words). This is not a human evaluation, and it doesn't
+replace my own labels.
+
+## 16. Tidying after a second review, 28 September 2026
+
+A second AI-assisted review of the public repo found a few leftovers, all
+fixed: one page still quoted the old best model's transcript of the example
+call, some experiment-log lines still described the 6-epoch soup as the best
+model, one site sentence said every kept run was still improving (run A peaked
+at epoch 9 of 12), two places still said "clean" clips, the README promised the
+whole page in two minutes, the site's top line didn't say what word error rate
+means, and the history didn't say why the public Git history starts on
+26 September.
+
 ## Not done yet
 
 - The word tagger has never been scored against labels written by a person:
-  the sheet and the [labelling guide](hand_labelling_guide.md) are ready.
+  the sheet and the [labelling guide](hand_labelling_guide.md) are ready. The
+  AI-labelled stand-in (section 15) suggests the real score is well below 0.8657.
 - More test recordings from new airports, to separate models a point apart.
 - Training audio of spelled-out registrations, the other way to work on callsign letters.
