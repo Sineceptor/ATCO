@@ -82,9 +82,9 @@ shown('callsign, command and numbers all right',
       f"Callsign, command and numbers all matched in {b[core]} of the {b['clips']} clips (the 2025 model: "
       f"{o[core]}; unmodified Whisper-small: {z[core]})")
 shown('every field right, with waypoints', f"with them, every field matched in only {b['all_fields_identical']}")
-shown('Whisper-small soup on whole instructions', f"the Whisper-small soup got {agree['soup_fixed_real'][core]}")
-check('the best model is not the top on whole instructions, as the page says',
-      max(m[core] for m in agree.values()) > b[core])
+shown('other 2026 models on whole instructions',
+      f"the Whisper-small soup and the single Whisper-medium both got {agree['soup_fixed_real'][core]}")
+check('those two really are level', agree['soup_fixed_real'][core] == agree['medium_real'][core])
 shown('missed callsigns counted', f"every one of the {b['missed_callsigns']['count']} missed callsigns")
 if (RESULTS / 'callsign_errors.json').exists():
     causes = load('callsign_errors.json')['models'][best]
@@ -151,11 +151,11 @@ if (RESULTS / 'letters_digits.json').exists():
     shown('letters and digits, best model', pct(ld[best]['accuracy']))
     shown('letters and digits, 2025 model', f"(the 2025 model: {pct(ld['checkpoint_2025']['accuracy'])})")
     lw = load('letters_digits.json')['rejected_trials']['letter_weighted_loss']['epoch1']
-    base = load('letters_digits.json')['validation'][best]
+    base = load('letters_digits.json')['validation']['soup_medium']  # the model the trial started from
     gained = {1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five'}.get(lw['right'] - base['right'])
     shown('letter-weighted trial gain', f"{gained} more of {lw['spelled_words']}")
     shown('letter-weighted trial word error rate',
-          f"from {pct(retrain['runs'][best]['validation']['beam']['wer'])} to {pct(lw['wer'])}")
+          f"from {pct(retrain['runs']['soup_medium']['validation']['beam']['wer'])} to {pct(lw['wer'])}")
 
 shown('synthetic clips', '4,808 clips')
 check('historical values keep their unknown-metric label', 'metric not established' in TEXT)

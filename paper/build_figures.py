@@ -28,6 +28,7 @@ LABELS = {
     "soup_fixed_real": "Soup: fixes-only + UWB-ATCC models",
     "medium_real": "Whisper-medium (LoRA) + UWB-ATCC",
     "soup_medium": "Soup of two Whisper-medium models",
+    "soup_medium_long": "Same soup, 12 epochs of training",
     "medium_longer": "Whisper-medium, trained longer",
 }
 

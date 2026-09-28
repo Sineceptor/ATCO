@@ -160,32 +160,32 @@ fixed seed per clip so every model hears the same audio
 
 | Added noise | Best 2026 model | 2025 model | Unmodified Whisper-small |
 | --- | ---: | ---: | ---: |
-| none | 15.44% | 19.81% | 58.79% |
-| 20 dB | 16.29% | 22.15% | 62.19% |
-| 10 dB | 20.87% | 28.01% | 70.50% |
-| 0 dB | 40.26% | 48.03% | 93.08% |
+| none | 15.97% | 19.81% | 58.79% |
+| 20 dB | 17.04% | 22.15% | 62.19% |
+| 10 dB | 19.06% | 28.01% | 70.50% |
+| 0 dB | 39.51% | 48.03% | 93.08% |
 
 The fine-tuned models are better at every noise level, and the best 2026 model,
-an average of two Whisper-medium models, also loses fewer points: 5.43 at 10 dB
-where the 2025 model loses 8.20, and 24.82 at 0 dB against 28.22. As a multiple
-of where each started it is no better (2.61 times at 0 dB against 2.42). The smaller 2026 soup, trained on the same extra real speech,
+an average of two Whisper-medium models, also loses fewer points: 3.09 at 10 dB
+where the 2025 model loses 8.20, and 23.54 at 0 dB against 28.22. As a multiple
+of where each started it is no better at 0 dB (2.47 times against 2.42). The smaller 2026 soup, trained on the same extra real speech,
 follows the 2025 curve closely (45.79% at 0 dB), so the robustness seems to come
 mostly from the bigger model. Here 0 dB means the noise has the same average power
 as the whole clip, pauses included, so while someone is talking the noise is
 louder than the speech.
 
 With the 300 to 3,400 Hz filter applied first, the recordings barely change:
-16.93% instead of 15.44% for the best 2026 model, 55.80% instead of 58.79% for
+15.55% instead of 15.97% for the best 2026 model, 55.80% instead of 58.79% for
 the unmodified model. They have already been through a radio, so there is little
 outside the voice band to remove. Under heavy noise the filtered versions do
-better (36.42% against 40.26% at 0 dB), but that is bookkeeping. The noise level is set
+better (33.87% against 39.51% at 0 dB), but that is bookkeeping. The noise level is set
 from the clip's total power, and the filter removes a median 2.05 dB of each
 test clip's power ([band_pass_power.json](../results/band_pass_power.json)), so a
 filtered clip gets about 2 dB less noise at the same nominal SNR while its speech
 in the band hardly changes. The noise is not filtered in either case, so the same
 share of it lands in the voice band both times. Near 0 dB the best model loses
-roughly 2.9 points per dB, so 2 dB less noise is worth about 6 points, more than
-the whole 3.84-point gap. There is no sign the filter itself helps.
+roughly 3.0 points per dB, so 2 dB less noise is worth about 6 points, as much
+as the whole 5.64-point gap. There is no sign the filter itself helps.
 
 It also connects to how Whisper itself works. The model never sees the
 waveform. It sees a log-mel spectrogram: a short-time Fourier transform with

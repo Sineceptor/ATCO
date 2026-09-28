@@ -114,6 +114,7 @@ decoding settings and the choice between models were all made on validation.
 | Weight average of the fixes-only and UWB-ATCC models | 17.66% | 16.72% | 13.00 to 20.68 |
 | Whisper-medium with LoRA (rank 32), + UWB-ATCC | 16.61% | 15.23% | 11.69 to 19.13 |
 | Weight average of that and the ATCO2-only Whisper-medium | 14.86% | 14.38% | 10.95 to 18.17 |
+| The same average, with the first model trained for 12 epochs | 14.42% | 14.27% | 10.93 to 17.99 |
 
 Each row uses the decoding setting that did best on validation; the full
 breakdown, with intervals for the difference from the 2025 checkpoint, is in
@@ -123,13 +124,13 @@ checkpoints on validation. Continuing to train the 2025 checkpoint with the fixe
 never beat it on validation, so no such checkpoint was kept.
 
 Adding white noise to the 74 test clips (greedy decoding with repetition
-guards) raises the selected model's error from 15.44% as recorded to 20.87% at
-10 dB and 40.26% at 0 dB, against 19.81%, 28.01% and 48.03% for the 2025
+guards) raises the selected model's error from 15.97% as recorded to 19.06% at
+10 dB and 39.51% at 0 dB, against 19.81%, 28.01% and 48.03% for the 2025
 checkpoint; unmodified Whisper-small rises from 58.79% to 93.08%. The smaller
 2026 soup follows the 2025 curve closely (45.79% at 0 dB; `noise_sweep.other_models`
 in [retraining.json](../results/retraining.json)). The selected model loses fewer
 points than the 2025 checkpoint, but as a multiple of its starting error it does
-not degrade more slowly (2.61 times at 0 dB against 2.42). The signal-to-noise
+not degrade more slowly (2.47 times at 0 dB against 2.42). The signal-to-noise
 ratio is measured over the whole clip, pauses included, and after the optional
 300 to 3,400 Hz filter, so a filtered clip receives less noise. Without the
 repetition guards, greedy decoding sometimes falls into loops on noisy clips,
@@ -147,12 +148,13 @@ the only airport outside Europe, goes from 18.80% to 41.44%
 ([leave_one_airport_out.json](../results/leave_one_airport_out.json)).
 
 Scored on their own, spelled phonetic-alphabet letters and digit words are
-mostly right: 94.41% for the selected model and 93.24% for the 2025 checkpoint on
+mostly right: 94.64% for the selected model and 93.24% for the 2025 checkpoint on
 the test clips, counting spelling variants of the same letter or digit as the
 same word ([letters_digits.json](../results/letters_digits.json)). A prompt
 listing the phonetic alphabet, under its best decoding on validation (plain
 beam), made no measurable difference to WER (171 word errors against 170) and got
-slightly fewer letters right (94.27% against 95.54%), so it was not adopted. Under
+slightly fewer letters right (94.27% against 95.54%) than the model it was tried
+on (the best model at the time, the 6-epoch soup), so it was not adopted. Under
 guarded beam it did much worse, possibly because the repetition guards also count
 the prompt's words. Training further with the loss weighted three times on letter
 and digit words gained four of 479 of them on validation but made overall WER
@@ -170,19 +172,28 @@ clips were scored. An ablation declared in advance, Whisper-medium trained the
 same way on the ATCO2 clips alone, scores 17.66% on validation and 15.65% on
 test, so most of the gain comes from the larger model
 ([retraining.json](../results/retraining.json), `ablations`). Averaging the two
-Whisper-medium models gave the lowest validation error of all (14.86%), so the
-average is the selected model: 14.38% on test, 4.26 points better than the 2025
-checkpoint (95% interval 1.96 to 6.61). Two things about that choice should be
-said plainly: the ATCO2-only model had been declared an ablation that could not
-itself be chosen, and I built the soup after both Whisper-medium models had been
-scored on the test clips. The soup was chosen on validation, but the idea was not
-blind to the test scores.
+Whisper-medium models gave the lowest validation error at the time (14.86%) and
+14.38% on test. Two things about that choice should be said plainly: the
+ATCO2-only model had been declared an ablation that could not itself be chosen,
+and I built the soup after both Whisper-medium models had been scored on the test
+clips. The soup was chosen on validation, but the idea was not blind to the test
+scores.
+
+The same average, with its first model trained for 12 epochs instead of 6
+(`medium_long`, rule written before the run), made 165 word errors on
+validation against 170 and was adopted: 14.27% on test, 4.37 points better than
+the 2025 checkpoint (95% interval 2.07 to 6.76). Against the 6-epoch soup it is
+one word better on test (−0.11 points, 95% interval −1.56 to +1.50), so the two
+are level. Trained alone, the 12-epoch model scores 15.65% on validation against
+16.61% for the 6-epoch one, and its best epoch was 9 of 12, so the 6-epoch run was
+somewhat undertrained.
 
 Every run that was kept reached its planned number of epochs while validation
 WER was still falling (run E at epoch 8 of 8, `medium_real` at 6 of 6, the
 ATCO2-only Whisper-medium at 5 of 5), and the learning rate decays to zero at that
-point, so these models may be undertrained. Only runs that never beat their
-starting point stopped early. Restarting `medium_real` with fresh adapters and a
+point, so these models may be undertrained; for Whisper-medium, the 12-epoch
+run above confirmed it. Only runs that never beat their starting point stopped
+early. Restarting `medium_real` with fresh adapters and a
 new warm-up for up to three more epochs (`medium_longer`) never improved on it on
 validation; that is not the same as training the original run for longer.
 

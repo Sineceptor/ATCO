@@ -91,7 +91,8 @@ Word error rate on the 74 unseen clips ([retraining.json](results/retraining.jso
 | + 10.5 hours of real ATC speech (UWB-ATCC) | 18.21% | 13.78 to 23.48 |
 | Average of the fixes-only and real-speech models (model soup) | 16.72% | 13.00 to 20.68 |
 | Whisper-medium with LoRA, + the same real speech | 15.23% | 11.69 to 19.13 |
-| **Average of that and a Whisper-medium trained on ATCO2 only (soup)** | **14.38%** | **10.95 to 18.17** |
+| Average of that and a Whisper-medium trained on ATCO2 only (soup) | 14.38% | 10.95 to 18.17 |
+| **The same soup, with the first model trained for 12 epochs instead of 6** | **14.27%** | **10.93 to 17.99** |
 
 - Fine-tuning is by far the biggest effect. Five-fold cross-validation by
   recording over all 874 clips puts the retrained Whisper-small at 19.16%
@@ -104,22 +105,24 @@ Word error rate on the 74 unseen clips ([retraining.json](results/retraining.jso
   better on the unseen clips than on all 175 (20.31%).
 - My synthetic speech did not help, even tested properly.
 - The best model, chosen on the validation clips, averages two Whisper-medium
-  models. I built that average after both models had been scored on these
-  clips, so the idea was not blind to them. It is 4.26 points better than the
-  2025 model, with a 95% range of 1.96 to 6.61 points. Trained on the ATCO2
-  clips alone, Whisper-medium already scores 15.65%, so most of the gain comes
-  from the bigger model. Restarting it with fresh adapters for more epochs did
-  not help, but every run I kept was still improving at its last planned epoch. The smaller
-  soup's 1.92-point gain is not certain.
+  models. I first built that kind of average after both of its models had been
+  scored on these clips, so the idea was not blind to them. It is 4.37 points
+  better than the 2025 model, with a 95% range of 2.07 to 6.76 points. Trained on
+  the ATCO2 clips alone, Whisper-medium already scores 15.65%, so most of the
+  gain comes from the bigger model. Training it for 12 epochs instead of 6 helped
+  the single model on validation; the soup made from it passed the rule I wrote
+  before the run, but on these clips it is only one word better than the
+  6-epoch soup, so the two are level. The smaller soup's 1.92-point gain is not
+  certain.
 - With white noise added at 0 dB (the same average power as the whole clip,
   pauses included), the best
-  model's error rises from 15.44% to 40.26% and the 2025 model's from 19.81%
+  model's error rises from 15.97% to 39.51% and the 2025 model's from 19.81%
   to 48.03%; unmodified Whisper goes from 58.79% to 93.08% (greedy decoding
   with repetition guards).
-- Spelled letters and digits are mostly right (94.41% on the unseen clips,
+- Spelled letters and digits are mostly right (94.64% on the unseen clips,
   [letters_digits.json](results/letters_digits.json)), but a callsign fails when
   any one of its words is wrong, so most instructions still have at least one
-  field wrong: callsign, command and numbers all match in only 34 of the 74
+  field wrong: callsign, command and numbers all match in only 38 of the 74
   clips, and callsigns are the weakest of the three
   ([extraction_agreement.json](results/extraction_agreement.json)).
 

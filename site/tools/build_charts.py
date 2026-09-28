@@ -26,6 +26,7 @@ LABELS = {
     'soup_fixed_real': 'Soup: fixes-only + real speech',
     'medium_real': 'Whisper-medium + real speech',
     'soup_medium': 'Soup of two Whisper-medium models',
+    'soup_medium_long': 'Same soup, Whisper-medium trained 12 epochs',
     'medium_longer': 'Whisper-medium, trained longer',
 }
 

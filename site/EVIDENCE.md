@@ -33,7 +33,8 @@ Each model's decoding setting was chosen on the validation clips.
 | 16.72% | `soup_fixed_real`: the average of the fixed and real_data weights | Its 1.92-point gain over 2025 has a 95% interval that crosses zero |
 | 15.23% | `medium_real`: Whisper-medium with rank-32 LoRA adapters, real clips plus UWB-ATCC | |
 | 15.65% | `ablations.medium_atco2_only`: the same, on the ATCO2 clips only; declared in advance as not eligible for selection | |
-| 14.38%, 4.26 points better than 2025, at least 1.96 at the edge of the 95% range | `soup_medium`: the average of the two Whisper-medium models; the best model on validation, so the chosen one | One test set of 74 clips; each model trained once |
+| 14.38% | `soup_medium`: the average of the two Whisper-medium models; the best model until the 12-epoch run | |
+| 14.27%, 4.37 points better than 2025, at least 2.07 at the edge of the 95% range | `soup_medium_long`: the same average with the first model trained for 12 epochs; passed the rule written before the run, so the chosen one; one word better than `soup_medium` on test | One test set of 74 clips; each model trained once |
 
 `continued` (the 2025 model trained further with the fix) never beat its
 starting point on validation, so no checkpoint was saved.
@@ -49,7 +50,7 @@ the tagger's own accuracy.
 
 ## Spelled letters and digits
 
-From [`letters_digits.json`](../results/letters_digits.json): 94.41% for the best
+From [`letters_digits.json`](../results/letters_digits.json): 94.64% for the best
 model and 93.24% for the 2025 model on the test clips, counting spelling
 variants of the same letter or digit as the same word. The alphabet-prompt trial
 is under `rejected_trials`.
@@ -81,7 +82,7 @@ person.
 | The seven radio stages, and µ-law giving 257 levels | [`simulate_radio_channel.py`](../experiments/asr/04_augmentation_and_synthetic_speech/simulate_radio_channel.py) |
 | 10.5 hours of UWB-ATCC speech | [`training/prepare_uwb_atcc.py`](../training/prepare_uwb_atcc.py) output: 11,291 clips |
 | The traced call: transcript, labels, 6.12 seconds | [`docs/evaluation.md`](../docs/evaluation.md) and [`docs/images/app_output.png`](../docs/images/app_output.png) |
-| "proceed and start approved" from the best 2026 model, "sion start approved" from the soup | their saved transcripts of that clip, one of the 74 unseen clips |
+| "provision start approved" from the best 2026 model, "sion start approved" from the Whisper-small soup | their saved transcripts of that clip, one of the 74 unseen clips |
 | The squawk check | `validate_physics` in [`atco/entity_extraction.py`](../atco/entity_extraction.py) |
 
 No ATCO2 or UWB-ATCC audio is published on the page or in this repository.

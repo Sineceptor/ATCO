@@ -78,7 +78,9 @@ Whisper-medium with its weights frozen and rank-32 LoRA adapters trained
 | `medium_real` | ATCO2 clips plus 1,000 UWB-ATCC clips per epoch, 6 epochs | 16.61% | 15.23% | −3.41 (−5.77 to −1.08) | Was the best until the soup below |
 | `medium_atco2_only` | Ablation, declared in advance and not eligible to be chosen: ATCO2 clips only | 17.66% | 15.65% | −2.98 (−5.26 to −0.67) | Ablation. Shows most of the gain is from model size |
 | `medium_longer` | `medium_real` restarted with fresh adapters and a new warm-up, up to 3 more epochs | never beat its start (17.92% → 18.09%, 18.44%) | | | No: nothing saved. Not the same as training the original run for longer |
-| **`soup_medium`** | **Weight average of the two Whisper-medium models** | **14.86%** | **14.38%** | **−4.26 (−6.61 to −1.96)** | **Yes: the best model, used by the app. Built after both ingredients had been scored on test, and one of them was the ablation** |
+| `soup_medium` | Weight average of the two Whisper-medium models | 14.86% | 14.38% | −4.26 (−6.61 to −1.96) | Was the best model until the 12-epoch run. Built after both ingredients had been scored on test, and one of them was the ablation |
+| `medium_long` | `medium_real`'s settings with 12 planned epochs (section 13); best epoch 9 | 15.65% | not scored | | Candidate only; its soup did better on validation |
+| **`soup_medium_long`** | **Weight average of `medium_long` and the ATCO2-only Whisper-medium** | **14.42%** | **14.27%** | **−4.37 (−6.76 to −2.07)** | **Yes, under the rule written first (165 validation errors against 170): the best model, used by the app. One word better than `soup_medium` on test (−0.11, −1.56 to +1.50), so the two are level** |
 
 ## 7. Noise
 
@@ -86,19 +88,19 @@ White noise added to the 74 test clips at a fixed signal-to-noise ratio,
 greedy decoding with repetition guards ([retraining.json](../results/retraining.json),
 `noise_sweep`).
 
-| Added noise | Best model | 2025 model | Unmodified |
-| --- | ---: | ---: | ---: |
-| none | 15.44% | 19.81% | 58.79% |
-| 10 dB | 20.87% | 28.01% | 70.50% |
-| 0 dB | 40.26% | 48.03% | 93.08% |
+| Added noise | Best model (12-epoch soup) | 6-epoch soup | 2025 model | Unmodified |
+| --- | ---: | ---: | ---: | ---: |
+| none | 15.97% | 15.44% | 19.81% | 58.79% |
+| 10 dB | 19.06% | 20.87% | 28.01% | 70.50% |
+| 0 dB | 39.51% | 40.26% | 48.03% | 93.08% |
 
 The Whisper-small soup reaches 45.79% at 0 dB and the single Whisper-medium
 model 42.81% (`noise_sweep.other_models`). 0 dB means the noise has the same
 average power as the whole clip, pauses included. The first noise sweep used
 plain greedy decoding and jumped about because a few noisy clips looped; it was
 redone with the guards (both are in `retraining.json`). With a 300 to 3,400 Hz
-filter applied first, the best model scores 16.93% with no added noise and
-36.42% at 0 dB, but the filter removes a median 2.05 dB of each clip's power, so
+filter applied first, the best model scores 15.55% with no added noise and
+33.87% at 0 dB (the 6-epoch soup: 16.93% and 36.42%), but the filter removes a median 2.05 dB of each clip's power, so
 filtered clips got about 2 dB less noise; that alone could explain the gap
 ([band_pass_power.json](../results/band_pass_power.json)).
 
@@ -112,26 +114,27 @@ median 0.012% of it, leaving it 34 dB below the static
 The app's tagger run on the correct transcript and on each model's transcript
 ([extraction_agreement.json](../results/extraction_agreement.json)).
 
-| Field matches the one from the correct transcript | Unmodified | 2025 model | Best model |
-| --- | ---: | ---: | ---: |
-| Callsign (59 clips) | 4 | 35 | 37 |
-| Command (56 clips) | 19 | 37 | 44 |
-| Numbers (58 clips) | 11 | 35 | 41 |
-| Callsign, command and numbers (74 clips) | 3 | 29 | 34 |
-| Every field, including waypoints (74 clips) | 0 | 20 | 23 |
+| Field matches the one from the correct transcript | Unmodified | 2025 model | 6-epoch soup | Best model (12-epoch soup) |
+| --- | ---: | ---: | ---: | ---: |
+| Callsign (59 clips) | 4 | 35 | 37 | 38 |
+| Command (56 clips) | 19 | 37 | 44 | 44 |
+| Numbers (58 clips) | 11 | 35 | 41 | 46 |
+| Callsign, command and numbers (74 clips) | 3 | 29 | 34 | 38 |
+| Every field, including waypoints (74 clips) | 0 | 20 | 23 | 25 |
 
 Waypoint labels come from a rule known to be too loose, so the first of those
-two rows is the headline. On it the best model is not clearly ahead of the other
-2026 models (Whisper-small soup and single Whisper-medium both 37), but a few
+two rows is the headline. On it the best model is only just ahead of the other
+2026 models (Whisper-small soup and single Whisper-medium both 37), and a few
 clips out of 74 is within noise. Spelling variants (alfa and alpha, oskar and
 oscar) count as the same word, as in section 9.
 
 None of the best model's 24 missed callsigns starts with a word absent from
 the training transcripts. Sorted by cause
-([callsign_errors.json](../results/callsign_errors.json)): 15 are letters or
+([callsign_errors.json](../results/callsign_errors.json)): 14 are letters or
 digits heard wrong, missed or added; 7 were transcribed word for word but the
-tagger labelled them differently; 1 is a misheard airline name; 1 is mostly
-lost. For the 2025 model's 25: 15, 6, 4 and 0.
+tagger labelled them differently; 1 is a misheard airline name; 2 are mostly
+lost. For the 6-epoch soup's 24: 15, 7, 1 and 1; for the 2025 model's 25: 15,
+6, 4 and 0.
 
 ## 9. Callsign letters and digits
 
@@ -143,7 +146,8 @@ niner and nine) as the same ([letters_digits.json](../results/letters_digits.jso
 | --- | ---: | ---: |
 | Unmodified Whisper-small | 60.96% | 66.20% |
 | 2025 model | 91.23% | 93.24% |
-| Best model | 96.03% | 94.41% |
+| 6-epoch soup (the model both trials below started from) | 96.03% | 94.41% |
+| Best model (12-epoch soup) | 96.24% | 94.64% |
 
 | Trial | Result on validation | Adopted |
 | --- | --- | --- |
@@ -177,6 +181,7 @@ not improve for two to four epochs (`training` in
 | E, `real_data` | 8 | 8 | 8 | at the plan, still improving |
 | `medium_real` | 6 | 6 | 6 | at the plan, still improving |
 | `medium_atco2_only` | 5 | 5 | 5 | at the plan, still improving |
+| `medium_long` | 12 | 12 | 9 | at the plan; peaked at epoch 9 |
 | D, `continued` | 6 | 4 | none | early: never beat its start |
 | `medium_longer` | 3 | 2 | none | early: never beat its start |
 
@@ -243,6 +248,26 @@ lower validation WER (best decoding) is adopted only if it makes fewer than 170
 word errors on the 101 validation clips, the current best (14.86%). Only an
 adopted model is scored on the test clips.
 
+*Result (28 September, 18:18):* the first two attempts were lost to the external
+drive being unplugged (in epoch 2, and in epoch 3 after it was moved to the
+internal disk but still read the ATCO2 clips from the drive). The third ran
+entirely from the internal disk, with pauses when the Mac was needed, and
+reproduced the lost attempts' first epochs exactly. Validation WER during
+training (greedy with guards): 29.11%, 26.22%, 25.17%, 21.94%, 20.72%, 20.98%,
+18.09%, 20.80%, 17.31%, 18.79%, 18.62%, 18.01%, so the best epoch was 9.
+
+| Candidate | Validation (best decoding) | Word errors |
+| --- | ---: | ---: |
+| `medium_long` alone | 15.65% | 179 |
+| `soup_medium_long` (with the ATCO2-only model) | 14.42% | 165 |
+
+165 is fewer than 170, so the soup was adopted and scored once on test: 14.27%
+(134 errors), 4.37 points better than the 2025 model (95% range 2.07 to 6.76).
+Against the previous best it is one word better on test (−0.11 points, 95% range
+−1.56 to +1.50): the two are level, and the new one is used because the rule
+chose it on validation. Its noise sweep, instruction counts, letters score and
+callsign causes were re-run, and every page updated.
+
 ## 14. The rest of the review, 27 September 2026
 
 | What | Result |
@@ -261,10 +286,5 @@ adopted model is scored on the test clips.
 
 - The word tagger has never been scored against labels written by a person:
   the sheet and the [labelling guide](hand_labelling_guide.md) are ready.
-- The longer Whisper-medium run (section 13) is running; its result will be
-  added here whatever it shows. The first attempt was lost on 27 September at
-  14:20, in epoch 2, when the external drive disconnected (epoch 1 had reached
-  29.11% on validation). It was restarted from scratch with the same settings
-  and the same rule, reading and writing only the internal disk.
 - More test recordings from new airports, to separate models a point apart.
 - Training audio of spelled-out registrations, the other way to work on callsign letters.
