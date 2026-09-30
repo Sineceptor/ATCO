@@ -33,6 +33,28 @@ These are just folder names on my computer, not names you can download. On my
 machine they are links to the model files on an external drive. Putting a
 different model in one of them will run, but won't reproduce my results.
 
+### Getting the models
+
+My fine-tuned checkpoints aren't downloadable. They are large (about 3 GB for
+the app's model), and they are trained on the ATCO2 set, released for research
+use, and on UWB-ATCC, whose licence is non-commercial and share-alike; I haven't
+yet worked out whether that lets me publish the weights. What you can do:
+
+- **Try the speech step with a public model.** The command line can use
+  unmodified Whisper instead of mine:
+  `python transcribe.py --audio clip.wav --asr-model openai/whisper-small --allow-downloads --tts none`.
+  The word tagger is my own checkpoint too, though, so the rest of the pipeline
+  needs `models/distilbert/`. The tests run without any models.
+- **Recreate them.** Get the ATCO2 one-hour set and UWB-ATCC ([data](data.md)),
+  then follow [experiment_manifest.json](../results/experiment_manifest.json):
+  it has the exact command, seed and base-model revision for every run, the
+  ingredients of each averaged model, and SHA-256 fingerprints so you can
+  confirm your data and checkpoints match mine. The word tagger comes from
+  `training/train_distilbert.py`, trained on the labels `training/entity_labels.py`
+  makes.
+- **Check the scores without running anything.** The per-clip error counts in
+  [results/clips/](../results/clips/) reproduce every headline number.
+
 To keep the same layout somewhere else, pass `--models-dir /path/to/models`. The
 app and the command line also take `--asr-model`, `--ner-model`, `--tts-model`
 and `--vocoder-model` to point at one folder at a time. The browser app only ever

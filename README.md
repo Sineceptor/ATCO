@@ -2,8 +2,13 @@
 
 I wanted to know whether small, free speech and language models could turn air
 traffic control radio into text that a computer can check. ATCO (Air Traffic
-Control Officer) is my attempt: about thirty training and decoding experiments
-on one hour of real ATC audio, and a small app that joins the pieces together.
+Control Officer) is my attempt: about thirty training and decoding experiments,
+starting from one hour of real ATC audio and later adding 10.5 hours from a
+second corpus, and a small app that joins the pieces together.
+
+**Result: on recordings no model trained on, my best model gets 14.27% of words
+wrong, against 18.64% for my 2025 model and 56.87% for Whisper out of the box
+(word error rate; lower is better).**
 
 **Audio → Whisper fine-tuned on ATC radio (Whisper-medium since the 2026 retraining) → DistilBERT word tagger → text, range checks and an optional spoken readback**
 
@@ -14,6 +19,13 @@ The screenshot is a real 6-second recording, run through my 2025 model
 goes wrong: "push and start" is heard as "portion startup", and the tagger
 calls words it does not know "waypoints". I left it in because those mistakes
 are most of what I learned from.
+
+There is a [one-page summary](paper/atco_summary.pdf), the [full paper](paper/atco_paper.pdf)
+and a plain account of [who did what](docs/contribution.md).
+
+A one-minute [screen recording](site/demo/atco-demo.mp4) shows the current app
+running on a generated radio call and a typed instruction (no sound; captions
+describe each step).
 
 The [project page](https://sineceptor.github.io/ATCO/) tells the same story. Its
 top section takes about two minutes; the rest goes into the detail, with a sound
@@ -48,9 +60,9 @@ test clips.
 | Baseline | Fine-tune all of Whisper-small | This is what I kept in 2025. In 2026 a Whisper-medium model replaced it (see Results) |
 | Bigger model | Whisper-large-v3 in 4-bit with LoRA, 18 versions, plus a noise and speed stress test | 27.86% WER clean, 34.42% noisy, 28.78% fast. No better than the small model |
 | More data | Noise and speed copies, then 4,808 clips of my own ATC sentences spoken by 31 TTS accents and pushed through a simulated radio | The scores I recorded moved by less than half a point, and I no longer trust how they were measured. It mostly did not work, and I think I know why |
-| Decoding | Vocabulary prompts, beam search settings, silence trimming, an LLM to fix the transcript | Small gains that I later realised were tuned on the test clips |
+| Decoding | Vocabulary prompts, beam search settings, silence trimming, an LLM to fix the transcript | Small gains that turned out to be tuned on the test clips |
 | Understanding the text | Word lists to label callsigns, commands, values and waypoints; DistilBERT and BERT trained on those labels; Phi-3 and Qwen for comparison | The taggers copy the word lists well, but the word lists are the weak part |
-| App | Browser and command-line app joining the three models, with checks on squawk codes, headings, frequencies, levels and runways | Works on my machine. You can watch an error travel from one stage to the next |
+| App | In 2025, separate scripts for each part; in 2026 they were joined into one browser and command-line app, with checks on squawk codes, headings, frequencies, levels and runways | Works on my machine. You can watch an error travel from one stage to the next |
 
 Every script, with its original messy name and what is wrong with it, is in
 [experiments/](experiments/README.md).
@@ -62,8 +74,8 @@ part I spent longest on was making my own training audio: writing a sentence
 generator that follows real phraseology rules, speaking the sentences with TTS
 in many accents, and then degrading the clean audio so it sounds like aircraft
 radio, using band-limiting, 1/f² engine noise, static, companding, a 300 to
-3400 Hz filter, clipping and a squelch click. (In 2026 I found the engine noise
-had almost all disappeared inside my own filter.) That last step is signal
+3400 Hz filter, clipping and a squelch click. (A 2026 measurement showed the
+engine noise had almost all disappeared inside my own filter.) That last step is signal
 processing, and it is where the project meets the physics I am more used to.
 
 It barely moved the scores I recorded at the time, and when I tested it
@@ -75,17 +87,22 @@ have now run.
 
 ## Results
 
-When I went back over the project in 2026 I found that my test was not clean:
-101 of the 175 test clips came from recordings that also gave training clips,
-and I had used the test clips to tune settings. So I kept the 74 clips from
-recordings no model has trained on as the test set, used the other 101 only for
-choices, fixed the bugs I found and retrained.
+When I went back over the project in 2026 with an AI coding assistant, the
+audit showed that my test was not clean: 101 of the 175 test clips came from
+recordings that also gave training clips, and I had used the test clips to tune
+settings. So I kept the 74 clips from recordings no model has trained on as the
+test set, used the other 101 for choosing checkpoints and decoding, fixed the
+bugs the audit found and retrained. The later runs followed rules written
+before they started, but some later ideas (such as averaging the two
+Whisper-medium models) came after earlier test results were known, so the 74
+clips are not a completely untouched final test.
 
 Word error rate on the 74 unseen clips ([retraining.json](results/retraining.json)):
 
 | Model | Word error rate | 95% range |
 | --- | --- | --- |
 | Whisper-small, not fine-tuned | 56.87% | 49.53 to 64.81 |
+| Whisper-medium, not fine-tuned (for comparison) | 43.88% | 38.09 to 50.11 |
 | My 2025 model | 18.64% | 14.44 to 23.19 |
 | Retrained with the fixes | 19.28% | 15.37 to 23.35 |
 | + my synthetic radio speech | 20.34% | 16.05 to 25.00 |
@@ -95,16 +112,22 @@ Word error rate on the 74 unseen clips ([retraining.json](results/retraining.jso
 | Average of that and a Whisper-medium trained on ATCO2 only (soup) | 14.38% | 10.95 to 18.17 |
 | **The same soup, with the first model trained for 12 epochs instead of 6** | **14.27%** | **10.93 to 17.99** |
 
-- Fine-tuning is by far the biggest effect. Five-fold cross-validation by
+- Fine-tuning is by far the biggest effect. Size alone does much less:
+  unmodified Whisper-medium scores 43.88%. Five-fold cross-validation by
   recording over all 874 clips puts the retrained Whisper-small at 19.16%
   (95% range 17.90 to 20.45) against 53.44% unmodified
   ([cross_validation.json](results/cross_validation.json)). Leaving out a whole
   airport is harder: 26.48% (95% range 24.96 to 27.99), and 41.44% for Sydney, the
   only airport outside Europe
-  ([leave_one_airport_out.json](results/leave_one_airport_out.json)).
+  ([leave_one_airport_out.json](results/leave_one_airport_out.json)). Both of these
+  are for the Whisper-small recipe, not the best model.
+- The best model differs from the 2025 one in size, training data and recipe at
+  once, so its gain can't be credited to any one of them; the ablation below says
+  most of it is size.
 - I can't detect any help the old model got from the overlap: it does slightly
   better on the unseen clips than on all 175 (20.31%).
-- My synthetic speech did not help, even tested properly.
+- My synthetic speech did not help in my setup, even tested properly; that
+  doesn't show synthetic ATC speech never could.
 - The best model, chosen on the validation clips, averages two Whisper-medium
   models. I first built that kind of average after both of its models had been
   scored on these clips, so the idea was not blind to them. It is 4.37 points
@@ -116,15 +139,17 @@ Word error rate on the 74 unseen clips ([retraining.json](results/retraining.jso
   6-epoch soup, so the two are level. The smaller soup's 1.92-point gain is not
   certain.
 - With white noise added at 0 dB (the same average power as the whole clip,
-  pauses included), the best
+  pauses included, so a little quieter than the speech itself), the best
   model's error rises from 15.97% to 39.51% and the 2025 model's from 19.81%
   to 48.03%; unmodified Whisper goes from 58.79% to 93.08% (greedy decoding
   with repetition guards).
 - Spelled letters and digits are mostly right (94.64% on the unseen clips,
   [letters_digits.json](results/letters_digits.json)), but a callsign fails when
   any one of its words is wrong, so most instructions still have at least one
-  field wrong: callsign, command and numbers all match in only 38 of the 74
-  clips, and callsigns are the weakest of the three
+  field wrong: the tagger extracts the same callsign, command and numbers from
+  the model's transcript as from the correct one in only 38 of the 74 clips, and
+  callsigns are the weakest of the three. That compares the tagger with itself,
+  not with a person
   ([extraction_agreement.json](results/extraction_agreement.json)).
 
 Every experiment, including the ones that failed, is in the
@@ -171,8 +196,10 @@ python -m unittest discover -s tests
 The models (Whisper, BERT, DistilBERT, SpeechT5, HiFi-GAN and the others) are
 other people's work, and the real audio comes from the ATCO2 and UWB-ATCC
 corpora ([data credit](docs/data.md)).
-I used AI coding tools to help write the code and to draft and edit this
-write-up. More in
+I used AI coding tools throughout: in 2025 to help write the code, and in 2026
+an AI assistant (Claude Code) audited the project with me, wrote most of the
+new code, ran the retraining experiments and drafted and edited this write-up,
+while I set the goals and made the final calls on what to run and publish. More in
 [project history](docs/project_history.md).
 
 The code is under the [MIT licence](LICENSE). The models and audio are not

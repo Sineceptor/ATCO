@@ -171,8 +171,9 @@ where the 2025 model loses 8.20, and 23.54 at 0 dB against 28.22. As a multiple
 of where each started it is no better at 0 dB (2.47 times against 2.42). The smaller 2026 soup, trained on the same extra real speech,
 follows the 2025 curve closely (45.79% at 0 dB), so the robustness seems to come
 mostly from the bigger model. Here 0 dB means the noise has the same average power
-as the whole clip, pauses included, so while someone is talking the noise is
-louder than the speech.
+as the whole clip, pauses included. The pauses pull that average down, so while
+someone is talking the speech is somewhat louder than the noise, and in the
+pauses there is only noise.
 
 With the 300 to 3,400 Hz filter applied first, the recordings barely change:
 15.55% instead of 15.97% for the best 2026 model, 55.80% instead of 58.79% for

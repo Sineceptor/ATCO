@@ -3,6 +3,7 @@
 # What it does: Same experiment with Qwen2.5-3B-Instruct.
 # Known problems:
 #   - Same comparability limits as the Phi-3 script.
+#   - The sentence score counts a sentence as right when every value is found, even if a value has the wrong entity type (a callsign's text labelled as a value still counts), so it overstates accuracy.
 # Not maintained: paths and dependencies are as they were at the time.
 # ---------------------------------------------------------------
 import os

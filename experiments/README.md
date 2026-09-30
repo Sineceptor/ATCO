@@ -172,7 +172,7 @@ The comment in `eval_vocab_prompt.py` is the most useful record in this folder: 
 
 ### NLP 4. Small language models as taggers
 
-Saved confusion matrices: [Phi-3](../results/original_2025/ner_phi3_few_shot.png), [Qwen](../results/original_2025/ner_qwen_few_shot.png). Both models 'miss' most rule-labelled WAYPOINT words (161 and 206 of about 258). Given that the rules label almost any unknown word as a waypoint, the language models are often right and the reference is wrong.
+Saved confusion matrices: [Phi-3](../results/original_2025/ner_phi3_few_shot.png), [Qwen](../results/original_2025/ner_qwen_few_shot.png). Both models 'miss' most rule-labelled WAYPOINT words (161 and 206 of about 258). Given that the rules label almost any unknown word as a waypoint, the language models are often right and the reference is wrong. Their sentence-level scores also count a sentence as right when every value is found even under the wrong entity type, so they overstate accuracy.
 
 | Script | Original name | What it does |
 | --- | --- | --- |
@@ -183,8 +183,8 @@ Saved confusion matrices: [Phi-3](../results/original_2025/ner_phi3_few_shot.png
 
 | Script | Original name | What it does |
 | --- | --- | --- |
-| [train_bert_speaker_role.py](nlp/05_speaker_role_and_wav2vec2/train_bert_speaker_role.py) | `NLP/comparison_train_bert_srd.py` | Side experiment following a published sequential ASR -> speaker-role baseline: BERT tags each word as PILOT or ATCO. Written with heavy LLM assistance from a paper. |
-| [train_wav2vec2_ctc_baseline.py](nlp/05_speaker_role_and_wav2vec2/train_wav2vec2_ctc_baseline.py) | `NLP/comparison_train_pure_asr.py` | wav2vec2-base-960h CTC fine-tune as a non-Whisper ASR baseline (lr 4e-4, 2000 steps). |
+| [train_bert_speaker_role.py](nlp/05_speaker_role_and_wav2vec2/train_bert_speaker_role.py) | `NLP/comparison_train_bert_srd.py` | Side experiment following the sequential ASR -> speaker-role baseline of Blatt, Krishnan and Klakow (Interspeech 2024), with the settings from its section 5: BERT tags each word as PILOT or ATCO. Written with heavy LLM assistance from that paper. |
+| [train_wav2vec2_ctc_baseline.py](nlp/05_speaker_role_and_wav2vec2/train_wav2vec2_ctc_baseline.py) | `NLP/comparison_train_pure_asr.py` | wav2vec2-base-960h CTC fine-tune as a non-Whisper ASR baseline (lr 4e-4, 2000 steps, the ASR settings of the same paper). |
 | [eval_wav2vec2_wer.py](nlp/05_speaker_role_and_wav2vec2/eval_wav2vec2_wer.py) | `NLP/test_asr_comparison.py` | WER/CER of the wav2vec2 baseline. |
 | [eval_asr_then_speaker_role.py](nlp/05_speaker_role_and_wav2vec2/eval_asr_then_speaker_role.py) | `NLP/test_asr_srd.py` | End to end: wav2vec2 transcript -> speaker-role tagger, scored on correctly recognised words. |
 

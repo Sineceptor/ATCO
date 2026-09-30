@@ -3,6 +3,7 @@
 # What it does: Few-shot entity extraction with Phi-3-mini (4-bit): three examples, JSON output, soft matching by value.
 # Known problems:
 #   - Not comparable with the BERT numbers: different reference rules, entity-level soft matching vs word-level scoring, and the few-shot examples contradict the rule labels in places.
+#   - The sentence score counts a sentence as right when every value is found, even if a value has the wrong entity type (a callsign's text labelled as a value still counts), so it overstates accuracy.
 # Not maintained: paths and dependencies are as they were at the time.
 # ---------------------------------------------------------------
 import os

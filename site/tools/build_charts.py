@@ -17,6 +17,7 @@ RESULTS = json.loads((SITE.parent / 'results' / 'retraining.json').read_text(enc
 
 LABELS = {
     'zero_shot': 'Whisper-small, not fine-tuned',
+    'zero_shot_medium': 'Whisper-medium, not fine-tuned',
     'checkpoint_2025': 'My 2025 model',
     'fixed': 'Retrained with the fixes',
     'synthetic': '+ my synthetic radio clips',

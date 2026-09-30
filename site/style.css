@@ -366,3 +366,5 @@ footer .warnline{color:#fff;border-left-color:#E6BBA8}
   footer{background:#fff;color:#000;border-top:1px solid #999}
   footer .warnline{color:#000}
 }
+
+video.demo { display: block; width: 100%; height: auto; margin: 0.75rem 0 1.25rem; border-radius: 10px; background: #0e1622; }

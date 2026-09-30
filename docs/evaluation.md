@@ -79,7 +79,10 @@ sentences. Against those labels, which are not a person's, the tagger agrees on
 57.33% of the 982 words it was sure about (weighted F1 0.6233) and the word-list
 rules on 65.07%. Most of the gap is ordinary words called waypoints (173 of 247)
 and callsign digits called values (71)
-([tagger_vs_ai_labels.json](../results/tagger_vs_ai_labels.json)).
+([tagger_vs_ai_labels.json](../results/tagger_vs_ai_labels.json)). The app's
+real output, after it drops waypoint labels on words like "and", agrees on 60.18%;
+counting whole entities that must match exactly, it gets 51.43% of its callsigns
+exactly right and finds 45.57% of the labelled ones.
 
 ## Known weaknesses of the entity labels
 
@@ -109,12 +112,15 @@ real: callsigns such as "Jetstar seven sixty seven" come out as unrelated words.
 
 The retraining keeps the 699 training clips and splits the 175 old test clips by
 recording: 101 that share a recording with training become validation clips, and
-the 74 from recordings no model trained on become the test set. Checkpoints,
-decoding settings and the choice between models were all made on validation.
+the 74 from recordings no model trained on become the test set. Checkpoints
+and decoding settings were chosen on validation, and the final longer run
+followed a rule written beforehand; some later ideas were developed after
+earlier test results were known, so the test set is not an untouched holdout.
 
 | Model | Validation WER | Test WER (74 clips) | 95% range |
 | --- | ---: | ---: | --- |
 | Whisper-small, not fine-tuned | 63.81% | 56.87% | 49.53 to 64.81 |
+| Whisper-medium, not fine-tuned | 47.20% | 43.88% | 38.09 to 50.11 |
 | 2025 checkpoint | 21.68% | 18.64% | 14.44 to 23.19 |
 | Retrained with the fixes | 20.02% | 19.28% | 15.37 to 23.35 |
 | + synthetic radio speech | 23.08% | 20.34% | 16.05 to 25.00 |

@@ -1,6 +1,8 @@
 # ---------------------------------------------------------------
 # Archived experiment (late 2025). Original file: NLP/comparison_train_pure_asr.py
 # What it does: wav2vec2-base-960h CTC fine-tune as a non-Whisper ASR baseline (lr 4e-4, 2000 steps).
+# Source: the ASR settings in section 5 of Blatt, A., Krishnan, A. and Klakow, D. Joint vs Sequential Speaker-Role
+#   Detection and Automatic Speech Recognition for Air-traffic Control. Interspeech 2024 (2000 steps, learning rate 4e-4).
 # Known problems:
 #   - The test set is used as the Trainer's eval set and selects the best checkpoint, so it is not an untouched test set.
 # Not maintained: paths and dependencies are as they were at the time.

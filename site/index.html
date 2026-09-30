@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ATCO: a small speech model for air traffic control radio · Ethan Zhang</title>
-<meta name="description" content="A student research project by Ethan Zhang: a small speech model that transcribes air traffic control radio, the ideas he tried with one hour of real audio, and what he found when he audited his own results.">
+<meta name="description" content="A student research project by Ethan Zhang: a small speech model that transcribes air traffic control radio, the ideas he tried starting from one hour of real audio, and what an audit of his own results.">
 <meta name="author" content="Ethan Zhang">
 <meta name="theme-color" content="#F4F6F7">
 <meta property="og:type" content="website">
 <meta property="og:title" content="ATCO: a small speech model for air traffic control radio">
-<meta property="og:description" content="Ethan Zhang's student research project: what he built, the ideas he tried with one hour of real audio, and what he found when he checked his own results.">
+<meta property="og:description" content="Ethan Zhang's student research project: what he built, the ideas he tried starting from one hour of real audio, and what an audit of his own results found.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&amp;family=Source+Sans+3:wght@400;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
@@ -43,18 +43,19 @@
       <p class="eyebrow">Ethan Zhang &middot; student research project &middot; 2025&ndash;26</p>
       <h1>I could hear every word. I couldn&rsquo;t follow a sentence.</h1>
       <p class="lede">That was me on a seaplane in the Maldives, listening to the pilots&rsquo; radio. So I
-        trained a small speech model to transcribe air traffic control, with one hour of real audio to
-        teach it, and then checked whether my own results held up.</p>
-      <p class="owns">In 2026 I went back over everything, found what was wrong with my own testing,
-        fixed it and retrained.</p>
+        trained a small speech model to transcribe air traffic control, starting from one hour of real audio,
+        and then checked whether my own results held up.</p>
+      <p class="owns">In 2026 I audited everything again with an AI coding assistant, which found what was
+        wrong with my own testing. We fixed it and retrained.</p>
       <p class="resultline">On recordings it had never heard, my best model&rsquo;s word error rate (the
         share of words it gets wrong, so lower is better) is <b>14.27%</b>. My 2025 model: <b>18.64%</b>.
         Whisper out of the box: <b>56.87%</b>.</p>
-      <p class="scopeline">699 real training clips &middot; 4,808 clips of generated speech &middot; about 30 experiments</p>
+      <p class="scopeline">699 real training clips &middot; 10.5 more hours of real speech for the best model &middot; 4,808 clips of generated speech &middot; about 30 experiments</p>
       <p class="actions">
         <a class="btn" href="#built">Watch one call go through it</a>
         <a class="btn ghost" href="#results">See the results</a>
         <a class="paperlink" href="https://github.com/Sineceptor/ATCO/blob/main/paper/atco_paper.pdf">Read the paper (PDF)</a>
+        <a class="paperlink" href="https://github.com/Sineceptor/ATCO/blob/main/paper/atco_summary.pdf">One-page summary (PDF)</a>
       </p>
       <p class="warnline">Research prototype. Not for operational use.</p>
     </div>
@@ -120,8 +121,8 @@
           <li class="bad"><b>portion</b><span>waypoint</span></li>
           <li class="bad"><b>startup</b><span>waypoint</span></li>
           <li><b>approved</b><span>command</span></li>
-          <li class="bad"><b>position</b><span>waypoint</span></li>
-          <li><b>three</b><span>value</span></li>
+          <li><b>position</b><span>waypoint</span></li>
+          <li class="bad"><b>three</b><span>value</span></li>
           <li><b>foxtrot</b><span>waypoint</span></li>
           <li><b>squawk</b><span>command</span></li>
           <li><b>four four zero two</b><span>value</span></li>
@@ -130,7 +131,8 @@
           <li class="bad"><b>juliett</b><span>waypoint</span></li>
         </ul>
         <p>It got the commands and the transponder code right, and went wrong on words it didn&rsquo;t know:
-          <q>portion</q>, <q>startup</q> and <q>position</q> became waypoints, and the callsign
+          <q>portion</q> and <q>startup</q> became waypoints, the <q>three</q> in <q>position three foxtrot</q>
+          (a place, by my labelling guide) became a number, and the callsign
           <q>eurotrans one three juliett</q> was split in three. Its training labels came from my word lists,
           which called any unfamiliar word of three or more letters a waypoint. That is the likeliest reason,
           though I haven&rsquo;t tested it.
@@ -147,6 +149,17 @@
     </ol>
 
     <div class="col">
+      <h3>Watch the current app run</h3>
+      <p>A one-minute screen recording of the real app on my laptop, using my best 2026 model. The input is
+        a sentence from my own generator read by the project&rsquo;s SpeechT5 voice, not ATCO2 audio, then a
+        typed instruction. The captions say what each step shows, and there is no sound. It is an
+        illustration; the measured results are below.</p>
+      <video class="demo" controls preload="none" playsinline width="1280" height="800"
+        poster="demo/atco-demo-poster.jpg" aria-label="Screen recording of the ATCO app transcribing a
+        generated radio call and checking a typed instruction">
+        <source src="demo/atco-demo.mp4" type="video/mp4">
+        <a href="demo/atco-demo.mp4">Download the screen recording (MP4, 66 seconds)</a>
+      </video>
       <details class="more">
         <summary>See the full screenshot</summary>
         <img class="fullshot" src="images/app-output.jpg" alt="The full saved screenshot of the app's output page: transcript, extracted words with labels, and a spoken readback player." width="569" height="777" loading="lazy" decoding="async">
@@ -317,7 +330,7 @@
         names the model kept missing, like Stefanik and Eurotrans. I tried a model six times bigger, a list of
         callsigns to steer the decoder, and a language model to tidy the transcripts. It barely moved: the
         scores I recorded changed by less than half a point, and the bigger model did worse with my
-        settings. Looking back in 2026, I found four likely reasons. Text-to-speech voices are calmer than
+        settings. Looking back in 2026, the audit turned up four likely reasons. Text-to-speech voices are calmer than
         real controllers. A file-path bug meant about a third of one training round was probably silence. And two were about my own
         measuring: I had chosen the hard words by looking at the test clips, and the test clips themselves
         turned out to overlap with training.</p>
@@ -331,9 +344,9 @@
 <section id="audit" class="tint">
   <div class="wrap col">
     <h2>Going back over everything</h2>
-    <p>In 2026 I went back over every script and every number before showing this to anyone. I found
-      four problems. Then I fixed what I could and trained the model again, this time testing it
-      properly.</p>
+    <p>In 2026, before showing this to anyone, I went back over every script and every number with an AI
+      coding assistant. That audit found four problems. We fixed what we could and trained the model
+      again, this time testing it properly.</p>
 
     <ol class="findings">
       <li>
@@ -397,14 +410,17 @@
       advance to adopt only if it beat the previous best on those clips. On the unseen clips, though, it is
       just one word better than that previous best, so the two are really level.</p>
     <p>Everything here is measured on the 74 unseen clips, from recordings none of these models heard in
-      training. Each 2026 model and its decoding settings were chosen on the other 101 clips, so the test
-      clips played no part in any 2026 choice. (My 2025 model was tuned on the old test clips, which
-      include these 74, so its score may be a little flattering.)</p>
+      training. Checkpoints and decoding settings were chosen on the other 101 clips, and the last run
+      followed a rule I wrote down before it started. The test clips aren&rsquo;t untouched, though: some
+      later ideas, such as averaging the two Whisper-medium models, came after I had seen earlier test
+      results, and all 74 were in the test set my 2025 model was tuned on, so its score may be a little
+      flattering.</p>
 
     <figure class="chartfig">
 <!-- chart:bars -->
-<div class="werbars" role="img" aria-label="Word error rate on the 74 unseen-recording clips. Whisper-small, not fine-tuned: 56.87%, 95% range 49.53 to 64.81; My 2025 model: 18.64%, 95% range 14.44 to 23.19; Retrained with the fixes: 19.28%, 95% range 15.37 to 23.35; + my synthetic radio clips: 20.34%, 95% range 16.05 to 25.00; + 10.5 hours of real ATC speech: 18.21%, 95% range 13.78 to 23.48; Soup: fixes-only + real speech: 16.72%, 95% range 13.00 to 20.68; Whisper-medium + real speech: 15.23%, 95% range 11.69 to 19.13; Soup of two Whisper-medium models: 14.38%, 95% range 10.95 to 18.17; Same soup, Whisper-medium trained 12 epochs: 14.27%, 95% range 10.93 to 17.99">
+<div class="werbars" role="img" aria-label="Word error rate on the 74 unseen-recording clips. Whisper-small, not fine-tuned: 56.87%, 95% range 49.53 to 64.81; Whisper-medium, not fine-tuned: 43.88%, 95% range 38.09 to 50.11; My 2025 model: 18.64%, 95% range 14.44 to 23.19; Retrained with the fixes: 19.28%, 95% range 15.37 to 23.35; + my synthetic radio clips: 20.34%, 95% range 16.05 to 25.00; + 10.5 hours of real ATC speech: 18.21%, 95% range 13.78 to 23.48; Soup: fixes-only + real speech: 16.72%, 95% range 13.00 to 20.68; Whisper-medium + real speech: 15.23%, 95% range 11.69 to 19.13; Soup of two Whisper-medium models: 14.38%, 95% range 10.95 to 18.17; Same soup, Whisper-medium trained 12 epochs: 14.27%, 95% range 10.93 to 17.99">
 <div class="wrow base"><span class="wl">Whisper-small, not fine-tuned</span><span class="wt"><i style="width:81.24%"></i><b style="left:70.76%;width:calc(92.59% - 70.76%)"></b></span><span class="wv">56.87%</span></div>
+<div class="wrow"><span class="wl">Whisper-medium, not fine-tuned</span><span class="wt"><i style="width:62.69%"></i><b style="left:54.41%;width:calc(71.59% - 54.41%)"></b></span><span class="wv">43.88%</span></div>
 <div class="wrow old"><span class="wl">My 2025 model</span><span class="wt"><i style="width:26.63%"></i><b style="left:20.63%;width:calc(33.13% - 20.63%)"></b></span><span class="wv">18.64%</span></div>
 <div class="wrow"><span class="wl">Retrained with the fixes</span><span class="wt"><i style="width:27.54%"></i><b style="left:21.96%;width:calc(33.36% - 21.96%)"></b></span><span class="wv">19.28%</span></div>
 <div class="wrow"><span class="wl">+ my synthetic radio clips</span><span class="wt"><i style="width:29.06%"></i><b style="left:22.93%;width:calc(35.71% - 22.93%)"></b></span><span class="wv">20.34%</span></div>
@@ -426,9 +442,10 @@
         Whisper-small&rsquo;s error rate by two thirds.</p></div>
       <div class="stat"><p class="big">14.27%</p><p>My best model now, a soup of two Whisper-medium
         models: 4.37 points better than 2025. Even at the edge of its 95% range it is 2.07 points
-        better.</p></div>
-      <div class="stat"><p class="big">20.34%</p><p>My synthetic radio speech didn&rsquo;t help, even
-        tested properly. Ten and a half hours of real ATC speech helped a little, mostly by stopping the model
+        better. It is bigger, trained on more data and with a different recipe, so no one of those gets
+        all the credit.</p></div>
+      <div class="stat"><p class="big">20.34%</p><p>My synthetic radio speech didn&rsquo;t help in my setup,
+        even tested properly (which doesn&rsquo;t show it never could). Ten and a half hours of real ATC speech helped a little, mostly by stopping the model
         getting stuck repeating itself.</p></div>
     </div>
 
@@ -440,7 +457,7 @@
       single small test can swing depending on which recordings it happens to hold.</p>
     <p>Cross-validation still lets the model hear other recordings from the same airport: the same
       controllers and place names. So I also left out one whole airport at a time, seven times. On an
-      airport it had never heard, the same recipe scores 26.48% (95% range 24.96% to 27.99%),
+      airport it had never heard, the same fixes-only Whisper-small recipe (not my best model) scores 26.48% (95% range 24.96% to 27.99%),
       7.32 points worse than on a new recording from a familiar airport, and still about half
       of Whisper out of the box. It depends on the airport: little changed at Brno and Bern, but Sydney,
       the only airport outside Europe, went from 18.80% to 41.44%. That model had never heard Australian
@@ -449,13 +466,15 @@
     <h3>From words to instructions</h3>
     <p>A word error rate near 14% sounds like six words in seven are right. For an instruction it is
       worse. I ran my word tagger on each correct transcript and on the model&rsquo;s version, and
-      compared what came out. My best model now gets the command right in 44 of the 56 clips that have
-      one (the 2025 model: 37) and the numbers right in 46 of 58 (2025: 35). Callsigns are the weak
-      point: 38 of 59. Callsign, command and numbers all matched in 38 of the 74 clips (the 2025 model:
+      compared what it extracted from each. With my best model, the extracted command matched in 44 of
+      the 56 clips that have one (the 2025 model: 37) and the extracted numbers in 46 of 58 (2025: 35).
+      Callsigns matched least often: 38 of 59. Callsign, command and numbers all matched in 38 of the 74 clips (the 2025 model:
       29; unmodified Whisper-small: 3). My tagger&rsquo;s waypoint labels aren&rsquo;t reliable, so I leave
       them out of that count; with them, every field matched in only 25. My other 2026 models are close
       behind (the Whisper-small soup and the single Whisper-medium both got 37), and a few clips out of 74
-      is within noise.</p>
+      is within noise. Requiring the fields in the same order gives the same counts. This compares the
+      tagger with itself on two transcripts, so it shows how much of a transcription error reaches the
+      extracted fields, not whether a person would agree the instruction was read right.</p>
     <p>I expected the missed callsigns to be airlines the model had never heard of. They weren&rsquo;t:
       every one of the 24 missed callsigns (a clip can hold more than one) started with a word from the
       training data. When I sorted them by cause, 14 were spelled-out letters and numbers heard wrong, like <span class="say">hotel delta lima</span> as <span class="say err">hotel golf
@@ -475,7 +494,8 @@
     <p>This is the measurement I should have made in 2025, before building a whole simulated radio. I
       added white noise to every unseen clip at a fixed signal-to-noise ratio, from 30&nbsp;dB down to
       0&nbsp;dB, and transcribed each one again. At 0&nbsp;dB the noise has the same average power as the
-      whole clip, pauses included, so it is louder than the speech while someone is talking. Every 10&nbsp;dB
+      whole clip, pauses included. The pauses pull that average down, so while someone is talking the
+      speech is somewhat louder than the noise, and in the pauses there is only noise. Every 10&nbsp;dB
       is a factor of ten in power.</p>
     <figure class="chartfig">
 <!-- chart:noise -->
@@ -635,7 +655,7 @@
 
     <p class="credits">The models are other people&rsquo;s work, and the real audio comes from the ATCO2 and
       UWB-ATCC research corpora. None of their audio or transcripts are published here. I used AI coding
-      tools to help write the code and to draft and edit this write-up.</p>
+      tools throughout: in 2025 to help write the code, and in 2026 an AI assistant (Claude Code) audited the project with me, wrote most of the new code, ran the retraining experiments and drafted and edited this write-up, while I set the goals and made the final calls on what to run and publish.</p>
     <details class="more">
       <summary>Credits and data citation</summary>
       <p>Whisper, BERT, DistilBERT, SpeechT5, HiFi-GAN, wav2vec2, Phi-3 and Qwen are other people&rsquo;s

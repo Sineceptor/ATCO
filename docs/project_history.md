@@ -18,25 +18,30 @@ document metadata, not from commits.
 
 ## What I did and what I used
 
-I chose the problem and the data, planned the experiments, ran all the training
-and evaluation on my own machine, and decided what to try next at each stage.
-The labelling word lists, the ATC text rules, the range checks, the sentence
-generator and the radio simulation were my designs.
+In 2025 I chose the problem and the data, planned the experiments, ran all the
+training and evaluation on my own machine, and decided what to try next at each
+stage. The labelling word lists, the ATC text rules, the range checks, the
+sentence generator and the radio simulation were my designs.
 
-In 2026 I went back and reviewed everything: I separated the original files
-from later rewrites, joined the models into `atco/pipeline.py`, wrote new
-evaluation scripts in [evaluation/](../evaluation/) and checked every old
-result. That review is how I found the recording overlap between training and
-test clips, the test-set leakage into my prompts and synthetic data, the
-start-token bug and the too-loose waypoint rule. None of those were known to me
-in 2025.
+In 2026 I went back over everything with an AI coding assistant (Claude Code).
+It audited the project with me: that audit is what found the recording overlap
+between training and test clips, the test-set leakage into my prompts and
+synthetic data, the start-token bug and the too-loose waypoint rule, none of
+which I knew about in 2025. The assistant also wrote most of the new code
+(joining the models into `atco/pipeline.py`, the evaluation scripts in
+[evaluation/](../evaluation/)), ran the retraining on my laptop and drafted the
+site, paper and these docs. I set the goals, decided what to run and publish,
+and chose between the options at each step. [Contribution](contribution.md)
+lists who did what in more detail.
 
 Whisper, BERT, DistilBERT, SpeechT5, HiFi-GAN, wav2vec2, Phi-3 and Qwen are
 other people's models, used through the Hugging Face libraries. The synthetic
 clips were spoken by Microsoft Edge text-to-speech voices, and the 2025
 experiments also used Silero VAD and a DeepSeek language model. I am not
-proposing a new model or training method. I used AI coding tools to help write
-the code and to draft and edit this write-up.
+proposing a new model or training method. I used AI coding tools throughout: in 2025 to help write the code, and in 2026
+an AI assistant (Claude Code) audited the project with me, wrote most of the new
+code, ran the retraining experiments and drafted and edited this write-up, while
+I set the goals and made the final calls on what to run and publish.
 
 The 2025 models were trained on a Windows laptop with an NVIDIA RTX 3070. I no
 longer have it, so all the 2026 retraining ran on a MacBook with an Apple M3 Pro

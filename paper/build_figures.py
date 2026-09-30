@@ -21,6 +21,7 @@ INK, INK3, LINE = "#15222D", "#5C6A75", "#D2D9DE"
 ACCENT, RUST, PALE, MID = "#285B73", "#B45F3C", "#B3C7D3", "#8AA8B9"
 LABELS = {
     "zero_shot": "Whisper-small, not fine-tuned",
+    "zero_shot_medium": "Whisper-medium, not fine-tuned",
     "checkpoint_2025": "2025 model",
     "fixed": "Retrained with the fixes",
     "synthetic": "+ synthetic radio speech",

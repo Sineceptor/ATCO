@@ -1,6 +1,9 @@
 # ---------------------------------------------------------------
 # Archived experiment (late 2025). Original file: NLP/comparison_train_bert_srd.py
 # What it does: Side experiment following a published sequential ASR -> speaker-role baseline: BERT tags each word as PILOT or ATCO. Written with heavy LLM assistance from a paper.
+# Source: Blatt, A., Krishnan, A. and Klakow, D. Joint vs Sequential Speaker-Role Detection and Automatic Speech
+#   Recognition for Air-traffic Control. Interspeech 2024. Its section 5 gives the BERT diarizer settings used
+#   here: learning rate 2e-5, 25 warm-up steps, batch size 16, early-stopping patience 5.
 # Known problems:
 #   - Turns with unknown speaker are labelled by a keyword heuristic, so BERT partly learns the heuristic.
 #   - The test set is used as the Trainer's eval set and selects the best checkpoint, so it is not an untouched test set.
@@ -28,7 +31,7 @@ OUTPUT_DIR = "comparison_bert_srd_model"
 TRAIN_JSON = "processed_data/ner_dataset_raw_split/train_raw.json"
 TEST_JSON = "processed_data/ner_dataset_raw_split/test_raw.json"
 
-# Hyperparameters from Paper Section 5 [cite: 121]
+# Hyperparameters from Blatt et al. (Interspeech 2024), section 5
 LEARNING_RATE = 2e-5
 BATCH_SIZE = 16
 WARMUP_STEPS = 25

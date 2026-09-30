@@ -6,9 +6,12 @@ are on the 74 test clips from recordings no model trained on, unless marked
 validation (the 101 clips used for every choice). Numbers come from the files
 named in each section; nothing here is rounded.
 
-**The rule for every choice.** Checkpoints, decoding settings and the choice
-between models were made on the validation clips only. A model was scored on
-the test clips only after it was built; the test clips never decided anything.
+**The rule for every choice.** Checkpoints and decoding settings were chosen on
+the validation clips, and a model was scored on the test clips only after it was
+built. The later runs followed rules written down before they started. The test
+clips are not a completely untouched holdout, though: some later ideas, notably
+averaging the two Whisper-medium models, came after earlier test results were
+known, and all 74 were in the old 2025 test set.
 
 ## 1. Re-scoring the 2025 work
 
@@ -118,7 +121,7 @@ The app's tagger run on the correct transcript and on each model's transcript
 | --- | ---: | ---: | ---: | ---: |
 | Callsign (59 clips) | 4 | 35 | 37 | 38 |
 | Command (56 clips) | 19 | 37 | 44 | 44 |
-| Numbers (58 clips) | 11 | 35 | 41 | 46 |
+| Numbers (58 clips) | 12 | 35 | 41 | 46 |
 | Callsign, command and numbers (74 clips) | 3 | 29 | 34 | 38 |
 | Every field, including waypoints (74 clips) | 0 | 20 | 23 | 25 |
 
@@ -302,7 +305,9 @@ Most of the disagreement is ordinary words tagged as waypoints (173 of 247) and
 callsign words, mostly flight-number digits, tagged as values (71). Some is the
 guide's conventions differing from the rules', such as "runway" belonging to the
 number after it (27 words). This is not a human evaluation, and it doesn't
-replace my own labels.
+replace my own labels. The app's actual output (after its function-word clean-up)
+agrees on 60.18%, and whole entities match exactly far less often: callsign spans
+51.43% precision and 45.57% recall.
 
 ## 16. Tidying after a second review, 28 September 2026
 
@@ -315,10 +320,37 @@ whole page in two minutes, the site's top line didn't say what word error rate
 means, and the history didn't say why the public Git history starts on
 26 September.
 
+## 17. Two more reviews, 30 September and 1 October 2026
+
+Both reviews were done with AI assistants; every finding was checked against the
+code or saved outputs before anything changed.
+
+| What | Result |
+| --- | --- |
+| Unmodified Whisper-medium, for comparison | 43.88% on test (47.20% on validation, plain beam, its best): size alone does little; adaptation does most of the work |
+| The app gave the tagger raw text, the evaluation spelled-out digits | Both now use one step (`atco/text_prep.py`); "jetstar 1 squawk 4582" now gets its warning. Only one published number moved: unmodified Whisper-small's numbers now match in 12 of 58 clips, not 11, because "16R" is read as a runway |
+| Number reader joined number words ("one thousand five hundred" became 1000500) | Reads quantities (1500); headings must be whole numbers; a value with no readable number is reported, except a direction such as "right" |
+| Readback dropped "flight level" from FL180 and "left" from 27L | Kept, joined or spaced |
+| The app rejected the "extensible" WAV many tools write | Accepted |
+| The instruction count compared unordered fields | Same fields in the same order gives the same counts for every model |
+| Reproducing the runs | `results/experiment_manifest.json`: exact command, seed, base model, data fingerprints and checkpoint hash for every run and soup |
+| Cross-validation and airport intervals could not be checked | `results/clips/errors_all_874.csv` has every clip's errors; it reproduces 19.16%, 26.48% and 53.44% |
+| Archived-script hashes no longer matched | The 26 September hashes kept as history, current ones added, and a test guards them |
+| Archive notes | The Phi-3 and Qwen sentence scores count wrong entity types as right; the speaker-role scripts follow Blatt, Krishnan and Klakow (Interspeech 2024), now cited |
+| Claims | The test set is disjoint from training but not untouched; the one-hour framing now says 10.5 more hours were added; who found what and what AI did is stated exactly; the 0 dB sentence was wrong (the speech is louder than the noise while someone talks) |
+| Tagger scoring tool | Now also scores the app's actual output and whole entities, with examples of each mistake: against the AI stand-in, 60.18% for the app's output |
+| Demonstration | A one-minute screen recording of the real app (`site/demo/atco-demo.mp4`) |
+| One-page summary | `paper/atco_summary.pdf` |
+
 ## Not done yet
 
 - The word tagger has never been scored against labels written by a person:
   the sheet and the [labelling guide](hand_labelling_guide.md) are ready. The
   AI-labelled stand-in (section 15) suggests the real score is well below 0.8657.
-- More test recordings from new airports, to separate models a point apart.
+- More test recordings from new airports, to separate models a point apart,
+  and one final evaluation of the frozen model on recordings nobody has looked at.
+- Labels written by a person for whole instructions (which callsign goes with
+  which command and number), to measure instruction accuracy rather than
+  agreement.
+- Publishing the fine-tuned weights, if the training data's licences allow it.
 - Training audio of spelled-out registrations, the other way to work on callsign letters.

@@ -72,10 +72,13 @@ check('the clean test set in results matches the split',
 
 agree = load('extraction_agreement.json')['models']
 b, o, z = agree[best], agree['checkpoint_2025'], agree['zero_shot']
-shown('commands right, best model', f"command right in {b['command']['clips_where_it_matches']} of the "
-      f"{b['command']['clips_with_field']} clips")
+shown('commands matched, best model', f"the extracted command matched in {b['command']['clips_where_it_matches']} of "
+      f"the {b['command']['clips_with_field']} clips")
 shown('commands right, 2025', f"(the 2025 model: {o['command']['clips_where_it_matches']})")
-shown('numbers right', f"numbers right in {b['value']['clips_where_it_matches']} of {b['value']['clips_with_field']}")
+shown('numbers matched', f"extracted numbers in {b['value']['clips_where_it_matches']} of {b['value']['clips_with_field']}")
+check('the ordered count equals the unordered one, as the page says',
+      b['callsign_command_value_identical_in_order'] == b['callsign_command_value_identical']
+      or 'same order gives the same counts' not in TEXT)
 shown('callsigns right', f"{b['callsign']['clips_where_it_matches']} of {b['callsign']['clips_with_field']}")
 core = 'callsign_command_value_identical'
 shown('callsign, command and numbers all right',
@@ -102,6 +105,11 @@ if (RESULTS / 'tagger_vs_ai_labels.json').exists():
           f"{pct(ai['tagger']['accuracy'])} of words (weighted F1 {ai['tagger']['weighted_f1']:.4f})" in paper_text
           and f"{pct(ai['word_list_rules']['accuracy'])} ({ai['word_list_rules']['weighted_f1']:.4f})" in paper_text)
     check('the paper says the AI labels are not a person\'s', 'this is not a human evaluation' in paper_text)
+    app = ai['app_output']
+    check('the paper quotes the app-output check exactly',
+          f"agrees on {pct(app['accuracy'])} (weighted F1 {app['weighted_f1']:.4f})" in paper_text
+          and f"{pct(app['exact_spans']['CALLSIGN']['exact_span_precision'])} of the application's callsign spans"
+          in paper_text)
 
 tag = load('rescoring_2025/entity_extraction.json')
 shown('tagger weighted F1', f"{tag['report']['weighted avg']['f1-score']:.4f}")
@@ -176,6 +184,16 @@ for name, run in runs.items():
     lo_, hi_ = (f'{100 * x:.2f}' for x in h['interval_95'])
     check(f'README shows {name}', f"{pct(h['wer'])}" in README and f'{lo_} to {hi_}' in README,
           f"expected {pct(h['wer'])} and {lo_} to {hi_}")
+
+summary = (SITE.parent / 'paper' / 'atco_summary.md').read_text(encoding='utf-8')
+for name in ['zero_shot', 'zero_shot_medium', 'checkpoint_2025', best]:
+    h = runs[name]['headline_test']
+    check(f'the one-page summary shows {name}',
+          f"{pct(h['wer'])}" in summary and f"{100 * h['interval_95'][0]:.2f} to {100 * h['interval_95'][1]:.2f}" in summary)
+if cv_path.exists():
+    check('the one-page summary shows the cross-validation and airport results',
+          pct(load('cross_validation.json')['retrained']['wer']) in summary
+          and pct(load('leave_one_airport_out.json')['pooled']['new_airport']['wer']) in summary)
 
 large = (RESULTS / 'original_2025' / 'asr_large_lora_robustness.txt').read_text(encoding='utf-8')
 large_wer = re.findall(r'\|\s*(\d+\.\d\d)%', large)[0::2]
