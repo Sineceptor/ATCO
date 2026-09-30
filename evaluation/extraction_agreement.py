@@ -20,45 +20,45 @@ import re
 from collections import Counter
 from pathlib import Path
 
-from .evaluate_models import spell_digits
+from atco.text_prep import prepare_for_tagger
 
 ROOT = Path(__file__).resolve().parents[1]
 FIELDS = ["CALLSIGN", "COMMAND", "VALUE", "WAYPOINT"]
 
 
 def normalise(text):
-    """Lower case, digits spelled out, punctuation removed: the form the tagger was trained on.
-
-    Spelling variants of the same word (alfa and alpha, oskar and oscar) are made
-    the same, as in evaluation.letters_digits, so that a callsign is not counted
-    as missed only because the reference spells it differently.
-    """
-    from .letters_digits import SAME
-
-    variants = {**SAME, "fourty": "forty"}
-    text = spell_digits(text).lower().replace("-", " ")
-    return " ".join(variants.get(w, w) for w in re.sub(r"[^a-z0-9' ]", " ", text).split())
+    """The form the tagger was trained on; the app uses the same step (atco.text_prep)."""
+    return prepare_for_tagger(text)
 
 
 def extract(pipe, text):
     from atco.entity_extraction import repair_bert_output
 
     if not text.strip():
-        return Counter()
+        return []
     found = repair_bert_output(pipe(text))
-    return Counter((e["entity_group"], " ".join(e["word"].lower().split())) for e in found)
+    return [(e["entity_group"], " ".join(e["word"].lower().split())) for e in found]
 
 
 def compare(pairs):
-    """pairs: list of (reference fields, model fields) Counters, one per clip."""
+    """pairs: list of (reference fields, model fields), each an ordered list per clip.
+
+    The main counts compare the fields as unordered collections: the same callsign,
+    command and number strings, wherever they appear. The in-order count also needs
+    them in the same order, which is closer to "the same instruction for the same
+    aircraft" when a clip holds more than one instruction.
+    """
     # Waypoint labels come from a rule that is known to be too loose, so the
     # headline count leaves them out; the count with them is kept alongside.
     core = lambda c: Counter({k: v for k, v in c.items() if k[0] != "WAYPOINT"})
+    in_order = lambda fields: [f for f in fields if f[0] != "WAYPOINT"]
     out = dict(
         clips=len(pairs),
-        all_fields_identical=sum(r == h for r, h in pairs),
-        callsign_command_value_identical=sum(core(r) == core(h) for r, h in pairs),
+        all_fields_identical=sum(Counter(r) == Counter(h) for r, h in pairs),
+        callsign_command_value_identical=sum(core(Counter(r)) == core(Counter(h)) for r, h in pairs),
+        callsign_command_value_identical_in_order=sum(in_order(r) == in_order(h) for r, h in pairs),
     )
+    pairs = [(Counter(r), Counter(h)) for r, h in pairs]
     for field in FIELDS:
         tp = fp = fn = 0
         clips_with_field = identical = 0
@@ -115,7 +115,7 @@ def main():
         rows = [r for r in rows if keep is None or r["file"] in keep]
         pairs = [(extract(pipe, normalise(r["reference"])), extract(pipe, normalise(r[mode]))) for r in rows]
         summary["models"][name] = dict(decoding=mode, **compare(pairs))
-        missed = [w for ref, hyp in pairs for (field, w) in (ref - hyp).elements() if field == "CALLSIGN"]
+        missed = [w for ref, hyp in pairs for (field, w) in (Counter(ref) - Counter(hyp)).elements() if field == "CALLSIGN"]
         summary["models"][name]["missed_callsigns"] = dict(
             count=len(missed),
             starting_with_a_word_never_in_training=sum(w.split()[0] not in known for w in missed),

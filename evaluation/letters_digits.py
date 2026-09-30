@@ -15,6 +15,8 @@ count as the same word. It also lists the commonest confusions.
 import argparse
 import json
 from collections import Counter
+
+from atco.text_prep import SPELLING_VARIANTS
 from pathlib import Path
 
 LETTERS = {
@@ -27,7 +29,7 @@ SPELLED = LETTERS | DIGITS
 # Spelling variants of the same letter or digit. The ATCO2 transcripts write both
 # "alfa" and "alpha", and "niner" where the speaker said niner; UWB-ATCC always
 # writes "nine". A callsign is equally right either way.
-SAME = {"alfa": "alpha", "niner": "nine", "juliet": "juliett", "whisky": "whiskey", "oskar": "oscar"}
+SAME = {k: v for k, v in SPELLING_VARIANTS.items() if k in LETTERS | DIGITS}
 
 
 def normalise(text):

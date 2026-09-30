@@ -120,7 +120,7 @@ def main():
             ref_text, hyp_text = normalise(r["reference"]), normalise(r[mode])
             hyp_fields = extract(pipe, hyp_text)
             found = [w for f, w in hyp_fields if f == "CALLSIGN"]
-            missed = (extract(pipe, ref_text) - hyp_fields).elements()
+            missed = (Counter(extract(pipe, ref_text)) - Counter(hyp_fields)).elements()
             for field, words in missed:
                 if field != "CALLSIGN":
                     continue

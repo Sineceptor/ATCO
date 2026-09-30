@@ -84,6 +84,26 @@ class AppTests(unittest.TestCase):
             self.request(result["transcript_url"]), (200, b"jetstar one\n")
         )
 
+    def test_extensible_wav_is_accepted(self):
+        # Many tools (macOS afconvert among them) write the "extensible" WAV variant.
+        import io
+
+        import numpy as np
+        import soundfile as sf
+
+        buffer = io.BytesIO()
+        sf.write(buffer, 0.1 * np.sin(np.arange(16000) / 5), 16000, format="WAVEX", subtype="PCM_16")
+
+        def connected(args):
+            result = app.pipeline.make_result("jetstar one", [], "", [])
+            result["tts_status"] = "skipped"
+            (args.output_dir / "result.json").write_text(json.dumps(result))
+            return result
+
+        with patch("app.pipeline.run", side_effect=connected):
+            status, _ = self.request("/api/transcribe", buffer.getvalue())
+        self.assertEqual(status, 200)
+
     def test_invalid_audio_is_rejected_before_model_loading(self):
         with patch("app.pipeline.run") as run:
             for body in [b"not audio", recording(31), recording(silent=True)]:

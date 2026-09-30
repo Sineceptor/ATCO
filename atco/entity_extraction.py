@@ -48,6 +48,8 @@ def drop_function_word_waypoints(entities):
             if not (e["entity_group"] == "WAYPOINT" and e["word"].strip().lower() in FUNCTION_WORDS)]
 
 
+DIRECTIONS = {"left", "right", "centre", "center", "l", "r", "c"}
+
 # Heuristic checks from the original experiment.
 
 
@@ -71,6 +73,11 @@ class CommandChecks:
             "decimal": ".",
             "point": ".",
         }
+        # Tens words, so "seventy seven" and "one sixty" read as numbers.
+        self.TENS = {"ten": 10, "eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14, "fifteen": 15,
+                     "sixteen": 16, "seventeen": 17, "eighteen": 18, "nineteen": 19, "twenty": 20,
+                     "thirty": 30, "forty": 40, "fourty": 40, "fifty": 50, "sixty": 60, "seventy": 70,
+                     "eighty": 80, "ninety": 90}
         # Check these words even if the model gives them a different label.
         self.force_commands = [
             "squawk",
@@ -84,14 +91,52 @@ class CommandChecks:
         ]
 
     def _text_to_digit(self, text):
-        words = text.lower().replace("-", " ").split()
-        res = []
+        """Read a spoken number; returns "" if the text holds no number.
+
+        Digit by digit ("one two one decimal eight") joins the digits: "121.8". With
+        "hundred" or "thousand" it is read as a quantity, so "one thousand five hundred"
+        is 1500, not 1000500, and "five thousand four eight zero" is 5480. A tens word
+        joins the digit after it: "seventy seven" is 77, "one sixty" is 160.
+        """
+        words = [w for w in text.lower().replace("-", " ").split()
+                 if w in self.num_map or w in self.TENS or w.replace(".", "", 1).isdigit()]
+        if not words:
+            return ""
+        if any(w in ("hundred", "thousand") for w in words):
+            total = base = current = 0
+            after_tens = False
+            for w in words:
+                if w == "thousand":
+                    total += ((base + current) or 1) * 1000
+                    base = current = 0
+                    after_tens = False
+                elif w == "hundred":
+                    base += (current or 1) * 100
+                    current = 0
+                    after_tens = False
+                elif w in self.TENS:
+                    value = self.TENS[w]
+                    current = value if current == 0 else current * 100 + value
+                    after_tens = value >= 20
+                elif w.isdigit() or self.num_map.get(w, "").isdigit():
+                    digits = w if w.isdigit() else self.num_map[w]
+                    current = current + int(digits) if after_tens else current * 10 ** len(digits) + int(digits)
+                    after_tens = False
+            return str(total + base + current)
+        out = ""
+        after_tens = False
         for w in words:
-            if w in self.num_map:
-                res.append(self.num_map[w])
-            elif w.replace(".", "", 1).isdigit():
-                res.append(w)
-        return "".join(res)
+            if w in self.TENS:
+                out += str(self.TENS[w])
+                after_tens = self.TENS[w] >= 20
+                continue
+            piece = self.num_map.get(w, w)
+            if after_tens and piece.isdigit() and len(piece) == 1:
+                out = out[:-1] + piece
+            else:
+                out += piece
+            after_tens = False
+        return out
 
     def validate_physics(self, command_word, value_str, context_text=""):
         warnings = []
@@ -99,7 +144,7 @@ class CommandChecks:
             val_float = float(value_str)
             val_int = int(float(value_str))
         except ValueError:
-            return warnings
+            return [f"Could not read a number from '{value_str}' after '{command_word}'; not checked."]
 
         cmd = command_word.lower()
 
@@ -126,8 +171,11 @@ class CommandChecks:
 
         # Heading.
         elif "heading" in cmd or "turn" in cmd:
-            if val_int < 0 or val_int > 360:
-                warnings.append(f"Heading {val_int} is outside the configured 0 to 360 range.")
+            # Check the value as read, not a truncated one: 360.5 is not a heading.
+            if val_float != val_int:
+                warnings.append(f"Heading {value_str} is not a whole number of degrees.")
+            if val_float < 0 or val_float > 360:
+                warnings.append(f"Heading {value_str} is outside the configured 0 to 360 range.")
 
         # Frequency.
         elif "contact" in cmd or "centre" in cmd or "approach" in cmd:
@@ -226,6 +274,11 @@ class CommandChecks:
                 if next_val_str:
                     w = self.validate_physics(word, next_val_str, raw_context)
                     warnings.extend(w)
+                elif raw_context and not set(raw_context.lower().split()) <= DIRECTIONS:
+                    # A value was found but no number could be read from it: say so,
+                    # rather than silently skipping the check. A direction ("turn right")
+                    # is a valid value that simply isn't a number.
+                    warnings.append(f"Could not read a number from '{raw_context}' after '{word}'; not checked.")
 
         return " ".join(parsed_text_parts), warnings
 

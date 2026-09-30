@@ -59,13 +59,19 @@ def run(args):
     from atco.entity_extraction import AtcParser, drop_function_word_waypoints, repair_bert_output
 
     parser = AtcParser(ner_path, local_files_only=local_only)
-    tokens = parser.pipe.tokenizer(transcript)["input_ids"]
+    from atco.text_prep import prepare_for_tagger
+
+    # The tagger sees the text in the form it was trained on (and the evaluation
+    # uses): lower case, digits spelled out. The original transcript is kept.
+    tagger_input = prepare_for_tagger(transcript)
+    tokens = parser.pipe.tokenizer(tagger_input)["input_ids"]
     max_tokens = parser.pipe.model.config.max_position_embeddings
     if len(tokens) > max_tokens:
         raise ValueError(f"Use one short instruction (maximum {max_tokens} model tokens)")
-    entities = drop_function_word_waypoints(repair_bert_output(parser.pipe(transcript)))
+    entities = drop_function_word_waypoints(repair_bert_output(parser.pipe(tagger_input)))
     parsed_text, warnings = parser.guard.check(entities)
     result = make_result(transcript, entities, parsed_text, warnings)
+    result["tagger_input"] = tagger_input
     result["models"] = {
         "asr": asr_path if args.audio else None,
         "ner": ner_path,

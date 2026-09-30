@@ -115,7 +115,7 @@ class Handler(BaseHTTPRequestHandler):
 
                 with sf.SoundFile(io.BytesIO(body)) as source:
                     if (
-                        source.format != "WAV"
+                        source.format not in ("WAV", "WAVEX")  # WAVEX: the "extensible" WAV many tools write
                         or not 0 < source.frames / source.samplerate <= 30
                     ):
                         raise ValueError(

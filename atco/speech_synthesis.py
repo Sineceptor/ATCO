@@ -1,12 +1,7 @@
 """SpeechT5 readback with the original ATC pronunciation rules."""
 import os
-from pathlib import Path
-
-
-import torch
-import soundfile as sf
 import re
-from transformers import SpeechT5Processor, SpeechT5ForTextToSpeech, SpeechT5HifiGan
+from pathlib import Path
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -68,6 +63,9 @@ class AtcTextNormalizer:
 
         text = text.upper()
 
+        # Compact forms: FL180 is "flight level one eight zero", not just the digits.
+        text = re.sub(r"\bFL\s?(\d{2,3})\b", lambda m: "FLIGHT LEVEL " + self._expand_digits(m.group(1)), text)
+
         # Expand the listed abbreviations.
         for term, phonetic in self.phonetic_map.items():
             text = re.sub(r"\b" + term + r"\b", phonetic, text)
@@ -90,6 +88,13 @@ class AtcTextNormalizer:
             return f"runway {spoken_num}{spoken_suffix}"
 
         text = re.sub(r"\bRWY(\d{1,2})([LRC]?)\b", replace_runway, text)
+
+        # A runway side written after the number, joined or spaced ("27L", "27 L"),
+        # is spoken, not dropped with the other letters.
+        def replace_side(match):
+            return f"{self._expand_digits(match.group(1))}, {self.rwy_suffix_map[match.group(2)]}"
+
+        text = re.sub(r"\b(\d{1,2})\s?([LRC])\b", replace_side, text)
 
         # Read remaining digits separately.
         words = text.split()
@@ -120,6 +125,12 @@ class AtcSpeaker:
         local_files_only=False,
     ):
         self.output_dir = os.fspath(output_dir)
+        # Imported here so the text rules above can be used and tested without them.
+        global torch, sf, SpeechT5Processor, SpeechT5ForTextToSpeech, SpeechT5HifiGan
+        import torch
+        import soundfile as sf
+        from transformers import SpeechT5Processor, SpeechT5ForTextToSpeech, SpeechT5HifiGan
+
         print("Loading SpeechT5...")
         self.processor = SpeechT5Processor.from_pretrained(
             model_path, local_files_only=local_files_only
