@@ -12,7 +12,10 @@ evaluation turns (about 1,000 words, an hour or two of work).
     python -m evaluation.hand_labels score
 
 The export does not show the rule labels or the model's predictions, so they
-cannot influence the person labelling.
+cannot influence the person labelling. The score compares the word-list rules,
+the tagger and the app's actual output (the tagger after its function-word
+clean-up) with the labels: per-label precision and recall, exact whole-entity
+matches, and a few examples of each kind of mistake.
 """
 
 import argparse
@@ -74,6 +77,51 @@ def compare(reference, candidate):
     return {"accuracy": correct / len(reference), "words": len(reference), "labels": report}
 
 
+def spans(labels):
+    """Runs of the same entity label in one sentence: (label, first word, last word)."""
+    out, start = [], None
+    for i, label in enumerate(labels + ["O"]):
+        if start is not None and label != labels[start]:
+            if labels[start] not in ("O", UNSURE):
+                out.append((labels[start], start, i - 1))
+            start = None
+        if start is None and label != "O":
+            start = i
+    return out
+
+
+def span_scores(reference_by_turn, candidate_by_turn):
+    """Exact entity-span matches: same label, same first and last word.
+
+    A candidate span touching a word the labeller marked unsure is left out.
+    """
+    report = {}
+    for label in LABELS[1:]:
+        tp = fp = fn = 0
+        for turn, ref in reference_by_turn.items():
+            cand = candidate_by_turn[turn]
+            unsure = {i for i, x in enumerate(ref) if x == UNSURE}
+            r = {s for s in spans(ref) if s[0] == label}
+            c = {s for s in spans(cand) if s[0] == label and not unsure & set(range(s[1], s[2] + 1))}
+            tp += len(r & c)
+            fp += len(c - r)
+            fn += len(r - c)
+        report[label] = {"exact_span_precision": tp / (tp + fp) if tp + fp else 0.0,
+                         "exact_span_recall": tp / (tp + fn) if tp + fn else 0.0,
+                         "reference_spans": tp + fn}
+    return report
+
+
+def mistakes(rows, keys, reference, candidate, per_kind=3):
+    """A few examples of each kind of disagreement, with the sentence."""
+    found = {}
+    for (turn, position), r, c in zip(keys, reference, candidate):
+        if r != c and len(found.setdefault(f"{r} -> {c}", [])) < per_kind:
+            words = rows[turn]["tokens"]
+            found[f"{r} -> {c}"].append(f"{words[position]} | {' '.join(words)}")
+    return dict(sorted(found.items(), key=lambda item: -len(item[1])))
+
+
 def score(test_file, sheet, predictions_file, output):
     human = read_sheet(sheet)
     missing = [key for key, label in human.items() if label is None]
@@ -88,10 +136,24 @@ def score(test_file, sheet, predictions_file, output):
     reference = [human[key] for key in keys]
     rules = [collapse(rows[t]["ner_tags"][p]) for t, p in keys]
     summary = {"words_left_out_as_unsure": len(unsure), "rules_vs_human": compare(reference, rules)}
+    summary["rules_vs_human"]["spans"] = span_scores(
+        {t: [human[(t, p)] for p in range(len(row["tokens"]))] for t, row in enumerate(rows)},
+        {t: [collapse(tag) for tag in row["ner_tags"]] for t, row in enumerate(rows)})
     if predictions_file.is_file():
         predicted = {(r["index"], p): label for r in read_jsonl(predictions_file) for p, label in enumerate(r["prediction"])}
         if set(keys) <= set(predicted) and len(predicted) == len(keys) + len(unsure):
-            summary["distilbert_vs_human"] = compare(reference, [predicted[key] for key in keys])
+            from atco.entity_extraction import FUNCTION_WORDS
+
+            # The app drops waypoint labels from function words; score that output too.
+            app = {k: ("O" if v == "WAYPOINT" and rows[k[0]]["tokens"][k[1]].lower() in FUNCTION_WORDS else v)
+                   for k, v in predicted.items()}
+            reference_by_turn = {t: [human[(t, p)] for p in range(len(row["tokens"]))] for t, row in enumerate(rows)}
+            for name, labels in [("distilbert", predicted), ("app_output", app)]:
+                result = compare(reference, [labels[key] for key in keys])
+                result["spans"] = span_scores(
+                    reference_by_turn, {t: [labels[(t, p)] for p in range(len(row["tokens"]))] for t, row in enumerate(rows)})
+                result["examples_of_mistakes"] = mistakes(rows, keys, reference, [labels[key] for key in keys])
+                summary[f"{name}_vs_human"] = result
         else:
             print("Model predictions cover different words (was --limit used?); skipping them.")
     else:

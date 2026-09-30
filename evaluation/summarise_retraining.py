@@ -44,6 +44,7 @@ ABLATIONS = {
 }
 DESCRIPTIONS = {
     "zero_shot": "Unmodified openai/whisper-small, no fine-tuning",
+    "zero_shot_medium": "Unmodified openai/whisper-medium, no fine-tuning (to separate model size from adaptation)",
     "checkpoint_2025": "The 2025 checkpoint used by the app, unchanged",
     **RUNS,
     **ABLATIONS,
@@ -84,6 +85,7 @@ def training_summary(log_path):
 def main():
     rng = np.random.default_rng(0)
     systems = {"zero_shot": ("zero_shot_validation", "zero_shot_test"),
+               "zero_shot_medium": ("zero_shot_medium_validation", "zero_shot_medium_test"),
                "checkpoint_2025": ("2025_validation", "2025_test")}
     for name in [*RUNS, *ABLATIONS]:
         if (OUT / "evaluation" / f"{name}_test" / "asr_predictions.jsonl").exists():
@@ -135,7 +137,7 @@ def main():
         boot = edits[picks].sum(axis=1) / words[picks].sum(axis=1)
         result = dict(decoding=mode, wer=round(float(edits.sum() / words.sum()), 4),
                       interval_95=[round(x, 4) for x in interval(boot)])
-        if name not in ("checkpoint_2025", "zero_shot"):
+        if name not in ("checkpoint_2025", "zero_shot", "zero_shot_medium"):
             diff = (edits[picks].sum(axis=1) - e_old[picks].sum(axis=1)) / w[picks].sum(axis=1)
             result["change_from_2025_points"] = round(float(100 * (edits.sum() - e_old.sum()) / w.sum()), 2)
             result["change_interval_95_points"] = [round(100 * x, 2) for x in interval(diff)]

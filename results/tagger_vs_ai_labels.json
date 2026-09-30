@@ -75,6 +75,28 @@
         "VALUE": 3,
         "WAYPOINT": 20
       }
+    },
+    "exact_spans": {
+      "CALLSIGN": {
+        "exact_span_precision": 0.5143,
+        "exact_span_recall": 0.4557,
+        "reference_spans": 79
+      },
+      "COMMAND": {
+        "exact_span_precision": 0.25,
+        "exact_span_recall": 0.3934,
+        "reference_spans": 61
+      },
+      "VALUE": {
+        "exact_span_precision": 0.1923,
+        "exact_span_recall": 0.3279,
+        "reference_spans": 61
+      },
+      "WAYPOINT": {
+        "exact_span_precision": 0.024,
+        "exact_span_recall": 0.25,
+        "reference_spans": 16
+      }
     }
   },
   "word_list_rules": {
@@ -116,8 +138,59 @@
         "VALUE": 3,
         "WAYPOINT": 17
       }
+    },
+    "exact_spans": {
+      "CALLSIGN": {
+        "exact_span_precision": 0.6761,
+        "exact_span_recall": 0.6076,
+        "reference_spans": 79
+      },
+      "COMMAND": {
+        "exact_span_precision": 0.2447,
+        "exact_span_recall": 0.377,
+        "reference_spans": 61
+      },
+      "VALUE": {
+        "exact_span_precision": 0.2211,
+        "exact_span_recall": 0.3443,
+        "reference_spans": 61
+      },
+      "WAYPOINT": {
+        "exact_span_precision": 0.0199,
+        "exact_span_recall": 0.1875,
+        "reference_spans": 16
+      }
     }
   },
   "for_comparison": "the tagger against its own word-list rules: 871 of 1,001 words (87.01%), weighted F1 0.8657",
-  "produced_by": "python -m evaluation.hand_labels score --sheet ai_labels.tsv --scores ai_label_scores.json"
+  "produced_by": "python -m evaluation.hand_labels score --sheet ai_labels.tsv --scores ai_label_scores.json",
+  "app_output": {
+    "what": "the tagger's labels after the app's clean-up, which drops waypoint labels on function words such as 'and'",
+    "accuracy": 0.6018,
+    "weighted_f1": 0.6532,
+    "exact_spans": {
+      "CALLSIGN": {
+        "exact_span_precision": 0.5143,
+        "exact_span_recall": 0.4557,
+        "reference_spans": 79
+      },
+      "COMMAND": {
+        "exact_span_precision": 0.25,
+        "exact_span_recall": 0.3934,
+        "reference_spans": 61
+      },
+      "VALUE": {
+        "exact_span_precision": 0.1923,
+        "exact_span_recall": 0.3279,
+        "reference_spans": 61
+      },
+      "WAYPOINT": {
+        "exact_span_precision": 0.0366,
+        "exact_span_recall": 0.375,
+        "reference_spans": 16
+      }
+    }
+  },
+  "exact_spans_means": "a run of words with the same label counts as one entity; it matches only if the label and its first and last word are the same",
+  "examples_of_mistakes": "kept out of this public file because they quote ATCO2 transcripts; the local run writes them to outputs/evaluation/ai_label_scores.json"
 }

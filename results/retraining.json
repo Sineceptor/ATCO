@@ -43,6 +43,52 @@
         ]
       }
     },
+    "zero_shot_medium": {
+      "description": "Unmodified openai/whisper-medium, no fine-tuning (to separate model size from adaptation)",
+      "validation": {
+        "greedy": {
+          "wer": 0.493,
+          "word_errors": 564,
+          "reference_words": 1144
+        },
+        "beam": {
+          "wer": 0.479,
+          "word_errors": 548,
+          "reference_words": 1144
+        },
+        "beamplain": {
+          "wer": 0.472,
+          "word_errors": 540,
+          "reference_words": 1144
+        }
+      },
+      "test": {
+        "greedy": {
+          "wer": 0.4526,
+          "word_errors": 425,
+          "reference_words": 939
+        },
+        "beam": {
+          "wer": 0.4345,
+          "word_errors": 408,
+          "reference_words": 939
+        },
+        "beamplain": {
+          "wer": 0.4388,
+          "word_errors": 412,
+          "reference_words": 939
+        }
+      },
+      "decoding_chosen_on_validation": "beamplain",
+      "headline_test": {
+        "decoding": "beamplain",
+        "wer": 0.4388,
+        "interval_95": [
+          0.3809,
+          0.5011
+        ]
+      }
+    },
     "checkpoint_2025": {
       "description": "The 2025 checkpoint used by the app, unchanged",
       "validation": {

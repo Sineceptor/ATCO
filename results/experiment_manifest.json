@@ -1,0 +1,564 @@
+{
+  "about": "python -m evaluation.export_manifest",
+  "base_models": {
+    "openai/whisper-small": {
+      "revision": "973afd24965f72e36ca33b3055d56a652f456b4d"
+    },
+    "openai/whisper-medium": {
+      "model.safetensors sha256": "62f73550fa6db24b0c6f6c5962bd0dae80fa644e93cde9cd9c3792971b47fd28"
+    }
+  },
+  "app_model": {
+    "folder": "models/whisper-medium-2026",
+    "same_as": "soup_medium_long",
+    "sha256": "c3f8eef99fba103b021f65928663061ff0afb1cdecbc692370f450a64fab612d"
+  },
+  "decoding": {
+    "greedy": "greedy, English, transcribe, max_new_tokens=128",
+    "beam": "beam search, 5 beams, repetition_penalty=1.2, no_repeat_ngram_size=3, max_new_tokens=128 (the app's decoding)",
+    "beamplain": "beam search, 5 beams, max_new_tokens=128, no repetition guards",
+    "chosen": "for each model, the decoding with the lowest validation WER (ties go to beam)"
+  },
+  "scoring": "python -m evaluation.evaluate_models asr --asr-model MODEL --manifest datasets/speech_split/{validation,test}.jsonl --audio-dir datasets/speech/audio; summaries: python -m evaluation.summarise_retraining",
+  "runs": {
+    "airport_LKPR": {
+      "command": "python -m training.train_whisper --local-only --base-model openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d --train datasets/speech_airports/LKPR/train.jsonl --validation datasets/speech_airports/LKPR/validation.jsonl --audio-dir datasets/speech/audio --extra-audio-dir datasets/speech/audio_synthetic --epochs 8 --patience 3 --learning-rate 1e-05 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --seed 42",
+      "seed": 42,
+      "base_model": "openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d",
+      "data": {
+        "train": {
+          "file": "datasets/speech_airports/LKPR/train.jsonl",
+          "clips": 693,
+          "sha256": "45ced33c34450c7245481503cfeb41d290d61a2be7de0e12848513dd36563707"
+        },
+        "validation": {
+          "file": "datasets/speech_airports/LKPR/validation.jsonl",
+          "clips": 77,
+          "sha256": "0c760459ec623aea76e7184de4be55bc43cd3e26d5c7343fea1d8e48c997ca44"
+        }
+      },
+      "epochs_run": 8,
+      "best_epoch": 6,
+      "checkpoints": "not kept (deleted after scoring to save space, or nothing beat the start)"
+    },
+    "airport_LKTB": {
+      "command": "python -m training.train_whisper --local-only --base-model openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d --train datasets/speech_airports/LKTB/train.jsonl --validation datasets/speech_airports/LKTB/validation.jsonl --audio-dir datasets/speech/audio --extra-audio-dir datasets/speech/audio_synthetic --epochs 8 --patience 3 --learning-rate 1e-05 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --seed 42",
+      "seed": 42,
+      "base_model": "openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d",
+      "data": {
+        "train": {
+          "file": "datasets/speech_airports/LKTB/train.jsonl",
+          "clips": 757,
+          "sha256": "c77b561410e70b47158d874236b847ef18090380346c433db9055e4ede631c9d"
+        },
+        "validation": {
+          "file": "datasets/speech_airports/LKTB/validation.jsonl",
+          "clips": 85,
+          "sha256": "60da390694f2ef629ec8ddce52df8ad3c1dd8cb59f7b3e30ae703cf786c55059"
+        }
+      },
+      "epochs_run": 8,
+      "best_epoch": 5,
+      "checkpoints": "not kept (deleted after scoring to save space, or nothing beat the start)"
+    },
+    "airport_LSGS": {
+      "command": "python -m training.train_whisper --local-only --base-model openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d --train datasets/speech_airports/LSGS/train.jsonl --validation datasets/speech_airports/LSGS/validation.jsonl --audio-dir datasets/speech/audio --extra-audio-dir datasets/speech/audio_synthetic --epochs 8 --patience 3 --learning-rate 1e-05 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --seed 42",
+      "seed": 42,
+      "base_model": "openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d",
+      "data": {
+        "train": {
+          "file": "datasets/speech_airports/LSGS/train.jsonl",
+          "clips": 553,
+          "sha256": "f2cb136c2f2afa8f6e87c757adf3bc49771d23ad3fc0e5b975e0b3fd2231c6b5"
+        },
+        "validation": {
+          "file": "datasets/speech_airports/LSGS/validation.jsonl",
+          "clips": 63,
+          "sha256": "dfb9458007b0bf99e17d9bde0c7c05c9112850f84b17980da7f4b712eebf6db5"
+        }
+      },
+      "epochs_run": 8,
+      "best_epoch": 7,
+      "checkpoints": "not kept (deleted after scoring to save space, or nothing beat the start)"
+    },
+    "airport_LSZB": {
+      "command": "python -m training.train_whisper --local-only --base-model openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d --train datasets/speech_airports/LSZB/train.jsonl --validation datasets/speech_airports/LSZB/validation.jsonl --audio-dir datasets/speech/audio --extra-audio-dir datasets/speech/audio_synthetic --epochs 8 --patience 3 --learning-rate 1e-05 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --seed 42",
+      "seed": 42,
+      "base_model": "openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d",
+      "data": {
+        "train": {
+          "file": "datasets/speech_airports/LSZB/train.jsonl",
+          "clips": 628,
+          "sha256": "7bf4ad1eecbccbda396ca4908583c882d9142f4a6475a1fe3a99a1410f883173"
+        },
+        "validation": {
+          "file": "datasets/speech_airports/LSZB/validation.jsonl",
+          "clips": 73,
+          "sha256": "618737e794e693420eeefe0687b300c49efdb72d851459c3bd0c280be5a310ef"
+        }
+      },
+      "epochs_run": 8,
+      "best_epoch": 8,
+      "checkpoints": "not kept (deleted after scoring to save space, or nothing beat the start)"
+    },
+    "airport_LSZH": {
+      "command": "python -m training.train_whisper --local-only --base-model openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d --train datasets/speech_airports/LSZH/train.jsonl --validation datasets/speech_airports/LSZH/validation.jsonl --audio-dir datasets/speech/audio --extra-audio-dir datasets/speech/audio_synthetic --epochs 8 --patience 3 --learning-rate 1e-05 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --seed 42",
+      "seed": 42,
+      "base_model": "openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d",
+      "data": {
+        "train": {
+          "file": "datasets/speech_airports/LSZH/train.jsonl",
+          "clips": 672,
+          "sha256": "6d70ee1cfd4215b309352d9ead6511cf5cec032f18c5d9ed9cfe3df5af3a0906"
+        },
+        "validation": {
+          "file": "datasets/speech_airports/LSZH/validation.jsonl",
+          "clips": 76,
+          "sha256": "d73e2c9ccb7401dfa35440d5dcbb6ff52c7459fcdf614632afb8888a630e6816"
+        }
+      },
+      "epochs_run": 6,
+      "best_epoch": 3,
+      "checkpoints": "not kept (deleted after scoring to save space, or nothing beat the start)"
+    },
+    "airport_LZIB": {
+      "command": "python -m training.train_whisper --local-only --base-model openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d --train datasets/speech_airports/LZIB/train.jsonl --validation datasets/speech_airports/LZIB/validation.jsonl --audio-dir datasets/speech/audio --extra-audio-dir datasets/speech/audio_synthetic --epochs 8 --patience 3 --learning-rate 1e-05 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --seed 42",
+      "seed": 42,
+      "base_model": "openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d",
+      "data": {
+        "train": {
+          "file": "datasets/speech_airports/LZIB/train.jsonl",
+          "clips": 714,
+          "sha256": "1093ccb50b6396f963a7af14e42377c3f1b8732cdcefb27e590c9010792edbf9"
+        },
+        "validation": {
+          "file": "datasets/speech_airports/LZIB/validation.jsonl",
+          "clips": 81,
+          "sha256": "fd20df903e9ebcca93d65271b47cf10535919224873fa1f4646564a1f0dc088a"
+        }
+      },
+      "epochs_run": 8,
+      "best_epoch": 8,
+      "checkpoints": "not kept (deleted after scoring to save space, or nothing beat the start)"
+    },
+    "airport_YSSY": {
+      "command": "python -m training.train_whisper --local-only --base-model openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d --train datasets/speech_airports/YSSY/train.jsonl --validation datasets/speech_airports/YSSY/validation.jsonl --audio-dir datasets/speech/audio --extra-audio-dir datasets/speech/audio_synthetic --epochs 8 --patience 3 --learning-rate 1e-05 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --seed 42",
+      "seed": 42,
+      "base_model": "openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d",
+      "data": {
+        "train": {
+          "file": "datasets/speech_airports/YSSY/train.jsonl",
+          "clips": 694,
+          "sha256": "41817278bec0a6268c2d6b84241ce00cc0ab9422caf29d4027ccb52d0869d0e2"
+        },
+        "validation": {
+          "file": "datasets/speech_airports/YSSY/validation.jsonl",
+          "clips": 78,
+          "sha256": "1844b8a3b5364307a2508f7c8c39c1e2bb13c299d54791fedb9a624fa1a8d08f"
+        }
+      },
+      "epochs_run": 8,
+      "best_epoch": 8,
+      "checkpoints": "not kept (deleted after scoring to save space, or nothing beat the start)"
+    },
+    "continued": {
+      "command": "python -m training.train_whisper --local-only --base-model models/whisper-small --train datasets/speech_split/train.jsonl --validation datasets/speech_split/validation.jsonl --audio-dir datasets/speech/audio --extra-audio-dir datasets/speech/audio_synthetic --epochs 6 --patience 4 --learning-rate 5e-06 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --seed 42",
+      "seed": 42,
+      "base_model": "models/whisper-small",
+      "data": {
+        "train": {
+          "file": "datasets/speech_split/train.jsonl",
+          "clips": 699,
+          "sha256": "5068a9c39e9c7c20b21ec68f20ae12e2502738084ec54e9e6449f7757720f4c7"
+        },
+        "validation": {
+          "file": "datasets/speech_split/validation.jsonl",
+          "clips": 101,
+          "sha256": "afb33b68dcf77d74c9e07610e13d05004f00701196245c10e73f0004ac1b612f"
+        }
+      },
+      "epochs_run": 4,
+      "best_epoch": 0,
+      "checkpoints": "not kept (deleted after scoring to save space, or nothing beat the start)"
+    },
+    "cv_fold0": {
+      "command": "python -m training.train_whisper --local-only --base-model openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d --train datasets/speech_folds/fold0/train.jsonl --validation datasets/speech_folds/fold0/validation.jsonl --audio-dir datasets/speech/audio --extra-audio-dir datasets/speech/audio_synthetic --epochs 8 --patience 3 --learning-rate 1e-05 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --seed 42",
+      "seed": 42,
+      "base_model": "openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d",
+      "data": {
+        "train": {
+          "file": "datasets/speech_folds/fold0/train.jsonl",
+          "clips": 630,
+          "sha256": "e134c5b735d6e1dccd39cc050a7d6be8d94f5ac484d29c6b137fc511c0ce4b8a"
+        },
+        "validation": {
+          "file": "datasets/speech_folds/fold0/validation.jsonl",
+          "clips": 70,
+          "sha256": "d1e187277a589cfd24ea957ce4481f41d3e40b780b80ca49846e51259865a016"
+        }
+      },
+      "epochs_run": 8,
+      "best_epoch": 5,
+      "checkpoints": "not kept (deleted after scoring to save space, or nothing beat the start)"
+    },
+    "cv_fold1": {
+      "command": "python -m training.train_whisper --local-only --base-model openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d --train datasets/speech_folds/fold1/train.jsonl --validation datasets/speech_folds/fold1/validation.jsonl --audio-dir datasets/speech/audio --extra-audio-dir datasets/speech/audio_synthetic --epochs 8 --patience 3 --learning-rate 1e-05 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --seed 42",
+      "seed": 42,
+      "base_model": "openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d",
+      "data": {
+        "train": {
+          "file": "datasets/speech_folds/fold1/train.jsonl",
+          "clips": 629,
+          "sha256": "029565b84dc2d000566872c38661a73bf22d46cc0cd398fbaf20cb7dd7007104"
+        },
+        "validation": {
+          "file": "datasets/speech_folds/fold1/validation.jsonl",
+          "clips": 70,
+          "sha256": "0f9b428996304f50d411f518edb56e24447d5ce735187975895d93a2b66e1ca4"
+        }
+      },
+      "epochs_run": 8,
+      "best_epoch": 8,
+      "checkpoints": "not kept (deleted after scoring to save space, or nothing beat the start)"
+    },
+    "cv_fold2": {
+      "command": "python -m training.train_whisper --local-only --base-model openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d --train datasets/speech_folds/fold2/train.jsonl --validation datasets/speech_folds/fold2/validation.jsonl --audio-dir datasets/speech/audio --extra-audio-dir datasets/speech/audio_synthetic --epochs 8 --patience 3 --learning-rate 1e-05 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --seed 42",
+      "seed": 42,
+      "base_model": "openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d",
+      "data": {
+        "train": {
+          "file": "datasets/speech_folds/fold2/train.jsonl",
+          "clips": 627,
+          "sha256": "f0cf99b08809b1fc6eec342839bea5753b33d24f569cd8a7d3aa525d41662e78"
+        },
+        "validation": {
+          "file": "datasets/speech_folds/fold2/validation.jsonl",
+          "clips": 70,
+          "sha256": "8f1b11627e7627bc0715eee034682b6a969f0217459b17164b0ebe3c86d8f30a"
+        }
+      },
+      "epochs_run": 8,
+      "best_epoch": 7,
+      "checkpoints": "not kept (deleted after scoring to save space, or nothing beat the start)"
+    },
+    "cv_fold3": {
+      "command": "python -m training.train_whisper --local-only --base-model openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d --train datasets/speech_folds/fold3/train.jsonl --validation datasets/speech_folds/fold3/validation.jsonl --audio-dir datasets/speech/audio --extra-audio-dir datasets/speech/audio_synthetic --epochs 8 --patience 3 --learning-rate 1e-05 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --seed 42",
+      "seed": 42,
+      "base_model": "openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d",
+      "data": {
+        "train": {
+          "file": "datasets/speech_folds/fold3/train.jsonl",
+          "clips": 630,
+          "sha256": "e7bcf6f19333d977aba4251b689cda53ebcfee1e5468e1cf9b0db7569b2c51c5"
+        },
+        "validation": {
+          "file": "datasets/speech_folds/fold3/validation.jsonl",
+          "clips": 70,
+          "sha256": "1e659fdfcdc21fd9f2c451b393349d4e93338b5e7e910b757f5fd7e371f7f67e"
+        }
+      },
+      "epochs_run": 8,
+      "best_epoch": 7,
+      "checkpoints": "not kept (deleted after scoring to save space, or nothing beat the start)"
+    },
+    "cv_fold4": {
+      "command": "python -m training.train_whisper --local-only --base-model openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d --train datasets/speech_folds/fold4/train.jsonl --validation datasets/speech_folds/fold4/validation.jsonl --audio-dir datasets/speech/audio --extra-audio-dir datasets/speech/audio_synthetic --epochs 8 --patience 3 --learning-rate 1e-05 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --seed 42",
+      "seed": 42,
+      "base_model": "openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d",
+      "data": {
+        "train": {
+          "file": "datasets/speech_folds/fold4/train.jsonl",
+          "clips": 629,
+          "sha256": "6693b6dc28cad4649c1a8c3e66c6d8155fa792fda62322cf31cb464aeca920c2"
+        },
+        "validation": {
+          "file": "datasets/speech_folds/fold4/validation.jsonl",
+          "clips": 71,
+          "sha256": "674cc352af704f8eabc26cc7972fbf159b231a3def244cd288d5048ed5205723"
+        }
+      },
+      "epochs_run": 8,
+      "best_epoch": 8,
+      "checkpoints": "not kept (deleted after scoring to save space, or nothing beat the start)"
+    },
+    "fixed": {
+      "command": "python -m training.train_whisper --local-only --base-model openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d --train datasets/speech_split/train.jsonl --validation datasets/speech_split/validation.jsonl --audio-dir datasets/speech/audio --extra-audio-dir datasets/speech/audio_synthetic --epochs 12 --patience 4 --learning-rate 1e-05 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --seed 42",
+      "seed": 42,
+      "base_model": "openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d",
+      "data": {
+        "train": {
+          "file": "datasets/speech_split/train.jsonl",
+          "clips": 699,
+          "sha256": "5068a9c39e9c7c20b21ec68f20ae12e2502738084ec54e9e6449f7757720f4c7"
+        },
+        "validation": {
+          "file": "datasets/speech_split/validation.jsonl",
+          "clips": 101,
+          "sha256": "afb33b68dcf77d74c9e07610e13d05004f00701196245c10e73f0004ac1b612f"
+        }
+      },
+      "epochs_run": 12,
+      "best_epoch": 9,
+      "checkpoints": {
+        "best": {
+          "file": "outputs/training/fixed/best/model.safetensors",
+          "sha256": "722b9497ba044ee39fac01838a85d35942af6421b2b868ef2f6110202aecb314"
+        }
+      }
+    },
+    "letter_weighted": {
+      "command": "python -m training.train_whisper --local-only --base-model outputs/training/soup_medium/best --train datasets/speech_split/train.jsonl --validation datasets/speech_split/validation.jsonl --audio-dir datasets/speech/audio --extra datasets/uwb_atcc/train.jsonl --extra-audio-dir datasets/uwb_atcc/audio --extra-per-epoch 1000 --epochs 2 --patience 2 --learning-rate 0.0001 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --lora 32 --letter-weight 3.0 --save-every-epoch --seed 42",
+      "seed": 42,
+      "base_model": "outputs/training/soup_medium/best",
+      "data": {
+        "train": {
+          "file": "datasets/speech_split/train.jsonl",
+          "clips": 699,
+          "sha256": "5068a9c39e9c7c20b21ec68f20ae12e2502738084ec54e9e6449f7757720f4c7"
+        },
+        "validation": {
+          "file": "datasets/speech_split/validation.jsonl",
+          "clips": 101,
+          "sha256": "afb33b68dcf77d74c9e07610e13d05004f00701196245c10e73f0004ac1b612f"
+        },
+        "extra": {
+          "file": "datasets/uwb_atcc/train.jsonl",
+          "clips": 11291,
+          "sha256": "6078e177c5b04292ef7637fc293ce74cefaf534d3eded83283149d46b5403902"
+        }
+      },
+      "epochs_run": 2,
+      "best_epoch": 0,
+      "checkpoints": "not kept (deleted after scoring to save space, or nothing beat the start)"
+    },
+    "medium_atco2_only": {
+      "command": "python -m training.train_whisper --local-only --base-model openai/whisper-medium (local copy; see base_models) --train datasets/speech_split/train.jsonl --validation datasets/speech_split/validation.jsonl --audio-dir datasets/speech/audio --extra-audio-dir datasets/speech/audio_synthetic --epochs 5 --patience 2 --learning-rate 0.0005 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --lora 32 --seed 42",
+      "seed": 42,
+      "base_model": "openai/whisper-medium (local copy; see base_models)",
+      "data": {
+        "train": {
+          "file": "datasets/speech_split/train.jsonl",
+          "clips": 699,
+          "sha256": "5068a9c39e9c7c20b21ec68f20ae12e2502738084ec54e9e6449f7757720f4c7"
+        },
+        "validation": {
+          "file": "datasets/speech_split/validation.jsonl",
+          "clips": 101,
+          "sha256": "afb33b68dcf77d74c9e07610e13d05004f00701196245c10e73f0004ac1b612f"
+        }
+      },
+      "epochs_run": 5,
+      "best_epoch": 5,
+      "checkpoints": {
+        "best": {
+          "file": "outputs/training/medium_atco2_only/best/adapter_model.safetensors",
+          "sha256": "0493250378ce6b8d9fe3c22cedc27afdee4d1853cfc3552d089d5d4a08f926a0"
+        },
+        "merged": {
+          "file": "outputs/training/medium_atco2_only/merged/model.safetensors",
+          "sha256": "a95313a9daf2ce87ddb82c2445e53e85b40d39342423bd8c8cef04099f30006c"
+        }
+      }
+    },
+    "medium_long": {
+      "command": "python -m training.train_whisper --local-only --base-model openai/whisper-medium (local copy; see base_models) --train datasets/speech_split/train.jsonl --validation datasets/speech_split/validation.jsonl --audio-dir datasets/speech/audio --extra datasets/uwb_atcc/train.jsonl --extra-audio-dir datasets/uwb_atcc/audio --extra-per-epoch 1000 --epochs 12 --patience 3 --learning-rate 0.0005 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --lora 32 --seed 42",
+      "seed": 42,
+      "base_model": "openai/whisper-medium (local copy; see base_models)",
+      "data": {
+        "train": {
+          "file": "datasets/speech_split/train.jsonl",
+          "clips": 699,
+          "sha256": "5068a9c39e9c7c20b21ec68f20ae12e2502738084ec54e9e6449f7757720f4c7"
+        },
+        "validation": {
+          "file": "datasets/speech_split/validation.jsonl",
+          "clips": 101,
+          "sha256": "afb33b68dcf77d74c9e07610e13d05004f00701196245c10e73f0004ac1b612f"
+        },
+        "extra": {
+          "file": "datasets/uwb_atcc/train.jsonl",
+          "clips": 11291,
+          "sha256": "6078e177c5b04292ef7637fc293ce74cefaf534d3eded83283149d46b5403902"
+        }
+      },
+      "epochs_run": 12,
+      "best_epoch": 9,
+      "checkpoints": {
+        "best": {
+          "file": "outputs/training/medium_long/best/adapter_model.safetensors",
+          "sha256": "755645bceef5787a6fe4b71135ebaf2ab760954049e24eb0b149ae019732e141"
+        },
+        "merged": {
+          "file": "outputs/training/medium_long/merged/model.safetensors",
+          "sha256": "7ffa87e96472e393bbbfc0cf99e4d215ced9138ed6887d8a5a82d9eb345d879a"
+        }
+      }
+    },
+    "medium_longer": {
+      "command": "python -m training.train_whisper --local-only --base-model outputs/training/medium_real/merged --train datasets/speech_split/train.jsonl --validation datasets/speech_split/validation.jsonl --audio-dir datasets/speech/audio --extra datasets/uwb_atcc/train.jsonl --extra-audio-dir datasets/uwb_atcc/audio --extra-per-epoch 1000 --epochs 3 --patience 2 --learning-rate 0.0002 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --lora 32 --seed 42",
+      "seed": 42,
+      "base_model": "outputs/training/medium_real/merged",
+      "data": {
+        "train": {
+          "file": "datasets/speech_split/train.jsonl",
+          "clips": 699,
+          "sha256": "5068a9c39e9c7c20b21ec68f20ae12e2502738084ec54e9e6449f7757720f4c7"
+        },
+        "validation": {
+          "file": "datasets/speech_split/validation.jsonl",
+          "clips": 101,
+          "sha256": "afb33b68dcf77d74c9e07610e13d05004f00701196245c10e73f0004ac1b612f"
+        },
+        "extra": {
+          "file": "datasets/uwb_atcc/train.jsonl",
+          "clips": 11291,
+          "sha256": "6078e177c5b04292ef7637fc293ce74cefaf534d3eded83283149d46b5403902"
+        }
+      },
+      "epochs_run": 2,
+      "best_epoch": 0,
+      "checkpoints": "not kept (deleted after scoring to save space, or nothing beat the start)"
+    },
+    "medium_real": {
+      "command": "python -m training.train_whisper --local-only --base-model openai/whisper-medium (local copy; see base_models) --train datasets/speech_split/train.jsonl --validation datasets/speech_split/validation.jsonl --audio-dir datasets/speech/audio --extra datasets/uwb_atcc/train.jsonl --extra-audio-dir datasets/uwb_atcc/audio --extra-per-epoch 1000 --epochs 6 --patience 2 --learning-rate 0.0005 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --lora 32 --seed 42",
+      "seed": 42,
+      "base_model": "openai/whisper-medium (local copy; see base_models)",
+      "data": {
+        "train": {
+          "file": "datasets/speech_split/train.jsonl",
+          "clips": 699,
+          "sha256": "5068a9c39e9c7c20b21ec68f20ae12e2502738084ec54e9e6449f7757720f4c7"
+        },
+        "validation": {
+          "file": "datasets/speech_split/validation.jsonl",
+          "clips": 101,
+          "sha256": "afb33b68dcf77d74c9e07610e13d05004f00701196245c10e73f0004ac1b612f"
+        },
+        "extra": {
+          "file": "datasets/uwb_atcc/train.jsonl",
+          "clips": 11291,
+          "sha256": "6078e177c5b04292ef7637fc293ce74cefaf534d3eded83283149d46b5403902"
+        }
+      },
+      "epochs_run": 6,
+      "best_epoch": 6,
+      "checkpoints": {
+        "best": {
+          "file": "outputs/training/medium_real/best/adapter_model.safetensors",
+          "sha256": "5a70254ac5793abc09a34d5b66499b5f45b9d7d103286b529aef935425b36180"
+        },
+        "merged": {
+          "file": "outputs/training/medium_real/merged/model.safetensors",
+          "sha256": "b2df5a463eaefad34ddc2a3005d754dd3c6cffcb69590a74e12b3845c1eee9e3"
+        }
+      }
+    },
+    "real_data": {
+      "command": "python -m training.train_whisper --local-only --base-model openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d --train datasets/speech_split/train.jsonl --validation datasets/speech_split/validation.jsonl --audio-dir datasets/speech/audio --extra datasets/uwb_atcc/train.jsonl --extra-audio-dir datasets/uwb_atcc/audio --extra-per-epoch 1400 --epochs 8 --patience 3 --learning-rate 1e-05 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --seed 42",
+      "seed": 42,
+      "base_model": "openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d",
+      "data": {
+        "train": {
+          "file": "datasets/speech_split/train.jsonl",
+          "clips": 699,
+          "sha256": "5068a9c39e9c7c20b21ec68f20ae12e2502738084ec54e9e6449f7757720f4c7"
+        },
+        "validation": {
+          "file": "datasets/speech_split/validation.jsonl",
+          "clips": 101,
+          "sha256": "afb33b68dcf77d74c9e07610e13d05004f00701196245c10e73f0004ac1b612f"
+        },
+        "extra": {
+          "file": "datasets/uwb_atcc/train.jsonl",
+          "clips": 11291,
+          "sha256": "6078e177c5b04292ef7637fc293ce74cefaf534d3eded83283149d46b5403902"
+        }
+      },
+      "epochs_run": 8,
+      "best_epoch": 8,
+      "checkpoints": {
+        "best": {
+          "file": "outputs/training/real_data/best/model.safetensors",
+          "sha256": "904479f64d33dd64d23ef5ab79714af52b0c49f228e3fcf2495a9a07f8524cf9"
+        }
+      }
+    },
+    "synthetic": {
+      "command": "python -m training.train_whisper --local-only --base-model openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d --train datasets/speech_split/train.jsonl --validation datasets/speech_split/validation.jsonl --audio-dir datasets/speech/audio --extra datasets/speech/synthetic.jsonl --extra-audio-dir datasets/speech/audio_synthetic --extra-per-epoch 700 --epochs 8 --patience 4 --learning-rate 1e-05 --batch-size 1 --accumulate 16 --warmup-steps 50 --optimizer adamw --memory-fraction 0.6 --spec-augment --seed 42",
+      "seed": 42,
+      "base_model": "openai/whisper-small@973afd24965f72e36ca33b3055d56a652f456b4d",
+      "data": {
+        "train": {
+          "file": "datasets/speech_split/train.jsonl",
+          "clips": 699,
+          "sha256": "5068a9c39e9c7c20b21ec68f20ae12e2502738084ec54e9e6449f7757720f4c7"
+        },
+        "validation": {
+          "file": "datasets/speech_split/validation.jsonl",
+          "clips": 101,
+          "sha256": "afb33b68dcf77d74c9e07610e13d05004f00701196245c10e73f0004ac1b612f"
+        },
+        "extra": {
+          "file": "datasets/speech/synthetic.jsonl",
+          "clips": 4808,
+          "sha256": "bce8bc67ed4968bfb1b538967880e490bd85ed616bf01520bd299113369696f4"
+        }
+      },
+      "epochs_run": 8,
+      "best_epoch": 7,
+      "checkpoints": {
+        "best": {
+          "file": "outputs/training/synthetic/best/model.safetensors",
+          "sha256": "df3713a1e4fc233967ed05f11f1140845cba5f24f6b64f670dc1b8e865a05f7c"
+        }
+      }
+    }
+  },
+  "soups": {
+    "soup_all3": {
+      "method": "python -m training.average_checkpoints outputs/training/fixed/best outputs/training/synthetic/best outputs/training/real_data/best --output outputs/training/soup_all3/best",
+      "ingredients": [
+        "outputs/training/fixed/best",
+        "outputs/training/synthetic/best",
+        "outputs/training/real_data/best"
+      ],
+      "checkpoint": {
+        "file": "outputs/training/soup_all3/best/model.safetensors",
+        "sha256": "bd4d9f1613f741c1c8dce8def9e0a2b758387fd18298faa7b01868237b26c6c5"
+      }
+    },
+    "soup_fixed_real": {
+      "method": "python -m training.average_checkpoints outputs/training/fixed/best outputs/training/real_data/best --output outputs/training/soup_fixed_real/best",
+      "ingredients": [
+        "outputs/training/fixed/best",
+        "outputs/training/real_data/best"
+      ],
+      "checkpoint": {
+        "file": "outputs/training/soup_fixed_real/best/model.safetensors",
+        "sha256": "780af66f786532713b72d9374ca4676d19ca7318f65247a7e8dc0e06051194f9"
+      }
+    },
+    "soup_medium": {
+      "method": "python -m training.average_checkpoints outputs/training/medium_real/merged outputs/training/medium_atco2_only/merged --output outputs/training/soup_medium/best",
+      "ingredients": [
+        "outputs/training/medium_real/merged",
+        "outputs/training/medium_atco2_only/merged"
+      ],
+      "checkpoint": {
+        "file": "outputs/training/soup_medium/best/model.safetensors",
+        "sha256": "76b0ffc5182fad49b516bbb7ecf57daba92b921086610f1d00e262e0bb972279"
+      }
+    },
+    "soup_medium_long": {
+      "method": "python -m training.average_checkpoints outputs/training/medium_long/merged outputs/training/medium_atco2_only/merged --output outputs/training/soup_medium_long/best",
+      "ingredients": [
+        "outputs/training/medium_long/merged",
+        "outputs/training/medium_atco2_only/merged"
+      ],
+      "checkpoint": {
+        "file": "outputs/training/soup_medium_long/best/model.safetensors",
+        "sha256": "c3f8eef99fba103b021f65928663061ff0afb1cdecbc692370f450a64fab612d"
+      }
+    }
+  }
+}

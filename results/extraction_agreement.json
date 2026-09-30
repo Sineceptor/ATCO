@@ -7,6 +7,7 @@
       "clips": 74,
       "all_fields_identical": 0,
       "callsign_command_value_identical": 3,
+      "callsign_command_value_identical_in_order": 3,
       "callsign": {
         "reference_items": 71,
         "recall": 0.0845,
@@ -17,21 +18,21 @@
       "command": {
         "reference_items": 104,
         "recall": 0.5192,
-        "precision": 0.7941,
+        "precision": 0.8182,
         "clips_with_field": 56,
         "clips_where_it_matches": 19
       },
       "value": {
         "reference_items": 103,
-        "recall": 0.3981,
-        "precision": 0.3628,
+        "recall": 0.4078,
+        "precision": 0.3717,
         "clips_with_field": 58,
-        "clips_where_it_matches": 11
+        "clips_where_it_matches": 12
       },
       "waypoint": {
         "reference_items": 315,
         "recall": 0.4603,
-        "precision": 0.2959,
+        "precision": 0.2965,
         "clips_with_field": 70,
         "clips_where_it_matches": 0
       },
@@ -45,6 +46,7 @@
       "clips": 74,
       "all_fields_identical": 20,
       "callsign_command_value_identical": 29,
+      "callsign_command_value_identical_in_order": 29,
       "callsign": {
         "reference_items": 71,
         "recall": 0.6479,
@@ -83,6 +85,7 @@
       "clips": 74,
       "all_fields_identical": 17,
       "callsign_command_value_identical": 28,
+      "callsign_command_value_identical_in_order": 28,
       "callsign": {
         "reference_items": 71,
         "recall": 0.5915,
@@ -121,6 +124,7 @@
       "clips": 74,
       "all_fields_identical": 18,
       "callsign_command_value_identical": 32,
+      "callsign_command_value_identical_in_order": 32,
       "callsign": {
         "reference_items": 71,
         "recall": 0.6197,
@@ -159,6 +163,7 @@
       "clips": 74,
       "all_fields_identical": 19,
       "callsign_command_value_identical": 31,
+      "callsign_command_value_identical_in_order": 31,
       "callsign": {
         "reference_items": 71,
         "recall": 0.6901,
@@ -197,6 +202,7 @@
       "clips": 74,
       "all_fields_identical": 20,
       "callsign_command_value_identical": 37,
+      "callsign_command_value_identical_in_order": 37,
       "callsign": {
         "reference_items": 71,
         "recall": 0.6056,
@@ -235,6 +241,7 @@
       "clips": 74,
       "all_fields_identical": 24,
       "callsign_command_value_identical": 37,
+      "callsign_command_value_identical_in_order": 37,
       "callsign": {
         "reference_items": 71,
         "recall": 0.6761,
@@ -273,6 +280,7 @@
       "clips": 74,
       "all_fields_identical": 23,
       "callsign_command_value_identical": 34,
+      "callsign_command_value_identical_in_order": 34,
       "callsign": {
         "reference_items": 71,
         "recall": 0.662,
@@ -311,6 +319,7 @@
       "clips": 74,
       "all_fields_identical": 25,
       "callsign_command_value_identical": 38,
+      "callsign_command_value_identical_in_order": 38,
       "callsign": {
         "reference_items": 71,
         "recall": 0.662,

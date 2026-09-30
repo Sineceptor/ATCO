@@ -8,7 +8,9 @@ error counts. No audio or transcript text is written, only file names and counts
 
 Writes results/clips/split.csv (all 874 clips: recording, airport, split) and
 results/clips/errors_validation.csv and errors_test.csv (word errors per model,
-under the decoding each model was scored with, and the clip's reference words).
+under the decoding each model was scored with, and the clip's reference words),
+and results/clips/errors_all_874.csv (every clip's errors in the cross-validation
+by recording, the leave-one-airport-out test and unmodified Whisper-small).
 """
 
 import csv
@@ -64,5 +66,38 @@ def main():
         print(part, len(clips), "clips;", int(sum(words)), "words;", total)
 
 
+def export_folds():
+    """Per-clip word errors for the cross-validation and the airport test (beam, as scored)."""
+    from .session_split import airport_id
+
+    by_recording, by_airport, zero = {}, {}, {}
+    for k in range(5):
+        for r in rows(ROOT / f"outputs/evaluation/cv_fold{k}_test/asr_predictions.jsonl"):
+            by_recording[r["file"]] = (k, r)
+    for folder in sorted((ROOT / "outputs/evaluation").glob("airport_*_test")):
+        for r in rows(folder / "asr_predictions.jsonl"):
+            by_airport[r["file"]] = r
+    for name in ["zero_shot", "zero_shot_train"]:
+        for r in rows(ROOT / f"outputs/evaluation/{name}/asr_predictions.jsonl"):
+            zero[r["file"]] = r
+    files = sorted(by_recording)
+    count = lambda r: tuple(int(x[0]) for x in clip_counts([r], "beam", spelled=True))
+    with (OUT / "errors_all_874.csv").open("w", newline="") as out:
+        writer = csv.writer(out)
+        writer.writerow(["clip", "airport", "cv_fold", "reference_words", "cv_by_recording_beam",
+                         "leave_one_airport_out_beam", "unmodified_whisper_small_beam"])
+        totals = [0, 0, 0, 0]
+        for f in files:
+            fold, r = by_recording[f]
+            e_rec, words = count(r)
+            e_air, w2 = count(by_airport[f]) if f in by_airport else (None, None)
+            e_zero, w3 = count(zero[f])
+            assert w2 in (None, words) and w3 == words, f
+            writer.writerow([clip_id(f), airport_id(f), fold, words, e_rec, e_air, e_zero])
+            totals = [totals[0] + words, totals[1] + e_rec, totals[2] + (e_air or 0), totals[3] + e_zero]
+    print("all 874:", len(files), "clips; words, errors by recording, by airport, unmodified:", totals)
+
+
 if __name__ == "__main__":
     main()
+    export_folds()
