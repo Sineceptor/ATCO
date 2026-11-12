@@ -7,7 +7,7 @@ author: Ethan Zhang, 2025 to 2026
 
 **What I built.** Whisper fine-tuned on ATC speech, a word tagger that labels callsigns, commands and numbers, range checks on the numbers, and a spoken readback, joined into one app.
 
-**What an audit found.** An audit I ran in 2026 with an AI assistant found my 2025 test was not clean: 101 of its 175 clips came from recordings that also gave training clips, and I had tuned settings on them. The test was rebuilt from the 74 clips whose recordings no model trained on, checkpoints and decoding were chosen on the other 101, and each later run's adoption rule was written down before it started. Some later ideas still came after earlier test results were known, so the test is disjoint from training but not untouched.
+**What an audit found.** A review in 2026 found my 2025 test was not clean: 101 of its 175 clips came from recordings that also gave training clips, and I had tuned settings on them. The test was rebuilt from the 74 clips whose recordings no model trained on, checkpoints and decoding were chosen on the other 101, and each later run's adoption rule was written down before it started. Some later ideas still came after earlier test results were known, so the test is disjoint from training but not untouched.
 
 | Word error rate (lower is better) | Result | 95% range |
 | ---------------------------------------- | ------------: | ------------ |
@@ -24,6 +24,8 @@ The first four rows are on the 74 unseen clips; the last two pool all 874 clips.
 
 **What it can't do.** The tagger extracts the same callsign, command and numbers from the best model's transcript as from the correct one in only 38 of 74 clips, and it has not yet been scored against labels written by a person. It is a research prototype, never to be used for real air traffic communication.
 
-**Who did what.** I chose the problem, designed the word lists, rules, range checks, sentence generator and radio simulation, and ran the 2025 experiments. I used AI coding tools throughout: in 2025 to help write the code, and in 2026 an AI assistant (Claude Code) audited the project with me, wrote most of the new code, ran the retraining experiments and drafted and edited the write-up, while I set the goals and made the final calls on what to run and publish.
+**My contribution.** I chose the problem, designed the word lists, rules, range checks, sentence generator and radio simulation, and ran the 2025 experiments. I set the goals and decided what to run and publish in 2026.
 
 Code, results and every experiment: github.com/Sineceptor/ATCO. Full paper and a one-minute demo: sineceptor.github.io/ATCO.
+
+AI tools supported coding, review, retraining and writing; see [project credits](https://github.com/Sineceptor/ATCO/blob/main/docs/contribution.md).

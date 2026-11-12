@@ -14,7 +14,7 @@ Controllers and pilots speak a restricted form of English. Numbers are read digi
 
 Automatic transcription could help controllers, for example by filling in radar labels from their own speech, which has been shown to reduce wrong or missing entries in a controlled trial [8]. That requires the recogniser to be accurate on the words that matter, and it requires a trustworthy estimate of that accuracy on speech the system has never heard. This project began with the first question and ended mostly on the second.
 
-The work has two parts. In 2025 I fine-tuned Whisper-small [1] on one hour of ATC audio and built a word tagger that labels callsigns, commands, values and waypoints, as separate scripts. In 2026, working with an AI coding assistant, I audited those results; the audit found that the evaluation did not measure what it appeared to, and the evaluation was rebuilt, the models retrained, and the parts joined into one application. This paper reports the rebuilt evaluation. Its contributions are:
+The work has two parts. In 2025 I fine-tuned Whisper-small [1] on one hour of ATC audio and built a word tagger that labels callsigns, commands, values and waypoints, as separate scripts. A review in 2026 found that the evaluation did not measure what it appeared to, and the evaluation was rebuilt, the models retrained, and the parts joined into one application. This paper reports the rebuilt evaluation. Its contributions are:
 
 1. A test set of recordings unseen by every model, with all development choices made on a separate validation set, and paired bootstrap intervals for every comparison.
 2. Measured answers to questions the 2025 work left open: how much fine-tuning helps, whether a label bug mattered, whether synthetic radio speech helps, and whether more real speech or a larger model helps.
@@ -234,7 +234,7 @@ With one hour of real audio, fine-tuning cut Whisper-small's word error rate on 
 
 ## Acknowledgements
 
-I used AI coding tools throughout: in 2025 to help write the code, and in 2026 an AI assistant (Claude Code) audited the project with me, wrote most of the new code, ran the retraining experiments and drafted and edited this paper, while I set the goals and made the final calls on what to run and publish.
+AI tools supported coding, the 2026 review and retraining, and preparation of this paper. I set the goals and decided what to run and publish. [Project credits](https://github.com/Sineceptor/ATCO/blob/main/docs/contribution.md) give the roles in more detail.
 
 ## References
 

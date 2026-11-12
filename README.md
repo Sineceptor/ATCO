@@ -20,8 +20,8 @@ goes wrong: "push and start" is heard as "portion startup", and the tagger
 calls words it does not know "waypoints". I left it in because those mistakes
 are most of what I learned from.
 
-There is a [one-page summary](paper/atco_summary.pdf), the [full paper](paper/atco_paper.pdf)
-and a plain account of [who did what](docs/contribution.md).
+There is a [one-page summary](paper/atco_summary.pdf) and the
+[full paper](paper/atco_paper.pdf).
 
 A one-minute [screen recording](site/demo/atco-demo.mp4) shows the current app
 running on a generated radio call and a typed instruction (no sound; captions
@@ -87,10 +87,10 @@ have now run.
 
 ## Results
 
-When I went back over the project in 2026 with an AI coding assistant, the
-audit showed that my test was not clean: 101 of the 175 test clips came from
-recordings that also gave training clips, and I had used the test clips to tune
-settings. So I kept the 74 clips from recordings no model has trained on as the
+A review of the project in 2026 showed that my test was not clean: 101 of the
+175 test clips came from recordings that also gave training clips, and I had
+used the test clips to tune settings. So I kept the 74 clips from recordings no
+model has trained on as the
 test set, used the other 101 for choosing checkpoints and decoding, fixed the
 bugs the audit found and retrained. The later runs followed rules written
 before they started, but some later ideas (such as averaging the two
@@ -199,7 +199,7 @@ corpora ([data credit](docs/data.md)).
 
 I used AI tools for coding support and help with the 2026 review, retraining
 and write-up. I set the project's goals and decided what to run and publish.
-[Contribution details](docs/contribution.md).
+[Project credits](docs/contribution.md).
 
 The code is under the [MIT licence](LICENSE). The models and audio are not
 included and keep their own licences.

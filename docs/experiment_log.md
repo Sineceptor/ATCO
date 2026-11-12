@@ -194,9 +194,9 @@ still improving may be undertrained. The 12-epoch repeat of `medium_real`
 
 ## 12. Corrections after a review, 27 September 2026
 
-Before freezing the numbers, I had the whole repo and site reviewed with an AI
-assistant, working from my own planning notes. Everything below was checked
-against the code and saved outputs before it was changed. Figures in this
+Before freezing the numbers, the repository and site were reviewed against my
+planning notes. Everything below was checked against the code and saved outputs
+before it was changed. Figures in this
 section describe the best model at the time, the 6-epoch soup.
 
 | Finding | What changed |
@@ -311,7 +311,7 @@ agrees on 60.18%, and whole entities match exactly far less often: callsign span
 
 ## 16. Tidying after a second review, 28 September 2026
 
-A second AI-assisted review of the public repo found a few leftovers, all
+A second review of the public repo found a few leftovers, all
 fixed: one page still quoted the old best model's transcript of the example
 call, some experiment-log lines still described the 6-epoch soup as the best
 model, one site sentence said every kept run was still improving (run A peaked
@@ -322,8 +322,9 @@ means, and the history didn't say why the public Git history starts on
 
 ## 17. Two more reviews, 30 September and 1 October 2026
 
-Both reviews were done with AI assistants; every finding was checked against the
-code or saved outputs before anything changed.
+Every finding was checked against the code or saved outputs before anything
+changed. The [project credits](contribution.md) describe the development and
+review support used.
 
 | What | Result |
 | --- | --- |
@@ -337,7 +338,7 @@ code or saved outputs before anything changed.
 | Cross-validation and airport intervals could not be checked | `results/clips/errors_all_874.csv` has every clip's errors; it reproduces 19.16%, 26.48% and 53.44% |
 | Archived-script hashes no longer matched | The 26 September hashes kept as history, current ones added, and a test guards them |
 | Archive notes | The Phi-3 and Qwen sentence scores count wrong entity types as right; the speaker-role scripts follow Blatt, Krishnan and Klakow (Interspeech 2024), now cited |
-| Claims | The test set is disjoint from training but not untouched; the one-hour framing now says 10.5 more hours were added; who found what and what AI did is stated exactly; the 0 dB sentence was wrong (the speech is louder than the noise while someone talks) |
+| Claims | The test set is disjoint from training but not untouched; the one-hour framing now says 10.5 more hours were added; project roles and development support clarified; the 0 dB sentence was wrong (the speech is louder than the noise while someone talks) |
 | Tagger scoring tool | Now also scores the app's actual output and whole entities, with examples of each mistake: against the AI stand-in, 60.18% for the app's output |
 | Demonstration | A one-minute screen recording of the real app (`site/demo/atco-demo.mp4`) |
 | One-page summary | `paper/atco_summary.pdf` |
