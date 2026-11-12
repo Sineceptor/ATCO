@@ -1,0 +1,56 @@
+% Single-column research-paper layout; loaded by Pandoc's LaTeX template.
+\IfFontExistsTF{Times New Roman}
+  {\setmainfont{Times New Roman}}
+  {\setmainfont{TeX Gyre Termes}}
+\usepackage{titling,titlesec,caption,enumitem,etoolbox,fancyhdr,needspace}
+\usepackage{booktabs,array}
+\usepackage[section]{placeins}
+\setlength{\parindent}{1em}
+\setlength{\parskip}{0pt}
+\linespread{1.06}
+\setlength{\emergencystretch}{2em}
+\widowpenalty=10000
+\clubpenalty=10000
+\raggedbottom
+
+\setlength{\droptitle}{-2em}
+\pretitle{\begin{center}\fontsize{17}{20}\selectfont\bfseries}
+\posttitle{\par\end{center}\vspace{0.3em}}
+\preauthor{\begin{center}\normalsize}
+\postauthor{\par\end{center}}
+\predate{\begin{center}\small}
+\postdate{\par\end{center}\vspace{0.7em}}
+\renewenvironment{abstract}
+  {\begin{center}\bfseries Abstract\end{center}\begin{quote}\small\noindent}
+  {\par\end{quote}\vspace{0.4em}}
+
+\titleformat{\section}{\normalfont\fontsize{12}{14}\selectfont\bfseries}{}{0pt}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{}{0pt}{}
+\titlespacing*{\section}{0pt}{12pt plus 2pt minus 1pt}{5pt}
+\titlespacing*{\subsection}{0pt}{9pt plus 2pt minus 1pt}{4pt}
+\pretocmd{\section}{\Needspace{6\baselineskip}}{}{}
+\pretocmd{\subsection}{\Needspace{5\baselineskip}}{}{}
+\setlist[enumerate]{leftmargin=1.8em,itemsep=1pt,topsep=4pt,parsep=0pt}
+
+\captionsetup{font=small,labelfont=bf,labelsep=period,
+  justification=justified,singlelinecheck=false,skip=5pt}
+\captionsetup[table]{position=top}
+\setlength{\textfloatsep}{12pt plus 2pt minus 2pt}
+\setlength{\floatsep}{10pt plus 2pt minus 2pt}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.08}
+\renewcommand{\floatpagefraction}{0.80}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\itshape Fine-tuning Whisper for ATC speech}
+\fancyhead[R]{\small Ethan Zhang}
+\fancyfoot[C]{\small\thepage}
+\setlength{\headheight}{14pt}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\footrulewidth}{0pt}
+\AtBeginEnvironment{thebibliography}{\small\setlength{\itemsep}{3pt}\setlength{\parskip}{0pt}}

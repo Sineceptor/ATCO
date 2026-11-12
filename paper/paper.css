@@ -1,4 +1,4 @@
-/* Print styles for atco_paper.pdf. */
+/* Print styles for the standalone one-page summary. The full paper uses typesetting.tex. */
 @page { size: A4; margin: 22mm 20mm 22mm 20mm; }
 html { font-size: 10.5pt; }
 body {

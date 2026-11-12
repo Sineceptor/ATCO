@@ -1,5 +1,5 @@
 ---
-title: "Transcribing air traffic control radio, starting from an hour of audio: fine-tuning Whisper and testing it on recordings it has never heard"
+title: "Fine-tuning Whisper for Air Traffic Control Speech with Limited Training Data"
 author: Ethan Zhang
 date: September 2026
 ---
@@ -66,7 +66,7 @@ A model soup [5] averages the weights of models fine-tuned from the same startin
 
 ### 4.2 Training
 
-All runs use the corrected labels, whose prefix matches the inference prompt, with the start token appearing once. Other settings: AdamW with weight decay 0.01, a linear learning-rate schedule with 50 warm-up steps, an effective batch of 16 clips, gradient clipping at 1.0, and SpecAugment [6] with time and frequency masking probabilities of 0.05. The learning rate is 1 × 10⁻⁵ for Whisper-small and 5 × 10⁻⁴ for the LoRA adapters. After every epoch the model transcribes the validation clips with greedy decoding and repetition guards; the checkpoint with the lowest validation WER is kept. Each run had a fixed epoch budget (12 for run A, 8 for runs B and E and for each cross-validation fold, 6 for the Whisper-medium run with extra speech and 5 for the ATCO2-only one), with the learning rate falling to zero at the end of it, and would stop early if validation WER did not improve for two to four epochs. Only the runs that never beat their starting point stopped early. Run E and both Whisper-medium runs were still improving at their final epoch, so they may be undertrained; a repeat of the Whisper-medium run with 12 planned epochs (Section 5.1) peaked at epoch 9.
+All runs use the corrected labels, whose prefix matches the inference prompt, with the start token appearing once. Other settings: AdamW with weight decay 0.01, a linear learning-rate schedule with 50 warm-up steps, an effective batch of 16 clips, gradient clipping at 1.0, and SpecAugment [6] with time and frequency masking probabilities of 0.05. The learning rate is $1 \times 10^{-5}$ for Whisper-small and $5 \times 10^{-4}$ for the LoRA adapters. After every epoch the model transcribes the validation clips with greedy decoding and repetition guards; the checkpoint with the lowest validation WER is kept. Each run had a fixed epoch budget (12 for run A, 8 for runs B and E and for each cross-validation fold, 6 for the Whisper-medium run with extra speech and 5 for the ATCO2-only one), with the learning rate falling to zero at the end of it, and would stop early if validation WER did not improve for two to four epochs. Only the runs that never beat their starting point stopped early. Run E and both Whisper-medium runs were still improving at their final epoch, so they may be undertrained; a repeat of the Whisper-medium run with 12 planned epochs (Section 5.1) peaked at epoch 9.
 
 All 2026 training ran on the M3 Pro laptop's GPU; the 2025 models had been trained on a Windows laptop with an NVIDIA RTX 3070, which I no longer have. Three measures kept memory at about 6 GB for Whisper-small and 4.9 GB for Whisper-medium: gradient checkpointing, one clip per step with gradients accumulated over 16, and labels padded to a single fixed length. The last matters on Apple GPUs, where every new tensor shape compiles and caches another compute graph; with variable label lengths, memory grew until the run failed. Whisper-small trained at about 0.6 seconds per clip and Whisper-medium at about 2.9.
 
@@ -78,13 +78,13 @@ Three decoding settings were scored for each model: greedy decoding; beam search
 
 ### 4.4 Evaluation
 
-WER is the number of substituted, deleted and inserted words divided by the number of reference words, pooled over all clips: WER = (S + D + I) / N. Before scoring, text is converted to upper case, punctuation is removed, and digits are spelled out, because unmodified Whisper writes "4402" where the references say "four four zero two". Other formatting differences, such as "X-ray" against "x ray", are left in place and slightly penalise the unmodified model.
+WER is the number of substituted, deleted and inserted words divided by the number of reference words, pooled over all clips: $\mathrm{WER} = (S + D + I)/N$. Before scoring, text is converted to upper case, punctuation is removed, and digits are spelled out, because unmodified Whisper writes "4402" where the references say "four four zero two". Other formatting differences, such as "X-ray" against "x ray", are left in place and slightly penalise the unmodified model.
 
 Checkpoints and decoding settings were selected on validation, and the final longer run followed a rule written beforehand; some later experiment ideas, notably averaging the two Whisper-medium models, were developed after earlier test results were known. The test clips are therefore disjoint from the training data but not an untouched final holdout, and the intervals below measure sampling uncertainty, not any bias that adapting the investigation could introduce.
 
 Uncertainty is estimated by resampling the 74 test clips with replacement 10,000 times [7]. Differences between two models use the same resampled clips for both (a paired bootstrap), which removes much of the variation due to which clips happen to be hard.
 
-Two further measurements address the practical question. For **noise robustness**, white Gaussian noise was added to each test clip at a signal-to-noise ratio SNR = 10 log₁₀(P_signal / P_noise) of 30, 20, 15, 10, 5 and 0 dB, where P_signal is the mean power of the whole clip, pauses included, after the optional band-pass filter (so at 0 dB the speech itself is somewhat louder than the noise, which pauses pull down), with a fixed random seed per clip so that all models hear identical audio; decoding was greedy with repetition guards. For **instruction-level agreement**, the application's DistilBERT tagger was run on the correct transcript and on each model's transcript, and the extracted (field, words) pairs were compared clip by clip. This measures how much transcription error reaches the extracted fields; it does not measure the tagger's own accuracy.
+Two further measurements address the practical question. For **noise robustness**, white Gaussian noise was added to each test clip at a signal-to-noise ratio $\mathrm{SNR} = 10\log_{10}(P_{\mathrm{signal}}/P_{\mathrm{noise}})$ of 30, 20, 15, 10, 5 and 0 dB, where $P_{\mathrm{signal}}$ is the mean power of the whole clip, pauses included, after the optional band-pass filter (so at 0 dB the speech itself is somewhat louder than the noise, which pauses pull down), with a fixed random seed per clip so that all models hear identical audio; decoding was greedy with repetition guards. For **instruction-level agreement**, the application's DistilBERT tagger was run on the correct transcript and on each model's transcript, and the extracted (field, words) pairs were compared clip by clip. This measures how much transcription error reaches the extracted fields; it does not measure the tagger's own accuracy.
 
 ## 5. Results
 
@@ -106,7 +106,7 @@ Two further measurements address the practical question. For **noise robustness*
 | Soup of the two Whisper-medium models | 14.86% | 14.38% | 10.95 to 18.17 |
 | The same soup, first model trained for 12 epochs | 14.42% | 14.27% | 10.93 to 17.99 |
 
-![Figure 2. Word error rate on the 74 test clips. The dark bar is the model selected on validation.](figures/fig2_word_error_rates.png)
+![Figure 2. Word error rate on the 74 test clips, with 95% bootstrap intervals. The square identifies the model selected on validation.](figures/fig2_word_error_rates.png)
 
 Fine-tuning is by far the largest effect: from 56.87% for the unmodified model to 18.64% for the 2025 model on the same clips. Model size alone does much less: unmodified Whisper-medium scores 43.88% (95% interval 38.09 to 50.11), so most of the way from there to the best model's 14.27% is adaptation to ATC speech. The 2025 model does slightly better on the unseen test clips than on all 175 old test clips (20.31%), so any inflation of its earlier score by the recording overlap is too small to detect this way.
 
@@ -150,7 +150,7 @@ The cross-validation still lets each model hear other recordings from the same a
 
 : Table 4. Leave one airport out: word error rate on each airport's clips for a model that never heard that airport, for the cross-validation model that heard other recordings from it, and for the unmodified model (beam search with repetition guards).
 
-| Airport left out | Clips | Never heard the airport | Heard other recordings from it | Not fine-tuned |
+| Airport left out | Clips | Held-out airport | Seen airport | Not fine-tuned |
 | ---------------------------------------- | ------------: | ------------: | ------------: | ------------: |
 | Prague (LKPR) | 104 | 30.24% | 24.85% | 60.70% |
 | Brno (LKTB) | 32 | 22.57% | 23.67% | 57.74% |
@@ -236,6 +236,10 @@ With one hour of real audio, fine-tuning cut Whisper-small's word error rate on 
 
 AI tools supported coding, the 2026 review and retraining, and preparation of this paper. I set the goals and decided what to run and publish. [Project credits](https://github.com/Sineceptor/ATCO/blob/main/docs/contribution.md) give the roles in more detail.
 
+## Data and code availability
+
+Code, result summaries and the scripts that produce every table and figure are at <https://github.com/Sineceptor/ATCO>. Results are in `results/`, and each number in this paper can be recomputed from them. Model weights and audio are not redistributed: the ATCO2 subset is available from <https://www.atco2.org/data> and UWB-ATCC from <https://huggingface.co/datasets/Jzuluaga/uwb_atcc>.
+
 ## References
 
 [1] Radford, A., Kim, J. W., Xu, T., Brockman, G., McLeavey, C. and Sutskever, I. Robust Speech Recognition via Large-Scale Weak Supervision. arXiv:2212.04356, 2022.
@@ -261,7 +265,3 @@ AI tools supported coding, the 2026 review and retraining, and preparation of th
 [11] International Civil Aviation Organization. Annex 10 to the Convention on International Civil Aviation, Aeronautical Telecommunications, Volume III: Communication Systems. Second edition, July 2007. Attachment to Part II, 1.1.2 (audio bandwidth assumed for 8.33 kHz equipment).
 
 [12] van Doorn, J., Sun, J., Hoekstra, J. M., Jonk, P. and de Vries, V. Whisper-ATC: Open Models for Air Traffic Control Automatic Speech Recognition with Accuracy. International Conference on Research in Air Transportation (ICRAT), Singapore, 2024.
-
-## Data and code
-
-Code, result summaries and the scripts that produce every table and figure are at https://github.com/Sineceptor/ATCO. Results are in `results/`, and each number in this paper can be recomputed from them. Model weights and audio are not redistributed: the ATCO2 subset is available from https://www.atco2.org/data and UWB-ATCC from https://huggingface.co/datasets/Jzuluaga/uwb_atcc.
