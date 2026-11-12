@@ -191,16 +191,31 @@ python -m unittest discover -s tests
 | [docs/](docs/) | [Experiment log](docs/experiment_log.md), [limited data and radio physics](docs/limited_data_and_radio_physics.md), [evaluation notes](docs/evaluation.md), [data credit](docs/data.md), [history](docs/project_history.md), [setup](docs/setup.md), [next steps](docs/next_steps.md) |
 | [tests/](tests/) | Tests that run without the models |
 
+## How I used AI
+
+I used AI coding tools throughout the project.
+
+- **In 2025,** I chose the problem and data, designed the labelling rules,
+  ATC text rules, range checks, sentence generator and simulated radio channel,
+  planned the experiments and ran the training and evaluation on my laptop.
+  AI tools helped me write the code.
+- **In the 2026 audit and retraining,** Claude Code ran the audit that found
+  problems in my testing, wrote most of the new code, proposed most of the new
+  experiments and ran them on my laptop. It also drafted and edited the webpage,
+  paper and documentation. Later repository reviews also used AI assistants.
+- **My role in that work** was to set the goals, choose and approve the runs,
+  choose between the options offered and decide what to publish.
+
+The [full contribution record](docs/contribution.md) explains who did what and
+what is still left for me to do; [project history](docs/project_history.md)
+gives the timeline. This disclosure was updated with Codex in November 2026,
+using the existing project records.
+
 ## Credits
 
 The models (Whisper, BERT, DistilBERT, SpeechT5, HiFi-GAN and the others) are
 other people's work, and the real audio comes from the ATCO2 and UWB-ATCC
 corpora ([data credit](docs/data.md)).
-I used AI coding tools throughout: in 2025 to help write the code, and in 2026
-an AI assistant (Claude Code) audited the project with me, wrote most of the
-new code, ran the retraining experiments and drafted and edited this write-up,
-while I set the goals and made the final calls on what to run and publish. More in
-[project history](docs/project_history.md).
 
 The code is under the [MIT licence](LICENSE). The models and audio are not
 included and keep their own licences.

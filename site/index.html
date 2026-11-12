@@ -45,8 +45,9 @@
       <p class="lede">That was me on a seaplane in the Maldives, listening to the pilots&rsquo; radio. So I
         trained a small speech model to transcribe air traffic control, starting from one hour of real audio,
         and then checked whether my own results held up.</p>
-      <p class="owns">In 2026 I audited everything again with an AI coding assistant, which found what was
-        wrong with my own testing. We fixed it and retrained.</p>
+      <p class="owns">I used AI coding tools throughout. In 2026, Claude Code audited the project with me,
+        wrote most of the new code, ran the retraining and helped write this page. I set the goals and
+        decided what to run and publish. <a href="#ai-use">How I used AI.</a></p>
       <p class="resultline">On recordings it had never heard, my best model&rsquo;s word error rate (the
         share of words it gets wrong, so lower is better) is <b>14.27%</b>. My 2025 model: <b>18.64%</b>.
         Whisper out of the box: <b>56.87%</b>.</p>
@@ -645,17 +646,33 @@
     <h2>How I made this</h2>
     <p>It started in 2025 as a team idea for an AI that could act like an air traffic controller. That was
       far too big for the time I had, so I narrowed it to one piece: turning the radio into text a computer
-      can check. The team didn&rsquo;t continue, and I carried on alone, teaching myself how to train a
-      model, and the maths underneath it, as I went.</p>
+      can check. The team didn&rsquo;t continue, and I carried on as an individual project, with AI coding
+      assistance, teaching myself how to train a model, and the maths underneath it, as I went.</p>
 
     <p id="small">Everything I trained for this project ran on my own laptops: the 2025 models on a Windows
       laptop with an NVIDIA RTX 3070, and the 2026 retraining on a MacBook with an Apple M3 Pro, after I no
       longer had the first one. Working on a laptop turned out to matter: a model I can run end to end is one I can re-run and check,
       which is the only reason I could go back over these numbers at all.</p>
 
+    <h3 id="ai-use">How I used AI</h3>
+    <p><strong>In 2025,</strong> I chose the problem and the data, planned the experiments and ran the
+      training and evaluation on my own laptop. The word-list labelling rules, ATC text rules, range
+      checks, sentence generator and simulated radio channel were my designs. I used AI coding tools
+      to help write the code.</p>
+    <p><strong>In the 2026 audit and retraining,</strong> Claude Code ran the audit that found problems in
+      my testing. It wrote most of the new code, including evaluation scripts, training changes and the
+      app that joins the models together. It proposed most of the new experiments and ran them on my
+      laptop, and drafted and edited the webpage, paper and documentation. Later repository reviews
+      also used AI assistants.</p>
+    <p><strong>My role in that work</strong> was to set the goals, choose which experiments to run,
+      approve the runs, choose between the options offered and decide what to publish. The
+      <a href="https://github.com/Sineceptor/ATCO/blob/main/docs/contribution.md">full contribution
+      record</a> gives more detail, including the work still left for me to do.</p>
+    <p class="note">This disclosure was updated with Codex in November 2026, using the existing project
+      records.</p>
+
     <p class="credits">The models are other people&rsquo;s work, and the real audio comes from the ATCO2 and
-      UWB-ATCC research corpora. None of their audio or transcripts are published here. I used AI coding
-      tools throughout: in 2025 to help write the code, and in 2026 an AI assistant (Claude Code) audited the project with me, wrote most of the new code, ran the retraining experiments and drafted and edited this write-up, while I set the goals and made the final calls on what to run and publish.</p>
+      UWB-ATCC research corpora. None of their audio or transcripts are published here.</p>
     <details class="more">
       <summary>Credits and data citation</summary>
       <p>Whisper, BERT, DistilBERT, SpeechT5, HiFi-GAN, wav2vec2, Phi-3 and Qwen are other people&rsquo;s
@@ -681,6 +698,7 @@
       <a class="btn" href="https://github.com/Sineceptor/ATCO">Read the code</a>
       <ul>
         <li><a href="https://github.com/Sineceptor/ATCO/blob/main/paper/atco_paper.pdf">The full write-up, as a paper (PDF)</a></li>
+        <li><a href="https://github.com/Sineceptor/ATCO/blob/main/docs/contribution.md">My contribution and how I used AI</a></li>
         <li><a href="https://github.com/Sineceptor/ATCO/blob/main/site/EVIDENCE.md">Every claim on this page and where it comes from</a></li>
         <li><a href="https://github.com/Sineceptor/ATCO/blob/main/experiments/README.md">All the experiments, with what went wrong in each</a></li>
         <li><a href="https://github.com/Sineceptor/ATCO/blob/main/docs/limited_data_and_radio_physics.md">How the generator and the simulated radio work</a></li>

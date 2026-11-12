@@ -40,6 +40,14 @@ did it with an AI coding assistant (Claude Code), working on my laptop.
   tagger can be scored against a person (the sheet and the rules for awkward
   words are ready).
 
+## November 2026: the AI-use disclosure
+
+I asked Codex to update the AI-use information on the GitHub repository and
+project page. It used the existing contribution record and project history to
+make the disclosure easier to find, separate my role from the assistants' work,
+and update the README and webpage wording. This was a documentation update;
+it did not involve new training or evaluation experiments.
+
 ## Borrowed
 
 Whisper, BERT, DistilBERT, SpeechT5 and HiFi-GAN, wav2vec2, Phi-3 and Qwen are

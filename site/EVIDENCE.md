@@ -87,6 +87,17 @@ person.
 
 No ATCO2 or UWB-ATCC audio is published on the page or in this repository.
 
+## AI assistance and authorship
+
+The opening disclosure and **How I used AI** section summarise
+[`docs/contribution.md`](../docs/contribution.md) and
+[`docs/project_history.md`](../docs/project_history.md): AI coding assistance
+in 2025; Claude Code's audit, implementation, experiment proposals and runs,
+and writing in 2026; and my role in setting goals and deciding what to run and
+publish. These are the project's account of contributions, not measured
+results. The contribution record also documents the November 2026 disclosure
+update with Codex.
+
 ## Outside sources
 
 | On the page | Source |
